@@ -1,9 +1,9 @@
 /**
  * Supabase Utility Functions - Universal CRUD Operations
- * 
+ *
  * This utility provides a unified interface for all CRUD operations
  * across any Supabase table with optional file upload support.
- * 
+ *
  * Usage:
  *   - Create: await createRecord('feed', { title: 'Test', description: 'Desc' })
  *   - Read: await getRecords('feed') or await getRecord('feed', 1)
@@ -13,26 +13,27 @@
  */
 
 // Import Supabase client (make sure supabase-js is loaded)
+/* eslint-disable no-undef */
 if (typeof supabase === 'undefined') {
   throw new Error('Supabase JS library not loaded. Include: <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>');
 }
 
 // Get config from config.js (which reads from environment variables)
 let config;
-if (typeof module !== "undefined" && module.exports) {
+/* eslint-disable global-require */
+if (typeof module !== 'undefined' && module.exports) {
   // Node.js environment
   config = require('./config.js');
-} else {
+} else if (typeof window !== 'undefined' && window.SUPABASE_CONFIG) {
   // Browser environment - check window.SUPABASE_CONFIG (set by config.js)
-  if (typeof window !== 'undefined' && window.SUPABASE_CONFIG) {
-    config = window.SUPABASE_CONFIG;
-  } else {
-    throw new Error('SUPABASE_CONFIG not found. Make sure config.js is loaded before supabase-utils.js');
-  }
+  config = window.SUPABASE_CONFIG;
+} else {
+  throw new Error('SUPABASE_CONFIG not found. Make sure config.js is loaded before supabase-utils.js');
 }
 
 // Initialize Supabase client
 const supabaseClient = supabase.createClient(config.url, config.anonKey);
+/* eslint-enable no-undef */
 
 /**
  * ============================================
@@ -52,15 +53,15 @@ const supabaseClient = supabase.createClient(config.url, config.anonKey);
 async function createRecord(tableName, data, options = {}) {
   try {
     if (!tableName) {
-      throw new Error("Table name is required");
+      throw new Error('Table name is required');
     }
 
     if (!data || (Array.isArray(data) && data.length === 0)) {
-      throw new Error("Data is required");
+      throw new Error('Data is required');
     }
 
     const insertData = Array.isArray(data) ? data : [data];
-    const selectColumns = options.select || "*";
+    const selectColumns = options.select || '*';
     const returnData = options.returnData !== false;
 
     let query = supabaseClient
@@ -74,13 +75,23 @@ async function createRecord(tableName, data, options = {}) {
     const { data: result, error } = await query;
 
     if (error) {
+      // eslint-disable-next-line no-console
       console.error(`Error creating record in ${tableName}:`, error);
       return { data: null, error };
     }
 
-    const returnValue = Array.isArray(data) ? result : (result && result[0] ? result[0] : result);
+    let returnValue;
+    if (Array.isArray(data)) {
+      returnValue = result;
+    } else if (result && result[0]) {
+      const [first] = result;
+      returnValue = first;
+    } else {
+      returnValue = result;
+    }
     return { data: returnValue, error: null };
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(`Exception creating record in ${tableName}:`, error);
     return { data: null, error };
   }
@@ -94,19 +105,25 @@ async function createRecord(tableName, data, options = {}) {
  * @param {string} bucketName - Name of the storage bucket
  * @param {Object} options - Additional options
  * @param {string} options.filePath - Custom file path (default: auto-generated)
- * @param {string} options.fileProperty - Property name in data object for file URL (default: 'file')
+ * @param {string} options.fileProperty - Property name in data object for file URL
  * @param {Object} options.uploadOptions - Options for file upload
  * @returns {Promise<{data: any, error: any}>}
  */
 async function createRecordWithFile(tableName, data, file, bucketName, options = {}) {
   try {
     if (!tableName || !file || !bucketName) {
-      throw new Error("Table name, file, and bucket name are required");
+      throw new Error('Table name, file, and bucket name are required');
     }
 
     // Upload file first
-    const uploadResult = await uploadFile(bucketName, file, options.filePath, options.uploadOptions);
-    
+    // eslint-disable-next-line no-use-before-define
+    const uploadResult = await uploadFile(
+      bucketName,
+      file,
+      options.filePath,
+      options.uploadOptions,
+    );
+
     if (uploadResult.error) {
       return { data: null, error: uploadResult.error };
     }
@@ -115,12 +132,13 @@ async function createRecordWithFile(tableName, data, file, bucketName, options =
     const fileProperty = options.fileProperty || 'file';
     const recordData = {
       ...data,
-      [fileProperty]: uploadResult.data.publicUrl
+      [fileProperty]: uploadResult.data.publicUrl,
     };
 
     // Create record with file URL
     return await createRecord(tableName, recordData, options);
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(`Exception creating record with file in ${tableName}:`, error);
     return { data: null, error };
   }
@@ -141,47 +159,70 @@ async function createRecordWithFile(tableName, data, file, bucketName, options =
  * @param {number} options.offset - Number of records to skip
  * @param {string} options.orderBy - Column to order by
  * @param {boolean} options.ascending - Order direction (default: false)
- * @param {Object} options.filters - Filter conditions (e.g., { column: 'value', column2: { op: 'gt', value: 10 } })
+ * @param {Object} options.filters - Filter conditions
  * @returns {Promise<{data: Array, error: any, count: number}>}
  */
 async function getRecords(tableName, options = {}) {
   try {
     if (!tableName) {
-      throw new Error("Table name is required");
+      throw new Error('Table name is required');
     }
 
-    const selectColumns = options.select || "*";
-    const limit = options.limit;
-    const offset = options.offset || 0;
-    const orderBy = options.orderBy;
-    const ascending = options.ascending !== undefined ? options.ascending : false;
-    const filters = options.filters || {};
-    const count = options.count || false;
+    const {
+      select: selectColumns = '*',
+      limit,
+      offset = 0,
+      orderBy,
+      ascending = false,
+      filters = {},
+      count: countOption = false,
+    } = options;
 
     let query = supabaseClient
       .from(tableName)
-      .select(selectColumns, count ? { count: 'exact' } : {});
+      .select(selectColumns, countOption ? { count: 'exact' } : {});
 
     // Apply filters
-    Object.keys(filters).forEach(column => {
+    Object.keys(filters).forEach((column) => {
       const filterValue = filters[column];
-      
+
       if (typeof filterValue === 'object' && filterValue !== null && !Array.isArray(filterValue)) {
         // Advanced filter: { op: 'gt', value: 10 }
-        const op = filterValue.op || 'eq';
-        const value = filterValue.value;
-        
+        const { op = 'eq', value } = filterValue;
+
         switch (op) {
-          case 'eq': query = query.eq(column, value); break;
-          case 'neq': query = query.neq(column, value); break;
-          case 'gt': query = query.gt(column, value); break;
-          case 'gte': query = query.gte(column, value); break;
-          case 'lt': query = query.lt(column, value); break;
-          case 'lte': query = query.lte(column, value); break;
-          case 'like': query = query.like(column, value); break;
-          case 'ilike': query = query.ilike(column, value); break;
-          case 'in': query = query.in(column, Array.isArray(value) ? value : [value]); break;
-          case 'is': query = query.is(column, value); break;
+          case 'eq':
+            query = query.eq(column, value);
+            break;
+          case 'neq':
+            query = query.neq(column, value);
+            break;
+          case 'gt':
+            query = query.gt(column, value);
+            break;
+          case 'gte':
+            query = query.gte(column, value);
+            break;
+          case 'lt':
+            query = query.lt(column, value);
+            break;
+          case 'lte':
+            query = query.lte(column, value);
+            break;
+          case 'like':
+            query = query.like(column, value);
+            break;
+          case 'ilike':
+            query = query.ilike(column, value);
+            break;
+          case 'in':
+            query = query.in(column, Array.isArray(value) ? value : [value]);
+            break;
+          case 'is':
+            query = query.is(column, value);
+            break;
+          default:
+            query = query.eq(column, value);
         }
       } else {
         // Simple equality filter
@@ -198,18 +239,21 @@ async function getRecords(tableName, options = {}) {
     if (limit) {
       query = query.range(offset, offset + limit - 1);
     } else if (offset > 0) {
-      query = query.range(offset, offset + 999999); // Large number for offset without limit
+      // Large number for offset without limit
+      query = query.range(offset, offset + 999999);
     }
 
     const { data, error, count: recordCount } = await query;
 
     if (error) {
+      // eslint-disable-next-line no-console
       console.error(`Error fetching records from ${tableName}:`, error);
       return { data: null, error, count: 0 };
     }
 
     return { data: data || [], error: null, count: recordCount || data?.length || 0 };
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(`Exception fetching records from ${tableName}:`, error);
     return { data: null, error, count: 0 };
   }
@@ -227,11 +271,11 @@ async function getRecords(tableName, options = {}) {
 async function getRecord(tableName, id, options = {}) {
   try {
     if (!tableName || id === undefined || id === null) {
-      throw new Error("Table name and ID are required");
+      throw new Error('Table name and ID are required');
     }
 
-    const selectColumns = options.select || "*";
-    const idColumn = options.idColumn || "id";
+    const selectColumns = options.select || '*';
+    const idColumn = options.idColumn || 'id';
 
     const { data, error } = await supabaseClient
       .from(tableName)
@@ -240,12 +284,14 @@ async function getRecord(tableName, id, options = {}) {
       .single();
 
     if (error) {
+      // eslint-disable-next-line no-console
       console.error(`Error fetching record from ${tableName}:`, error);
       return { data: null, error };
     }
 
     return { data, error: null };
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(`Exception fetching record from ${tableName}:`, error);
     return { data: null, error };
   }
@@ -259,24 +305,37 @@ async function getRecord(tableName, id, options = {}) {
  */
 async function getRecordCount(tableName, options = {}) {
   try {
-    const filters = options.filters || {};
+    const { filters = {} } = options;
     let query = supabaseClient
       .from(tableName)
-      .select("*", { count: "exact", head: true });
+      .select('*', { count: 'exact', head: true });
 
     // Apply filters
-    Object.keys(filters).forEach(column => {
+    Object.keys(filters).forEach((column) => {
       const filterValue = filters[column];
       if (typeof filterValue === 'object' && filterValue !== null && !Array.isArray(filterValue)) {
-        const op = filterValue.op || 'eq';
-        const value = filterValue.value;
+        const { op = 'eq', value } = filterValue;
         switch (op) {
-          case 'eq': query = query.eq(column, value); break;
-          case 'neq': query = query.neq(column, value); break;
-          case 'gt': query = query.gt(column, value); break;
-          case 'gte': query = query.gte(column, value); break;
-          case 'lt': query = query.lt(column, value); break;
-          case 'lte': query = query.lte(column, value); break;
+          case 'eq':
+            query = query.eq(column, value);
+            break;
+          case 'neq':
+            query = query.neq(column, value);
+            break;
+          case 'gt':
+            query = query.gt(column, value);
+            break;
+          case 'gte':
+            query = query.gte(column, value);
+            break;
+          case 'lt':
+            query = query.lt(column, value);
+            break;
+          case 'lte':
+            query = query.lte(column, value);
+            break;
+          default:
+            query = query.eq(column, value);
         }
       } else {
         query = query.eq(column, filterValue);
@@ -286,12 +345,14 @@ async function getRecordCount(tableName, options = {}) {
     const { count, error } = await query;
 
     if (error) {
+      // eslint-disable-next-line no-console
       console.error(`Error counting records in ${tableName}:`, error);
       return { count: 0, error };
     }
 
     return { count: count || 0, error: null };
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(`Exception counting records in ${tableName}:`, error);
     return { count: 0, error };
   }
@@ -317,16 +378,16 @@ async function getRecordCount(tableName, options = {}) {
 async function updateRecord(tableName, id, updates, options = {}) {
   try {
     if (!tableName || id === undefined || id === null) {
-      throw new Error("Table name and ID are required");
+      throw new Error('Table name and ID are required');
     }
 
     if (!updates || Object.keys(updates).length === 0) {
-      throw new Error("Updates object is required and cannot be empty");
+      throw new Error('Updates object is required and cannot be empty');
     }
 
-    const selectColumns = options.select || "*";
+    const selectColumns = options.select || '*';
     const returnData = options.returnData !== false;
-    const idColumn = options.idColumn || "id";
+    const idColumn = options.idColumn || 'id';
 
     let query = supabaseClient
       .from(tableName)
@@ -340,6 +401,7 @@ async function updateRecord(tableName, id, updates, options = {}) {
     const { data, error } = await query;
 
     if (error) {
+      // eslint-disable-next-line no-console
       console.error(`Error updating record in ${tableName}:`, error);
       return { data: null, error };
     }
@@ -347,6 +409,7 @@ async function updateRecord(tableName, id, updates, options = {}) {
     const returnValue = data && data[0] ? data[0] : data;
     return { data: returnValue, error: null };
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(`Exception updating record in ${tableName}:`, error);
     return { data: null, error };
   }
@@ -362,14 +425,27 @@ async function updateRecord(tableName, id, updates, options = {}) {
  * @param {Object} options - Additional options
  * @returns {Promise<{data: any, error: any}>}
  */
-async function updateRecordWithFile(tableName, id, updates, file = null, bucketName = null, options = {}) {
+async function updateRecordWithFile(
+  tableName,
+  id,
+  updates,
+  file = null,
+  bucketName = null,
+  options = {},
+) {
   try {
-    let finalUpdates = { ...updates };
+    const finalUpdates = { ...updates };
 
     // If file is provided, upload it first
     if (file && bucketName) {
-      const uploadResult = await uploadFile(bucketName, file, options.filePath, options.uploadOptions);
-      
+      // eslint-disable-next-line no-use-before-define
+      const uploadResult = await uploadFile(
+        bucketName,
+        file,
+        options.filePath,
+        options.uploadOptions,
+      );
+
       if (uploadResult.error) {
         return { data: null, error: uploadResult.error };
       }
@@ -381,6 +457,7 @@ async function updateRecordWithFile(tableName, id, updates, file = null, bucketN
     // Update record
     return await updateRecord(tableName, id, finalUpdates, options);
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(`Exception updating record with file in ${tableName}:`, error);
     return { data: null, error };
   }
@@ -398,10 +475,10 @@ async function updateRecordWithFile(tableName, id, updates, file = null, bucketN
 async function updateRecords(tableName, ids, updates, options = {}) {
   try {
     if (!tableName || !ids || !Array.isArray(ids) || ids.length === 0) {
-      throw new Error("Table name and array of IDs are required");
+      throw new Error('Table name and array of IDs are required');
     }
 
-    const idColumn = options.idColumn || "id";
+    const idColumn = options.idColumn || 'id';
 
     const { data, error } = await supabaseClient
       .from(tableName)
@@ -410,12 +487,14 @@ async function updateRecords(tableName, ids, updates, options = {}) {
       .select();
 
     if (error) {
+      // eslint-disable-next-line no-console
       console.error(`Error updating records in ${tableName}:`, error);
       return { data: null, error };
     }
 
     return { data: data || [], error: null };
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(`Exception updating records in ${tableName}:`, error);
     return { data: null, error };
   }
@@ -439,11 +518,11 @@ async function updateRecords(tableName, ids, updates, options = {}) {
 async function deleteRecord(tableName, id, options = {}) {
   try {
     if (!tableName || id === undefined || id === null) {
-      throw new Error("Table name and ID are required");
+      throw new Error('Table name and ID are required');
     }
 
     const returnData = options.returnData !== false;
-    const idColumn = options.idColumn || "id";
+    const idColumn = options.idColumn || 'id';
 
     let query = supabaseClient
       .from(tableName)
@@ -457,6 +536,7 @@ async function deleteRecord(tableName, id, options = {}) {
     const { data, error } = await query;
 
     if (error) {
+      // eslint-disable-next-line no-console
       console.error(`Error deleting record from ${tableName}:`, error);
       return { data: null, error };
     }
@@ -464,6 +544,7 @@ async function deleteRecord(tableName, id, options = {}) {
     const returnValue = data && data[0] ? data[0] : data;
     return { data: returnValue, error: null };
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(`Exception deleting record from ${tableName}:`, error);
     return { data: null, error };
   }
@@ -480,10 +561,10 @@ async function deleteRecord(tableName, id, options = {}) {
 async function deleteRecords(tableName, ids, options = {}) {
   try {
     if (!tableName || !ids || !Array.isArray(ids) || ids.length === 0) {
-      throw new Error("Table name and array of IDs are required");
+      throw new Error('Table name and array of IDs are required');
     }
 
-    const idColumn = options.idColumn || "id";
+    const idColumn = options.idColumn || 'id';
 
     const { data, error } = await supabaseClient
       .from(tableName)
@@ -492,12 +573,14 @@ async function deleteRecords(tableName, ids, options = {}) {
       .select();
 
     if (error) {
+      // eslint-disable-next-line no-console
       console.error(`Error deleting records from ${tableName}:`, error);
       return { data: null, error, count: 0 };
     }
 
     return { data: data || [], error: null, count: data?.length || 0 };
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(`Exception deleting records from ${tableName}:`, error);
     return { data: null, error, count: 0 };
   }
@@ -523,7 +606,7 @@ async function deleteRecords(tableName, ids, options = {}) {
 async function uploadFile(bucketName, file, filePath = null, uploadOptions = {}) {
   try {
     if (!bucketName || !file) {
-      throw new Error("Bucket name and file are required");
+      throw new Error('Bucket name and file are required');
     }
 
     // Generate file path if not provided
@@ -533,7 +616,7 @@ async function uploadFile(bucketName, file, filePath = null, uploadOptions = {})
     const options = {
       cacheControl: uploadOptions.cacheControl || '3600',
       upsert: uploadOptions.upsert || false,
-      contentType: uploadOptions.contentType || file.type || 'application/octet-stream'
+      contentType: uploadOptions.contentType || file.type || 'application/octet-stream',
     };
 
     // Upload file
@@ -542,6 +625,7 @@ async function uploadFile(bucketName, file, filePath = null, uploadOptions = {})
       .upload(path, file, options);
 
     if (uploadError) {
+      // eslint-disable-next-line no-console
       console.error(`Error uploading file to ${bucketName}:`, uploadError);
       return { data: null, error: uploadError };
     }
@@ -554,11 +638,12 @@ async function uploadFile(bucketName, file, filePath = null, uploadOptions = {})
     return {
       data: {
         publicUrl: urlData.publicUrl,
-        path: uploadData.path || path
+        path: uploadData.path || path,
       },
-      error: null
+      error: null,
     };
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(`Exception uploading file to ${bucketName}:`, error);
     return { data: null, error };
   }
@@ -573,7 +658,7 @@ async function uploadFile(bucketName, file, filePath = null, uploadOptions = {})
 async function deleteFile(bucketName, filePath) {
   try {
     if (!bucketName || !filePath) {
-      throw new Error("Bucket name and file path are required");
+      throw new Error('Bucket name and file path are required');
     }
 
     const { data, error } = await supabaseClient.storage
@@ -581,12 +666,14 @@ async function deleteFile(bucketName, filePath) {
       .remove([filePath]);
 
     if (error) {
+      // eslint-disable-next-line no-console
       console.error(`Error deleting file from ${bucketName}:`, error);
       return { data: null, error };
     }
 
     return { data, error: null };
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(`Exception deleting file from ${bucketName}:`, error);
     return { data: null, error };
   }
@@ -600,7 +687,7 @@ async function deleteFile(bucketName, filePath) {
  */
 function getFileUrl(bucketName, filePath) {
   if (!bucketName || !filePath) {
-    throw new Error("Bucket name and file path are required");
+    throw new Error('Bucket name and file path are required');
   }
 
   const { data } = supabaseClient.storage
@@ -627,10 +714,10 @@ function getFileUrl(bucketName, filePath) {
 async function upsertRecord(tableName, data, options = {}) {
   try {
     if (!tableName || !data) {
-      throw new Error("Table name and data are required");
+      throw new Error('Table name and data are required');
     }
 
-    const onConflict = options.onConflict || "id";
+    const onConflict = options.onConflict || 'id';
 
     const { data: result, error } = await supabaseClient
       .from(tableName)
@@ -638,6 +725,7 @@ async function upsertRecord(tableName, data, options = {}) {
       .select();
 
     if (error) {
+      // eslint-disable-next-line no-console
       console.error(`Error upserting record in ${tableName}:`, error);
       return { data: null, error };
     }
@@ -645,6 +733,7 @@ async function upsertRecord(tableName, data, options = {}) {
     const returnValue = Array.isArray(result) && result[0] ? result[0] : result;
     return { data: returnValue, error: null };
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(`Exception upserting record in ${tableName}:`, error);
     return { data: null, error };
   }
@@ -658,39 +747,39 @@ const SupabaseUtils = {
   // Create
   createRecord,
   createRecordWithFile,
-  
+
   // Read
   getRecords,
   getRecord,
   getRecordCount,
-  
+
   // Update
   updateRecord,
   updateRecordWithFile,
   updateRecords,
-  
+
   // Delete
   deleteRecord,
   deleteRecords,
-  
+
   // File operations
   uploadFile,
   deleteFile,
   getFileUrl,
-  
+
   // Upsert
   upsertRecord,
-  
+
   // Client access (for advanced usage)
-  client: supabaseClient
+  client: supabaseClient,
 };
 
 // Export for Node.js/CommonJS
-if (typeof module !== "undefined" && module.exports) {
+if (typeof module !== 'undefined' && module.exports) {
   module.exports = SupabaseUtils;
 }
 
 // Export for browser (make it available globally)
-if (typeof window !== "undefined") {
+if (typeof window !== 'undefined') {
   window.SupabaseUtils = SupabaseUtils;
 }
