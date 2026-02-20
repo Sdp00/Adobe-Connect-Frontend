@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feed API Examples - CRUD Operations</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      color: #555;
+      margin: 30px 0 15px 0;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #007bff;
+    }
+
+    .section {
+      background: white;
+      padding: 25px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #555;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      transition: background-color 0.2s;
+    }
+
+    button:hover:not(:disabled) {
+      background-color: #0056b3;
+    }
+
+    button:disabled {
+      background-color: #6c757d;
+      cursor: not-allowed;
+    }
+
+    button.danger {
+      background-color: #dc3545;
+    }
+
+    button.danger:hover:not(:disabled) {
+      background-color: #c82333;
+    }
+
+    button.success {
+      background-color: #28a745;
+    }
+
+    button.success:hover:not(:disabled) {
+      background-color: #218838;
+    }
+
+    .result {
+      margin-top: 15px;
+      padding: 15px;
+      border-radius: 4px;
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .result.success {
+      background-color: #d4edda;
+      border-color: #c3e6cb;
+      color: #155724;
+    }
+
+    .result.error {
+      background-color: #f8d7da;
+      border-color: #f5c6cb;
+      color: #721c24;
+    }
+
+    .result pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .feed-list {
+      display: grid;
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .feed-item {
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #fff;
+    }
+
+    .feed-item h3 {
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .feed-item p {
+      color: #666;
+      margin-bottom: 10px;
+    }
+
+    .feed-item .meta {
+      font-size: 12px;
+      color: #999;
+      margin-top: 10px;
+    }
+
+    .feed-item .actions {
+      margin-top: 10px;
+    }
+
+    .feed-item .actions button {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Feed API Examples - CRUD Operations</h1>
+
+  <!-- CREATE Section -->
+  <div class="section">
+    <h2>CREATE - Add New Feed</h2>
+    <div class="form-group">
+      <label for="createTitle">Title:</label>
+      <input type="text" id="createTitle" placeholder="Enter title" />
+    </div>
+    <div class="form-group">
+      <label for="createDescription">Description:</label>
+      <textarea id="createDescription" placeholder="Enter description"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="createFile">File URL (or upload file below):</label>
+      <input type="text" id="createFile" placeholder="https://example.com/file.jpg" />
+    </div>
+    <div class="form-group">
+      <label for="createFileUpload">Upload File:</label>
+      <input type="file" id="createFileUpload" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm" />
+      <small style="color: #666;">If you upload a file, it will override the File URL above</small>
+    </div>
+    <button class="success" onclick="handleCreate()">Create Feed</button>
+    <button class="success" onclick="handleCreateWithFile()">Create with File Upload</button>
+    <div id="createResult" class="result" style="display: none;"></div>
+  </div>
+
+  <!-- READ Section -->
+  <div class="section">
+    <h2>READ - Fetch Feeds</h2>
+    <button onclick="handleGetAll()">Get All Feeds</button>
+    <button onclick="handleGetById()">Get by ID</button>
+    <input type="number" id="getById" placeholder="Enter ID" style="width: 150px; display: inline-block;" />
+    <button onclick="handleGetWithFilters()">Get with Filters</button>
+    <div id="readResult" class="result" style="display: none;"></div>
+    <div id="feedList" class="feed-list"></div>
+  </div>
+
+  <!-- UPDATE Section -->
+  <div class="section">
+    <h2>UPDATE - Modify Feed</h2>
+    <div class="form-group">
+      <label for="updateId">Feed ID:</label>
+      <input type="number" id="updateId" placeholder="Enter feed ID" />
+    </div>
+    <div class="form-group">
+      <label for="updateTitle">New Title:</label>
+      <input type="text" id="updateTitle" placeholder="Enter new title" />
+    </div>
+    <div class="form-group">
+      <label for="updateDescription">New Description:</label>
+      <textarea id="updateDescription" placeholder="Enter new description"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="updateFile">New File URL:</label>
+      <input type="text" id="updateFile" placeholder="https://example.com/new-file.jpg" />
+    </div>
+    <button onclick="handleUpdate()">Update Feed</button>
+    <div id="updateResult" class="result" style="display: none;"></div>
+  </div>
+
+  <!-- DELETE Section -->
+  <div class="section">
+    <h2>DELETE - Remove Feed</h2>
+    <div class="form-group">
+      <label for="deleteId">Feed ID:</label>
+      <input type="number" id="deleteId" placeholder="Enter feed ID to delete" />
+    </div>
+    <button class="danger" onclick="handleDelete()">Delete Feed</button>
+    <button class="danger" onclick="handleDeleteMultiple()">Delete Multiple</button>
+    <input type="text" id="deleteIds" placeholder="1,2,3" style="width: 150px; display: inline-block;" />
+    <div id="deleteResult" class="result" style="display: none;"></div>
+  </div>
+
+  <!-- Load Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Load Config -->
+  <script src="config.js"></script>
+  <!-- Load Utils -->
+  <script src="supabase-utils.js"></script>
+  <script>
+    // Table name configuration (can be changed to work with any table)
+    const TABLE_NAME = 'feed';
+
+    // Helper function to show result
+    function showResult(elementId, data, isError = false) {
+      const element = document.getElementById(elementId);
+      element.style.display = "block";
+      element.className = `result ${isError ? 'error' : 'success'}`;
+      element.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+    }
+
+    // CREATE - Add new feed using utility
+    async function handleCreate() {
+      const title = document.getElementById("createTitle").value.trim();
+      const description = document.getElementById("createDescription").value.trim();
+      const file = document.getElementById("createFile").value.trim();
+
+      if (!title || !description || !file) {
+        showResult("createResult", { error: "Please fill all fields" }, true);
+        return;
+      }
+
+      const result = await SupabaseUtils.createRecord(TABLE_NAME, {
+        title,
+        description,
+        file
+      });
+
+      if (result.error) {
+        showResult("createResult", { error: result.error.message, details: result.error }, true);
+      } else {
+        showResult("createResult", { success: true, data: result.data });
+        // Clear form
+        document.getElementById("createTitle").value = "";
+        document.getElementById("createDescription").value = "";
+        document.getElementById("createFile").value = "";
+        document.getElementById("createFileUpload").value = "";
+        // Refresh feed list
+        handleGetAll();
+      }
+    }
+
+    // CREATE - Add new feed with file upload using utility
+    async function handleCreateWithFile() {
+      const title = document.getElementById("createTitle").value.trim();
+      const description = document.getElementById("createDescription").value.trim();
+      const fileInput = document.getElementById("createFileUpload");
+      const file = fileInput.files[0];
+
+      if (!title || !description) {
+        showResult("createResult", { error: "Please fill title and description" }, true);
+        return;
+      }
+
+      if (!file) {
+        showResult("createResult", { error: "Please select a file to upload" }, true);
+        return;
+      }
+
+      // Show loading state
+      showResult("createResult", { message: "Uploading file and creating record..." }, false);
+
+      const result = await SupabaseUtils.createRecordWithFile(
+        TABLE_NAME,
+        { title, description },
+        file,
+        'uploads', // bucket name
+        {
+          fileProperty: 'file' // property name in data object
+        }
+      );
+
+      if (result.error) {
+        showResult("createResult", { error: result.error.message, details: result.error }, true);
+      } else {
+        showResult("createResult", { success: true, data: result.data });
+        // Clear form
+        document.getElementById("createTitle").value = "";
+        document.getElementById("createDescription").value = "";
+        document.getElementById("createFile").value = "";
+        document.getElementById("createFileUpload").value = "";
+        // Refresh feed list
+        handleGetAll();
+      }
+    }
+
+    // READ - Get all feeds using utility
+    async function handleGetAll() {
+      const result = await SupabaseUtils.getRecords(TABLE_NAME, {
+        orderBy: 'created_at',
+        ascending: false
+      });
+
+      if (result.error) {
+        showResult("readResult", { error: result.error.message, details: result.error }, true);
+      } else {
+        showResult("readResult", { count: result.count, data: result.data });
+        displayFeedList(result.data);
+      }
+    }
+
+    // READ - Get feed by ID using utility
+    async function handleGetById() {
+      const id = document.getElementById("getById").value;
+      if (!id) {
+        showResult("readResult", { error: "Please enter an ID" }, true);
+        return;
+      }
+
+      const result = await SupabaseUtils.getRecord(TABLE_NAME, id);
+
+      if (result.error) {
+        showResult("readResult", { error: result.error.message, details: result.error }, true);
+      } else {
+        showResult("readResult", { data: result.data });
+        displayFeedList([result.data]);
+      }
+    }
+
+    // READ - Get with filters using utility
+    async function handleGetWithFilters() {
+      const result = await SupabaseUtils.getRecords(TABLE_NAME, {
+        limit: 5,
+        orderBy: 'created_at',
+        ascending: false
+      });
+
+      if (result.error) {
+        showResult("readResult", { error: result.error.message, details: result.error }, true);
+      } else {
+        showResult("readResult", { 
+          count: result.count, 
+          message: "Showing first 5 feeds", 
+          data: result.data 
+        });
+        displayFeedList(result.data);
+      }
+    }
+
+    // Display feed list
+    function displayFeedList(feeds) {
+      const container = document.getElementById("feedList");
+      if (!feeds || feeds.length === 0) {
+        container.innerHTML = "<p>No feeds found</p>";
+        return;
+      }
+
+      container.innerHTML = feeds.map(feed => `
+        <div class="feed-item">
+          <h3>${feed.title || "Untitled"}</h3>
+          <p>${feed.description || "No description"}</p>
+          ${feed.file ? `<p><strong>File:</strong> <a href="${feed.file}" target="_blank">${feed.file}</a></p>` : ""}
+          <div class="meta">
+            ID: ${feed.id} | Created: ${new Date(feed.created_at).toLocaleString()}
+          </div>
+          <div class="actions">
+            <button onclick="loadFeedForEdit(${feed.id})">Edit</button>
+            <button class="danger" onclick="handleDeleteById(${feed.id})">Delete</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    // Load feed for editing using utility
+    async function loadFeedForEdit(id) {
+      const result = await SupabaseUtils.getRecord(TABLE_NAME, id);
+
+      if (result.error) {
+        alert("Error loading feed: " + result.error.message);
+        return;
+      }
+
+      const data = result.data;
+      document.getElementById("updateId").value = data.id;
+      document.getElementById("updateTitle").value = data.title || "";
+      document.getElementById("updateDescription").value = data.description || "";
+      document.getElementById("updateFile").value = typeof data.file === 'string' ? data.file : "";
+      
+      // Scroll to update section
+      document.querySelector('.section:nth-of-type(3)').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // UPDATE - Update feed using utility
+    async function handleUpdate() {
+      const id = document.getElementById("updateId").value;
+      const title = document.getElementById("updateTitle").value.trim();
+      const description = document.getElementById("updateDescription").value.trim();
+      const file = document.getElementById("updateFile").value.trim();
+
+      if (!id) {
+        showResult("updateResult", { error: "Please enter a feed ID" }, true);
+        return;
+      }
+
+      const updates = {};
+      if (title) updates.title = title;
+      if (description) updates.description = description;
+      if (file) updates.file = file;
+
+      if (Object.keys(updates).length === 0) {
+        showResult("updateResult", { error: "Please provide at least one field to update" }, true);
+        return;
+      }
+
+      // Add updated timestamp
+      updates.updated_ar = new Date().toISOString();
+
+      const result = await SupabaseUtils.updateRecord(TABLE_NAME, id, updates);
+
+      if (result.error) {
+        showResult("updateResult", { error: result.error.message, details: result.error }, true);
+      } else {
+        showResult("updateResult", { success: true, data: result.data });
+        // Refresh feed list
+        handleGetAll();
+      }
+    }
+
+    // DELETE - Delete feed by ID using utility
+    async function handleDelete() {
+      const id = document.getElementById("deleteId").value;
+      if (!id) {
+        showResult("deleteResult", { error: "Please enter a feed ID" }, true);
+        return;
+      }
+
+      if (!confirm(`Are you sure you want to delete feed #${id}?`)) {
+        return;
+      }
+
+      const result = await SupabaseUtils.deleteRecord(TABLE_NAME, id);
+
+      if (result.error) {
+        showResult("deleteResult", { error: result.error.message, details: result.error }, true);
+      } else {
+        showResult("deleteResult", { success: true, deleted: result.data });
+        document.getElementById("deleteId").value = "";
+        // Refresh feed list
+        handleGetAll();
+      }
+    }
+
+    // DELETE - Delete by ID (from feed list) using utility
+    async function handleDeleteById(id) {
+      if (!confirm(`Are you sure you want to delete feed #${id}?`)) {
+        return;
+      }
+
+      const result = await SupabaseUtils.deleteRecord(TABLE_NAME, id);
+
+      if (result.error) {
+        alert("Error deleting feed: " + result.error.message);
+      } else {
+        alert("Feed deleted successfully!");
+        // Refresh feed list
+        handleGetAll();
+      }
+    }
+
+    // DELETE - Delete multiple feeds using utility
+    async function handleDeleteMultiple() {
+      const idsStr = document.getElementById("deleteIds").value.trim();
+      if (!idsStr) {
+        showResult("deleteResult", { error: "Please enter comma-separated IDs" }, true);
+        return;
+      }
+
+      const ids = idsStr.split(",").map(id => parseInt(id.trim())).filter(id => !isNaN(id));
+      if (ids.length === 0) {
+        showResult("deleteResult", { error: "Please enter valid IDs" }, true);
+        return;
+      }
+
+      if (!confirm(`Are you sure you want to delete ${ids.length} feed(s)?`)) {
+        return;
+      }
+
+      const result = await SupabaseUtils.deleteRecords(TABLE_NAME, ids);
+
+      if (result.error) {
+        showResult("deleteResult", { error: result.error.message, details: result.error }, true);
+      } else {
+        showResult("deleteResult", { 
+          success: true, 
+          deleted: result.data, 
+          count: result.count 
+        });
+        document.getElementById("deleteIds").value = "";
+        // Refresh feed list
+        handleGetAll();
+      }
+    }
+
+    // Load all feeds on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      handleGetAll();
+    });
+  </script>
+</body>
+</html>
