@@ -6,8 +6,3 @@ build/
 coverage/
 .vscode/
 .idea/
-# Webpack-generated files
-blocks/banner/banner.js
-scripts/vendor.js
-**/banner/banner.js
-**/vendor/vendor.js
