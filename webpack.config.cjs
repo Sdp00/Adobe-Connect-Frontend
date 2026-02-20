@@ -9,23 +9,8 @@ const path = require('path');
 const fs = require('fs');
 require('dotenv').config();
 const multipleHtmlPlugins = require('./htmlWebpackPlugins.cjs');
-// const CustomResolverPlugin = require('./customResolverPlugin.js');
 
 const brands = ['default'];
-
-// if (fs.existsSync('brand-config.json')) {
-//   const strData = fs.readFileSync('brand-config.json', { encoding: 'utf8', flag: 'r' });
-//   if (strData) {
-//     const brandConfig = JSON.parse(strData);
-
-//     if (process.env.BRANDS) {
-//       const envBrands = process.env.BRANDS.split(',');
-//       brands = brands.concat(envBrands);
-//     } else {
-//       brands = brands.concat(brandConfig.brands);
-//     }
-//   }
-// }
 
 console.log('Building brands', brands);
 
@@ -42,8 +27,9 @@ class CopyFiles {
   // eslint-disable-next-line class-methods-use-this
   apply(compiler) {
     // Copy files only in production mode when running `npm run build`
+    // Uncomment below to restrict copying to production only
     // if (compiler.options.mode !== 'production') {
-    //   return null;
+    //   return;
     // }
     compiler.hooks.done.tap('Copy', () => {
       // copy component files
@@ -87,23 +73,6 @@ class CopyFiles {
         },
         (err) => err && console.error(err),
       );
-
-      // brands.forEach((brand) => {
-      //   if (brand !== 'default') {
-      //     blocks.forEach((block) => {
-      //       fs.copyFile(`./dist/${brand}/${block}/${block}.css`, `./blocks/${block}/${brand}/_${block}.css`, (err) => {
-      //         // if (err) console.error(err);
-      //         // eslint-disable-next-line max-len
-      //         /* console.log(`./dist/${brand}/${block}/${block}.css was copied to ./blocks/${block}/${brand}/_${block}.css`); */
-      //       });
-      //       fs.copyFile(`./dist/${brand}/${block}/${block}.css`, `./blocks/${block}/${brand}/${block}.css`, (err) => {
-      //         // if (err) console.error(err);
-      //         // eslint-disable-next-line max-len
-      //         /* console.log(`./dist/${brand}/${block}/${block}.css was copied to ./blocks/${block}/${brand}/${block}.css`);  */
-      //       });
-      //     });
-      //   }
-      // });
     });
   }
 }
@@ -172,6 +141,7 @@ const configurations = brands.map((brand, index) => ({
           if (opt.filename.endsWith('.js')) {
             return '/* eslint-disable */';
           }
+          return '';
         },
         raw: true,
         stage: webpack.Compilation.PROCESS_ASSETS_STAGE_REPORT,
@@ -181,20 +151,19 @@ const configurations = brands.map((brand, index) => ({
   externalsType: 'module',
   externals: [
     // Don't bundle EDS JS files.
-    function ({ request }, callback) {
-      if (request.includes('scripts/')) {
+    function externalsHandler({ request }, callback) {
+      if (request && request.includes('scripts/')) {
         // Externalize to a commonjs module using the request path
         const filepath = request.split('scripts/').pop();
         return callback(null, `/scripts/${filepath?.endsWith('.js') ? filepath : `${filepath}.js`}`);
       }
       // Continue without externalizing the import
-      callback();
+      return callback();
     },
   ],
   resolve: {
     plugins: [
-      // brand specific css resolver
-      // new CustomResolverPlugin({ brand }),
+      // brand specific css resolver (add if needed)
     ],
     extensions: ['.js', '.jsx', '.tsx', '.ts'],
   },
@@ -262,4 +231,3 @@ const configurations = brands.map((brand, index) => ({
 }));
 
 module.exports = configurations;
- 
