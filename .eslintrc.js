@@ -20,7 +20,7 @@ module.exports = {
   ],
   rules: {
     'import/extensions': ['error', { js: 'always' }], // require js file extensions in imports
-    'linebreak-style': 'off', // enforce unix linebreaks
+    'linebreak-style': 'off', // handled by .gitattributes for cross-platform compatibility
     'no-param-reassign': [2, { props: false }], // allow modifying properties of param
   },
 };
