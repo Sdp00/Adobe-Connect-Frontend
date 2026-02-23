@@ -1,19 +1,27 @@
-/* Sidebar - Design Match */
+/* =========================================================
+   SIDEBAR — ADOBE SPECTRUM STYLE (DESIGN ONLY)
+   ========================================================= */
+
+/* Token bridge — map sidebar vars to Spectrum tokens */
 :root {
-  --sb-red: #eb5146;
-  --sb-red-light: #fff5f5;
-  --sb-text: #374151;
-  --sb-text-light: #6b7280;
-  --sb-white: #fff;
-  --sb-border: #f3f4f6;
+  --sb-red: var(--spectrum-red-600);
+  --sb-red-light: var(--spectrum-gray-100);
+  --sb-text: var(--spectrum-text-primary);
+  --sb-text-light: var(--spectrum-text-secondary);
+  --sb-white: var(--spectrum-gray-50);
+  --sb-border: var(--spectrum-border-divider);
   --sb-w-collapsed: 80px;
   --sb-w-expanded: 240px;
-  --sb-header-h: 64px;  /* ← ADD THIS */
+  --sb-header-h: 64px;
 }
+
+/* =========================================================
+   BASE SIDEBAR
+   ========================================================= */
 
 .sb-sidebar {
   position: fixed;
-  top: var(--sb-header-h);  /* ← CHANGE FROM: top: 0; */
+  top: var(--sb-header-h);
   left: 0;
   bottom: 0;
   width: var(--sb-w-collapsed);
@@ -31,7 +39,10 @@
   width: var(--sb-w-expanded);
 }
 
-/* Nav List */
+/* =========================================================
+   NAV LIST
+   ========================================================= */
+
 .sb-nav-list {
   list-style: none;
   padding: 0 16px;
@@ -43,7 +54,10 @@
   margin-bottom: 4px;
 }
 
-/* Nav Links */
+/* =========================================================
+   NAV LINKS
+   ========================================================= */
+
 .sb-nav-link {
   display: flex;
   align-items: center;
@@ -54,18 +68,18 @@
   color: var(--sb-text);
   font-size: 15px;
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, color 0.2s ease;
   white-space: nowrap;
 }
 
 .sb-nav-link:hover {
   background: var(--sb-red-light);
-  color: var(--sb-red);
+  color: var(--sb-text);
 }
 
 .sb-nav-link-active {
   background: var(--sb-red-light);
-  color: var(--sb-red);
+  color: var(--sb-text);
   position: relative;
 }
 
@@ -81,7 +95,10 @@
   border-radius: 0 4px 4px 0;
 }
 
-/* Nav Icon */
+/* =========================================================
+   ICONS
+   ========================================================= */
+
 .sb-nav-icon {
   display: flex;
   align-items: center;
@@ -94,9 +111,14 @@
 .sb-nav-icon svg {
   width: 100%;
   height: 100%;
+  stroke: currentcolor;
+  fill: none;
 }
 
-/* Nav Label */
+/* =========================================================
+   LABEL ANIMATION
+   ========================================================= */
+
 .sb-nav-label {
   opacity: 0;
   transform: translateX(-10px);
@@ -109,14 +131,20 @@
   transform: translateX(0);
 }
 
-/* Divider */
+/* =========================================================
+   DIVIDER
+   ========================================================= */
+
 .sb-divider {
   height: 1px;
   background: var(--sb-border);
   margin: 16px 24px;
 }
 
-/* Social List */
+/* =========================================================
+   SOCIAL LINKS
+   ========================================================= */
+
 .sb-social-list {
   list-style: none;
   padding: 0 16px;
@@ -143,12 +171,12 @@
   border-radius: 10px;
   color: var(--sb-text-light);
   text-decoration: none;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 .sb-social-link:hover {
   background: var(--sb-red-light);
-  color: var(--sb-red);
+  color: var(--sb-text);
 }
 
 .sb-social-icon {
@@ -162,15 +190,27 @@
   fill: none;
 }
 
-/* X icon (filled) */
+/* Filled icons (X / Twitter) */
 .sb-social-icon svg[fill="currentColor"] {
   fill: currentcolor;
   stroke: none;
 }
 
-/* Hide on mobile */
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
 @media (width <= 767px) {
   .sb-sidebar {
     display: none;
   }
+}
+
+/* =========================================================
+   DARK MODE — AUTO VIA SPECTRUM TOKENS
+   ========================================================= */
+
+html[data-theme="dark"] .sb-sidebar {
+  background: var(--spectrum-gray-50);
+  border-right-color: var(--spectrum-border-divider);
 }
