@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Events API – CRUD</title>
+
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 1200px;
+      margin: auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    h1 { margin-bottom: 20px; }
+    h2 { margin: 30px 0 10px; }
+
+    .section {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+    }
+
+    button {
+      padding: 8px 14px;
+      cursor: pointer;
+      margin-right: 8px;
+    }
+
+    .danger { background: #dc3545; color: #fff; }
+    .success { background: #28a745; color: #fff; }
+
+    .result {
+      margin-top: 12px;
+      padding: 12px;
+      background: #eee;
+      white-space: pre-wrap;
+    }
+
+    .event-card {
+      border: 1px solid #ddd;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      background: #fff;
+    }
+
+    .event-card img {
+      max-width: 100%;
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+
+    .meta {
+      font-size: 12px;
+      color: #777;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Events API – CRUD Operations</h1>
+
+<!-- CREATE -->
+<div class="section">
+  <h2>CREATE Event</h2>
+
+  <div class="form-group">
+    <label>Title</label>
+    <input id="c_title" />
+  </div>
+
+  <div class="form-group">
+    <label>Date</label>
+    <input id="c_date" type="date" />
+  </div>
+
+  <div class="form-group">
+    <label>Time</label>
+    <input id="c_time" />
+  </div>
+
+  <div class="form-group">
+    <label>Location</label>
+    <input id="c_location" />
+  </div>
+
+  <div class="form-group">
+    <label>Image URL</label>
+    <input id="c_image" />
+  </div>
+
+  <div class="form-group">
+    <label>Deadline</label>
+    <input id="c_deadline" type="date" />
+  </div>
+
+  <button class="success" onclick="createEvent()">Create Event</button>
+  <div id="createResult" class="result"></div>
+</div>
+
+<!-- READ -->
+<div class="section">
+  <h2>READ Events</h2>
+  <button onclick="getAllEvents()">Get All Events</button>
+  <div id="readResult" class="result"></div>
+  <div id="eventsList"></div>
+</div>
+
+<!-- UPDATE -->
+<div class="section">
+  <h2>UPDATE Event</h2>
+
+  <div class="form-group">
+    <label>Event ID</label>
+    <input id="u_id" />
+  </div>
+
+  <div class="form-group">
+    <label>Title</label>
+    <input id="u_title" />
+  </div>
+
+  <div class="form-group">
+    <label>Image URL</label>
+    <input id="u_image" />
+  </div>
+
+  <button onclick="updateEvent()">Update Event</button>
+  <div id="updateResult" class="result"></div>
+</div>
+
+<!-- DELETE -->
+<div class="section">
+  <h2>DELETE Event</h2>
+
+  <div class="form-group">
+    <label>Event ID</label>
+    <input id="d_id" />
+  </div>
+
+  <button class="danger" onclick="deleteEvent()">Delete Event</button>
+  <div id="deleteResult" class="result"></div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="supabase-utils.js"></script>
+
+<script>
+  const TABLE = 'events';
+
+  /* CREATE */
+  async function createEvent() {
+    const payload = {
+      title: c_title.value,
+      date: c_date.value,
+      time: c_time.value,
+      location: c_location.value,
+      image: c_image.value,
+      deadline: c_deadline.value
+    };
+
+    const res = await SupabaseUtils.createRecord(TABLE, payload);
+    createResult.textContent = JSON.stringify(res, null, 2);
+    getAllEvents();
+  }
+
+  /* READ */
+  async function getAllEvents() {
+    const res = await SupabaseUtils.getRecords(TABLE, {
+      orderBy: 'date',
+      ascending: true
+    });
+
+    readResult.textContent = JSON.stringify(res, null, 2);
+    renderEvents(res.data || []);
+  }
+
+  function renderEvents(events) {
+    eventsList.innerHTML = events.map(e => `
+      <div class="event-card">
+        <strong>${e.title}</strong>
+        <div>${e.date} • ${e.time}</div>
+        <div>${e.location}</div>
+        ${e.image ? `<img src="${e.image}" />` : ""}
+        <div class="meta">ID: ${e.id}</div>
+      </div>
+    `).join("");
+  }
+
+  /* UPDATE */
+  async function updateEvent() {
+    const id = u_id.value;
+    const updates = {
+      title: u_title.value,
+      image: u_image.value,
+      updated_at: new Date().toISOString()
+    };
+
+    const res = await SupabaseUtils.updateRecord(TABLE, id, updates);
+    updateResult.textContent = JSON.stringify(res, null, 2);
+    getAllEvents();
+  }
+
+  /* DELETE */
+  async function deleteEvent() {
+    const id = d_id.value;
+    const res = await SupabaseUtils.deleteRecord(TABLE, id);
+    deleteResult.textContent = JSON.stringify(res, null, 2);
+    getAllEvents();
+  }
+
+  window.onload = getAllEvents;
+</script>
+
+</body>
+</html>
