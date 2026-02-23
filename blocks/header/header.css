@@ -43,6 +43,9 @@ body {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 /* =========================================================
@@ -200,7 +203,7 @@ body {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: var(--spectrum-gray-800);
+  background: var(--spectrum-red-600);
   color: #fff;
   display: grid;
   place-items: center;
@@ -527,4 +530,88 @@ html[data-theme="dark"] .nav-inner {
 html[data-theme="dark"] .profile-modal {
   background: var(--spectrum-gray-50);
   color: var(--spectrum-text-primary);
+}
+
+/* =========================================================
+   MOBILE RESPONSIVE
+   ========================================================= */
+
+/* Tablet — hide search center, compress padding */
+@media (width <= 768px) {
+  .nav-inner {
+    grid-template-columns: auto auto;
+    justify-content: space-between;
+    padding: 0 16px;
+    height: 56px;
+  }
+
+  .nav-center {
+    display: none;
+  }
+
+  .nav-title {
+    font-size: 14px;
+  }
+
+  .nav-right {
+    gap: 8px;
+  }
+
+  .profile-menu {
+    right: -8px;
+    width: 240px;
+  }
+}
+
+/* Mobile — further tighten layout */
+@media (width <= 480px) {
+  .nav-inner {
+    padding: 0 12px;
+    height: 52px;
+  }
+
+  .nav-logo-img {
+    width: 28px;
+    height: 28px;
+  }
+
+  .nav-title {
+    font-size: 13px;
+  }
+
+  .nav-right {
+    gap: 4px;
+  }
+
+  /* Hide theme toggle on very small screens to save space */
+  .theme-toggle-btn {
+    display: none;
+  }
+
+  .avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .profile-menu {
+    right: -4px;
+    width: 220px;
+  }
+
+  .profile-modal {
+    width: 95vw;
+    padding: 16px;
+    border-radius: 14px;
+  }
+
+  .interest-list {
+    gap: 6px;
+  }
+
+  .interest-chip,
+  .interest-pill {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
 }
