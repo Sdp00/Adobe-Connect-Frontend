@@ -1,22 +1,20 @@
-/* ================================ ORGANIZATION HIERARCHY – PRO ================================ */
- 
 .org-page {
   padding: 32px;
   background: #f8f8f8;
   font-family: "Adobe Clean", system-ui, sans-serif;
 }
- 
+
 /* Header */
 .org-header h1 {
   font-size: 24px;
   margin: 0;
 }
- 
+
 .org-header p {
   margin-top: 6px;
   color: #6b7280;
 }
- 
+
 /* Chart */
 .org-chart {
   margin-top: 48px;
@@ -24,7 +22,7 @@
   flex-direction: column;
   align-items: center;
 }
- 
+
 /* Levels */
 .level {
   display: flex;
@@ -32,12 +30,12 @@
   justify-content: center;
   position: relative;
 }
- 
+
 .level-2,
 .level-3 {
   width: 100%;
 }
- 
+
 /* Cards */
 .card {
   width: 260px;
@@ -47,33 +45,44 @@
   overflow: hidden;
   text-align: left;
 }
- 
+
 .card.small {
   width: 220px;
   padding: 16px;
 }
- 
-/* Text (GENERIC FIRST — FIX) */
+
 .name {
   font-size: 15px;
   font-weight: 600;
 }
- 
+
 .role {
   font-size: 13px;
-  opacity: .85;
+  opacity: 0.85;
 }
- 
-/* Small card overrides (SPECIFIC AFTER — FIX) */
+
+/* Dark mode */
+html[data-theme="dark"] .name {
+  color: #fff;
+}
+
+html[data-theme="dark"] .role {
+  color: #b3b3b3;
+}
+
 .card.small .name {
   font-weight: 600;
 }
- 
+
 .card.small .role {
   font-size: 13px;
   color: #6b7280;
 }
- 
+
+html[data-theme="dark"] .card.small .role {
+  color: #b3b3b3;
+}
+
 /* Card top */
 .card-top {
   padding: 16px;
@@ -81,16 +90,16 @@
   gap: 12px;
   align-items: center;
 }
- 
+
 .card-top.red {
   background: linear-gradient(135deg, #ef4444, #dc2626);
   color: #fff;
 }
- 
+
 .card-top.light {
   background: #fef2f2;
 }
- 
+
 /* Avatar */
 .avatar {
   width: 44px;
@@ -102,25 +111,25 @@
   place-items: center;
   font-weight: 700;
 }
- 
+
 /* Body */
 .card-body {
   padding: 14px;
   font-size: 13px;
 }
- 
-/* CEO emphasis */
+
+/* CEO */
 .ceo {
   border: 2px solid #ef4444;
 }
- 
-/* CONNECTORS */
+
+/* Connectors */
 .v-line {
   width: 2px;
   height: 40px;
   background: #d1d5db;
 }
- 
+
 .h-line {
   position: absolute;
   top: -20px;
@@ -129,4 +138,37 @@
   height: 2px;
   background: #d1d5db;
 }
- 
+
+
+
+html[data-theme="dark"] .org-page {
+  background: #181818;
+  color: #fff;
+}
+
+html[data-theme="dark"] .org-header h1 {
+  color: #fff;
+}
+
+html[data-theme="dark"] .org-header p {
+  color: #b3b3b3;
+}
+
+html[data-theme="dark"] .card {
+  background: #1e1e1e;
+  box-shadow: 0 20px 40px rgb(0 0 0 / 30%);
+  color: #fff;
+}
+
+html[data-theme="dark"] .card-top.light {
+  background: #2a2a2a;
+}
+
+html[data-theme="dark"] .card-body {
+  color: #b3b3b3;
+}
+
+html[data-theme="dark"] .v-line,
+html[data-theme="dark"] .h-line {
+  background: #444;
+}

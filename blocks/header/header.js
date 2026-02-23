@@ -1,10 +1,7 @@
 import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
 
-/**
- * loads and decorates the header, mainly the nav
- * @param {Element} block The header block element
- */
+
 export default async function decorate(block) {
   // load nav as fragment
   const navMeta = getMetadata('nav');
@@ -20,7 +17,7 @@ export default async function decorate(block) {
  
   block.textContent = '';
 
-  // Check if profile info was previously saved
+  
   const profileSaved = localStorage.getItem('profileComplete') === 'true';
   const addInfoLabel = profileSaved ? 'Edit Info' : 'Add Info';
  
@@ -29,7 +26,7 @@ export default async function decorate(block) {
  
   nav.innerHTML = `
     <div class="nav-left">
-      <img class="nav-logo-img" src="/blocks/header/Adobe-logo.jpeg" alt="Adobe" />
+      <a href="/"><img class="nav-logo-img" src="/blocks/header/Adobe-logo.jpeg" alt="Adobe" /></a>
       <span class="nav-title">${title}</span>
     </div>
  
@@ -137,7 +134,7 @@ export default async function decorate(block) {
     profile.classList.remove('open');
   });
  
-  /* Optional navigation hooks (safe placeholders) */
+  
   nav.querySelector('.menu-hierarchy')?.addEventListener('click', () => {
     window.location.href = '/hierarchy';
   });
@@ -152,9 +149,7 @@ export default async function decorate(block) {
 
   block.append(nav);
 
-  /* ============================= */
-  /* DARK / LIGHT MODE TOGGLE     */
-  /* ============================= */
+  /* Dark/Light Mode*/
 
   const moonIcon = `
     <svg class="nav-icon" viewBox="0 0 24 24">
@@ -178,7 +173,7 @@ export default async function decorate(block) {
 
   const themeBtn = nav.querySelector('.theme-toggle-btn');
 
-  // Apply saved theme on load
+
   const savedTheme = localStorage.getItem('theme') || 'light';
   document.documentElement.setAttribute('data-theme', savedTheme);
   themeBtn.innerHTML = savedTheme === 'dark' ? sunIcon : moonIcon;
@@ -194,14 +189,12 @@ export default async function decorate(block) {
 }
 
 
-/* ============================= */
-/* PROFILE COMPLETE MODAL LOGIC */
-/* ============================= */
+/* Profile */
 
 function openProfileModal(nav) {
   if (document.querySelector('.profile-modal-overlay')) return;
 
-  // Pre-load saved data if editing
+  
   const savedDate = localStorage.getItem('profileBirthday') || '';
   const savedInterests = JSON.parse(localStorage.getItem('profileInterests') || '[]');
   const isEdit = localStorage.getItem('profileComplete') === 'true';
@@ -271,12 +264,12 @@ function openProfileModal(nav) {
 
     const selectedInterests = [...overlay.querySelectorAll('.interest-chip.selected')].map(c => c.textContent.trim());
 
-    // Save to localStorage
+    
     localStorage.setItem('profileBirthday', dateInput.value);
     localStorage.setItem('profileInterests', JSON.stringify(selectedInterests));
     localStorage.setItem('profileComplete', 'true');
 
-    // Update the menu label to "Edit Info"
+    
     const label = nav?.querySelector('.add-info-label');
     if (label) label.textContent = 'Edit Info';
 

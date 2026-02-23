@@ -1,27 +1,25 @@
-/* =========================================================
-   ADOBE SPECTRUM – MY POSTS PAGE
-   ========================================================= */
- 
+/* Adobe Spectrum */
+
 .myposts-page {
   padding: 32px;
   font-family: "Adobe Clean", system-ui, sans-serif;
   background: #f8f8f8;
   min-height: 100vh;
 }
- 
+
 /* Header */
 .myposts-title {
   font-size: 24px;
   font-weight: 700;
   margin: 0;
 }
- 
+
 .myposts-subtitle {
   margin-top: 6px;
   font-size: 14px;
   color: #8e8e8e;
 }
- 
+
 /* Grid */
 .myposts-grid {
   margin-top: 28px;
@@ -29,7 +27,7 @@
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 24px;
 }
- 
+
 /* Card */
 .post-card {
   background: #fff;
@@ -40,32 +38,32 @@
   display: flex;
   flex-direction: column;
 }
- 
+
 /* Image */
 .post-card img {
   width: 100%;
   height: 180px;
   object-fit: cover;
 }
- 
+
 /* Content */
 .post-content {
   padding: 18px;
 }
- 
+
 .post-content h3 {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
 }
- 
+
 .post-content p {
   margin: 10px 0 16px;
   font-size: 14px;
   color: #4b4b4b;
   line-height: 1.5;
 }
- 
+
 /* Remove button */
 .remove-btn {
   border: 1px solid #e11d48;
@@ -78,16 +76,48 @@
   cursor: pointer;
   transition: all 0.2s ease;
 }
- 
+
 .remove-btn:hover {
   background: #e11d48;
   color: #fff;
 }
- 
+
 /* Empty state */
 .empty-state {
   font-size: 14px;
   color: #8e8e8e;
   padding: 40px;
 }
- 
+
+/* Dark Mode */
+
+html[data-theme="dark"] .myposts-page {
+  background: #181818;
+  color: #fff;
+}
+
+html[data-theme="dark"] .myposts-title {
+  color: #fff;
+}
+
+html[data-theme="dark"] .myposts-subtitle {
+  color: #b3b3b3;
+}
+
+html[data-theme="dark"] .post-card {
+  background: #1e1e1e;
+  border-color: #333;
+  box-shadow: 0 12px 24px rgb(0 0 0 / 30%);
+}
+
+html[data-theme="dark"] .post-content h3 {
+  color: #fff;
+}
+
+html[data-theme="dark"] .post-content p {
+  color: #b3b3b3;
+}
+
+html[data-theme="dark"] .empty-state {
+  color: #b3b3b3;
+}
