@@ -33,6 +33,30 @@ function buildHeroBlock(main) {
 }
 
 /**
+ * Loads sidebar as fragment on every page
+ */
+async function loadSidebar() {
+  const sidebarBlock = document.createElement('div');
+  sidebarBlock.classList.add('sidebar');
+
+  // Insert sidebar after header
+  const header = document.querySelector('header');
+  if (header) {
+    header.insertAdjacentElement('afterend', sidebarBlock);
+  } else {
+    document.body.prepend(sidebarBlock);
+  }
+
+  try {
+    const { default: decorateSidebar } = await import('../blocks/sidebar/sidebar.js');
+    decorateSidebar(sidebarBlock);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to load sidebar:', err);
+  }
+}
+
+/**
  * load fonts.css and set a session storage flag
  */
 async function loadFonts() {
@@ -119,6 +143,7 @@ async function loadEager(doc) {
  */
 async function loadLazy(doc) {
   loadHeader(doc.querySelector('header'));
+  loadSidebar(); // ← ADD SIDEBAR HERE
 
   const main = doc.querySelector('main');
   await loadSections(main);

@@ -1,0 +1,48 @@
+{
+  "trainings": [
+    {
+      "id": "train-001",
+      "title": "React Advanced Patterns",
+      "date": "2026-02-25",
+      "time": "02:00 PM",
+      "location": "Training Room B",
+      "image": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800",
+      "status": "pending",
+      "daysToRespond": 5,
+      "rsvp": null
+    },
+    {
+      "id": "train-002",
+      "title": "Design Systems Fundamentals",
+      "date": "2026-03-10",
+      "time": "10:00 AM",
+      "location": "Online",
+      "image": "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800",
+      "status": "pending",
+      "daysToRespond": 14,
+      "rsvp": null
+    },
+    {
+      "id": "train-003",
+      "title": "Accessibility Best Practices",
+      "date": "2026-03-20",
+      "time": "01:00 PM",
+      "location": "Workshop A",
+      "image": "https://images.unsplash.com/photo-1573164713988-8665fc963095?w=800",
+      "status": "pending",
+      "daysToRespond": 24,
+      "rsvp": null
+    },
+    {
+      "id": "train-004",
+      "title": "JavaScript ES2024 Features",
+      "date": "2026-01-20",
+      "time": "03:00 PM",
+      "location": "Tech Lab",
+      "image": "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=800",
+      "status": "past",
+      "daysToRespond": null,
+      "rsvp": "accepted"
+    }
+  ]
+}

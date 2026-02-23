@@ -1,0 +1,58 @@
+{
+  "newsletters": [
+    {
+      "id": "news-001",
+      "title": "Adobe Monthly - New Year Edition",
+      "description": "Kickstart 2026 with insights on new features, product updates, and team accomplishments from across the organization.",
+      "date": "January 2026",
+      "badge": "January 2026",
+      "image": "https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=800",
+      "url": "#"
+    },
+    {
+      "id": "news-002",
+      "title": "Year in Review 2025",
+      "description": "A comprehensive look at our accomplishments, milestones, and highlights from an incredible year of innovation.",
+      "date": "December 2025",
+      "badge": "December 2025",
+      "image": "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=800",
+      "url": "#"
+    },
+    {
+      "id": "news-003",
+      "title": "Innovation & Creativity",
+      "description": "Celebrating innovation across teams with highlights from our latest product launches and creative campaigns.",
+      "date": "November 2025",
+      "badge": "November 2025",
+      "image": "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=800",
+      "url": "#"
+    },
+    {
+      "id": "news-004",
+      "title": "Q3 Product Updates",
+      "description": "Discover the latest features and improvements rolling out across our product suite this quarter.",
+      "date": "October 2025",
+      "badge": "October 2025",
+      "image": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800",
+      "url": "#"
+    },
+    {
+      "id": "news-005",
+      "title": "Creative Community Spotlight",
+      "description": "Meet the talented creators using Adobe tools to bring their visions to life around the world.",
+      "date": "September 2025",
+      "badge": "September 2025",
+      "image": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800",
+      "url": "#"
+    },
+    {
+      "id": "news-006",
+      "title": "Adobe MAX Recap",
+      "description": "Relive the best moments from Adobe MAX 2025 with keynote highlights and session recordings.",
+      "date": "August 2025",
+      "badge": "August 2025",
+      "image": "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800",
+      "url": "#"
+    }
+  ]
+}
