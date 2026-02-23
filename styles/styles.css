@@ -38,6 +38,38 @@
 
   /* nav height */
   --nav-height: 64px;
+
+  /* Post-bar */
+  --post-bar-bg: #fff;
+  --post-bar-border: #e2e6ea;
+  --post-bar-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+  --post-bar-radius: 12px;
+  --avatar-size: 40px;
+  --input-bg: #f4f6f8;
+  --input-border: #dde1e7;
+  --input-radius: 24px;
+  --input-color: #8a94a6;
+  --input-font: 0.9375rem;
+  --btn-bg: #0073e6;
+  --btn-bg-hover: #005bbf;
+  --btn-color: #fff;
+  --btn-radius: 24px;
+  --btn-font: 0.875rem;
+  --btn-padding: 8px 22px;
+
+  /* Modal */
+  --modal-overlay: rgb(15 23 42 / 55%);
+  --modal-bg: #fff;
+  --modal-radius: 14px;
+  --modal-shadow: 0 16px 48px rgb(0 0 0 / 16%);
+  --modal-width: 480px;
+  --accent: #0073e6;
+  --accent-light: #e8f0fe;
+  --text-primary: #1a2332;
+  --text-secondary: #5a6474;
+  --text-muted: #8a94a6;
+  --danger: #d93025;
+  --transition: 0.2s ease;
 }
 
 /* fallback fonts */
