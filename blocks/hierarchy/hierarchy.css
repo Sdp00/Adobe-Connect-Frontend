@@ -1,0 +1,132 @@
+/* ================================ ORGANIZATION HIERARCHY – PRO ================================ */
+ 
+.org-page {
+  padding: 32px;
+  background: #f8f8f8;
+  font-family: "Adobe Clean", system-ui, sans-serif;
+}
+ 
+/* Header */
+.org-header h1 {
+  font-size: 24px;
+  margin: 0;
+}
+ 
+.org-header p {
+  margin-top: 6px;
+  color: #6b7280;
+}
+ 
+/* Chart */
+.org-chart {
+  margin-top: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+ 
+/* Levels */
+.level {
+  display: flex;
+  gap: 32px;
+  justify-content: center;
+  position: relative;
+}
+ 
+.level-2,
+.level-3 {
+  width: 100%;
+}
+ 
+/* Cards */
+.card {
+  width: 260px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgb(0 0 0 / 8%);
+  overflow: hidden;
+  text-align: left;
+}
+ 
+.card.small {
+  width: 220px;
+  padding: 16px;
+}
+ 
+/* Text (GENERIC FIRST — FIX) */
+.name {
+  font-size: 15px;
+  font-weight: 600;
+}
+ 
+.role {
+  font-size: 13px;
+  opacity: .85;
+}
+ 
+/* Small card overrides (SPECIFIC AFTER — FIX) */
+.card.small .name {
+  font-weight: 600;
+}
+ 
+.card.small .role {
+  font-size: 13px;
+  color: #6b7280;
+}
+ 
+/* Card top */
+.card-top {
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+ 
+.card-top.red {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #fff;
+}
+ 
+.card-top.light {
+  background: #fef2f2;
+}
+ 
+/* Avatar */
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #fff;
+  color: #dc2626;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+ 
+/* Body */
+.card-body {
+  padding: 14px;
+  font-size: 13px;
+}
+ 
+/* CEO emphasis */
+.ceo {
+  border: 2px solid #ef4444;
+}
+ 
+/* CONNECTORS */
+.v-line {
+  width: 2px;
+  height: 40px;
+  background: #d1d5db;
+}
+ 
+.h-line {
+  position: absolute;
+  top: -20px;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: #d1d5db;
+}
+ 
