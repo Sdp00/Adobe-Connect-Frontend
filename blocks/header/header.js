@@ -1,108 +1,6 @@
 import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
 
-// media query match that indicates mobile/tablet width
-const isDesktop = window.matchMedia('(min-width: 900px)');
-
-function closeOnEscape(e) {
-  if (e.code === 'Escape') {
-    const nav = document.getElementById('nav');
-    const navSections = nav.querySelector('.nav-sections');
-    const navSectionExpanded = navSections.querySelector('[aria-expanded="true"]');
-    if (navSectionExpanded && isDesktop.matches) {
-      // eslint-disable-next-line no-use-before-define
-      toggleAllNavSections(navSections);
-      navSectionExpanded.focus();
-    } else if (!isDesktop.matches) {
-      // eslint-disable-next-line no-use-before-define
-      toggleMenu(nav, navSections);
-      nav.querySelector('button').focus();
-    }
-  }
-}
-
-function closeOnFocusLost(e) {
-  const nav = e.currentTarget;
-  if (!nav.contains(e.relatedTarget)) {
-    const navSections = nav.querySelector('.nav-sections');
-    const navSectionExpanded = navSections.querySelector('[aria-expanded="true"]');
-    if (navSectionExpanded && isDesktop.matches) {
-      // eslint-disable-next-line no-use-before-define
-      toggleAllNavSections(navSections, false);
-    } else if (!isDesktop.matches) {
-      // eslint-disable-next-line no-use-before-define
-      toggleMenu(nav, navSections, false);
-    }
-  }
-}
-
-function openOnKeydown(e) {
-  const focused = document.activeElement;
-  const isNavDrop = focused.className === 'nav-drop';
-  if (isNavDrop && (e.code === 'Enter' || e.code === 'Space')) {
-    const dropExpanded = focused.getAttribute('aria-expanded') === 'true';
-    // eslint-disable-next-line no-use-before-define
-    toggleAllNavSections(focused.closest('.nav-sections'));
-    focused.setAttribute('aria-expanded', dropExpanded ? 'false' : 'true');
-  }
-}
-
-function focusNavSection() {
-  document.activeElement.addEventListener('keydown', openOnKeydown);
-}
-
-/**
- * Toggles all nav sections
- * @param {Element} sections The container element
- * @param {Boolean} expanded Whether the element should be expanded or collapsed
- */
-function toggleAllNavSections(sections, expanded = false) {
-  sections.querySelectorAll('.nav-sections .default-content-wrapper > ul > li').forEach((section) => {
-    section.setAttribute('aria-expanded', expanded);
-  });
-}
-
-/**
- * Toggles the entire nav
- * @param {Element} nav The container element
- * @param {Element} navSections The nav sections within the container element
- * @param {*} forceExpanded Optional param to force nav expand behavior when not null
- */
-function toggleMenu(nav, navSections, forceExpanded = null) {
-  const expanded = forceExpanded !== null ? !forceExpanded : nav.getAttribute('aria-expanded') === 'true';
-  const button = nav.querySelector('.nav-hamburger button');
-  document.body.style.overflowY = (expanded || isDesktop.matches) ? '' : 'hidden';
-  nav.setAttribute('aria-expanded', expanded ? 'false' : 'true');
-  toggleAllNavSections(navSections, expanded || isDesktop.matches ? 'false' : 'true');
-  button.setAttribute('aria-label', expanded ? 'Open navigation' : 'Close navigation');
-  // enable nav dropdown keyboard accessibility
-  const navDrops = navSections.querySelectorAll('.nav-drop');
-  if (isDesktop.matches) {
-    navDrops.forEach((drop) => {
-      if (!drop.hasAttribute('tabindex')) {
-        drop.setAttribute('tabindex', 0);
-        drop.addEventListener('focus', focusNavSection);
-      }
-    });
-  } else {
-    navDrops.forEach((drop) => {
-      drop.removeAttribute('tabindex');
-      drop.removeEventListener('focus', focusNavSection);
-    });
-  }
-
-  // enable menu collapse on escape keypress
-  if (!expanded || isDesktop.matches) {
-    // collapse menu on escape press
-    window.addEventListener('keydown', closeOnEscape);
-    // collapse menu on focus lost
-    nav.addEventListener('focusout', closeOnFocusLost);
-  } else {
-    window.removeEventListener('keydown', closeOnEscape);
-    nav.removeEventListener('focusout', closeOnFocusLost);
-  }
-}
-
 /**
  * loads and decorates the header, mainly the nav
  * @param {Element} block The header block element
@@ -113,54 +11,281 @@ export default async function decorate(block) {
   const navPath = navMeta ? new URL(navMeta, window.location).pathname : '/nav';
   const fragment = await loadFragment(navPath);
 
-  // decorate nav DOM
+  const content = fragment.querySelector(':scope > div > div');
+  if (!content) return;
+ 
+  const items = [...content.querySelectorAll('p')];
+  const title = items[0]?.textContent?.trim() || '';
+  const searchText = items[1]?.textContent?.trim() || '';
+ 
   block.textContent = '';
-  const nav = document.createElement('nav');
-  nav.id = 'nav';
-  while (fragment.firstElementChild) nav.append(fragment.firstElementChild);
 
-  const classes = ['brand', 'sections', 'tools'];
-  classes.forEach((c, i) => {
-    const section = nav.children[i];
-    if (section) section.classList.add(`nav-${c}`);
+  // Check if profile info was previously saved
+  const profileSaved = localStorage.getItem('profileComplete') === 'true';
+  const addInfoLabel = profileSaved ? 'Edit Info' : 'Add Info';
+ 
+  const nav = document.createElement('nav');
+  nav.className = 'nav-inner';
+ 
+  nav.innerHTML = `
+    <div class="nav-left">
+      <img class="nav-logo-img" src="/blocks/header/Adobe-logo.jpeg" alt="Adobe" />
+      <span class="nav-title">${title}</span>
+    </div>
+ 
+    <div class="nav-center">
+      <div class="nav-search">
+        <svg class="nav-icon" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="7"></circle>
+          <line x1="16.65" y1="16.65" x2="21" y2="21"></line>
+        </svg>
+        <input type="search" placeholder="${searchText}" />
+      </div>
+    </div>
+ 
+    <div class="nav-right">
+ 
+      <!-- Theme -->
+      <button class="icon-btn theme-toggle-btn">
+        <svg class="nav-icon" viewBox="0 0 24 24">
+          <path d="M21 12.79A9 9 0 0111.21 3a7 7 0 109.79 9.79z"/>
+        </svg>
+      </button>
+ 
+      <!-- Notifications -->
+      <div class="notify">
+        <button class="icon-btn notify-trigger">
+          <svg class="nav-icon" viewBox="0 0 24 24">
+            <path d="M18 8a6 6 0 10-12 0v5l-2 2h16l-2-2z"/>
+            <path d="M13.73 21a2 2 0 01-3.46 0"/>
+          </svg>
+          <span class="notify-dot"></span>
+        </button>
+      </div>
+ 
+      <!-- Profile -->
+      <div class="profile">
+        <div class="profile-trigger">
+          <div class="avatar">J</div>
+          <svg class="chevron" viewBox="0 0 24 24">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </div>
+ 
+        <div class="profile-menu">
+          <div class="profile-info">
+            <div class="profile-name">Jaishree D G</div>
+            <div class="profile-role">Apprentice Tech</div>
+          </div>
+ 
+          <ul>
+            <!-- Add Info / Edit Info -->
+            <li class="menu-add-info">
+              <svg class="menu-icon" viewBox="0 0 24 24">
+                <circle cx="12" cy="7" r="4"></circle>
+                <path d="M5.5 21a6.5 6.5 0 0113 0"></path>
+              </svg>
+              <span class="add-info-label">${addInfoLabel}</span>
+            </li>
+ 
+            <!-- My Posts -->
+            <li class="menu-posts">
+              <svg class="menu-icon" viewBox="0 0 24 24">
+                <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+                <line x1="8" y1="8" x2="16" y2="8"></line>
+                <line x1="8" y1="12" x2="16" y2="12"></line>
+              </svg>
+              My Posts
+            </li>
+ 
+            <!-- Hierarchy -->
+            <li class="menu-hierarchy">
+              <svg class="menu-icon" viewBox="0 0 24 24">
+                <rect x="10" y="3" width="4" height="4" rx="1"></rect>
+                <rect x="3" y="17" width="4" height="4" rx="1"></rect>
+                <rect x="17" y="17" width="4" height="4" rx="1"></rect>
+                <line x1="12" y1="7" x2="5" y2="17"></line>
+                <line x1="12" y1="7" x2="19" y2="17"></line>
+              </svg>
+              Hierarchy
+            </li>
+ 
+            <!-- Logout -->
+            <li class="danger menu-logout">
+              <svg class="menu-icon" viewBox="0 0 24 24">
+                <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+              </svg>
+              Logout
+            </li>
+          </ul>
+        </div>
+      </div>
+ 
+    </div>
+  `;
+ 
+  const profile = nav.querySelector('.profile');
+ 
+  nav.querySelector('.profile-trigger').onclick = (e) => {
+    e.stopPropagation();
+    profile.classList.toggle('open');
+  };
+ 
+  document.addEventListener('click', () => {
+    profile.classList.remove('open');
+  });
+ 
+  /* Optional navigation hooks (safe placeholders) */
+  nav.querySelector('.menu-hierarchy')?.addEventListener('click', () => {
+    window.location.href = '/hierarchy';
+  });
+ 
+  nav.querySelector('.menu-posts')?.addEventListener('click', () => {
+    window.location.href = '/myposts';
+  });
+ 
+  nav.querySelector('.menu-add-info')?.addEventListener('click', () => {
+    openProfileModal(nav);
   });
 
-  const navBrand = nav.querySelector('.nav-brand');
-  const brandLink = navBrand.querySelector('.button');
-  if (brandLink) {
-    brandLink.className = '';
-    brandLink.closest('.button-container').className = '';
-  }
+  block.append(nav);
 
-  const navSections = nav.querySelector('.nav-sections');
-  if (navSections) {
-    navSections.querySelectorAll(':scope .default-content-wrapper > ul > li').forEach((navSection) => {
-      if (navSection.querySelector('ul')) navSection.classList.add('nav-drop');
-      navSection.addEventListener('click', () => {
-        if (isDesktop.matches) {
-          const expanded = navSection.getAttribute('aria-expanded') === 'true';
-          toggleAllNavSections(navSections);
-          navSection.setAttribute('aria-expanded', expanded ? 'false' : 'true');
-        }
-      });
+  /* ============================= */
+  /* DARK / LIGHT MODE TOGGLE     */
+  /* ============================= */
+
+  const moonIcon = `
+    <svg class="nav-icon" viewBox="0 0 24 24">
+      <path d="M21 12.79A9 9 0 0111.21 3a7 7 0 109.79 9.79z"/>
+    </svg>
+  `;
+
+  const sunIcon = `
+    <svg class="nav-icon" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="5"/>
+      <line x1="12" y1="1" x2="12" y2="3"/>
+      <line x1="12" y1="21" x2="12" y2="23"/>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+      <line x1="1" y1="12" x2="3" y2="12"/>
+      <line x1="21" y1="12" x2="23" y2="12"/>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+    </svg>
+  `;
+
+  const themeBtn = nav.querySelector('.theme-toggle-btn');
+
+  // Apply saved theme on load
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  themeBtn.innerHTML = savedTheme === 'dark' ? sunIcon : moonIcon;
+
+  // Toggle on click
+  themeBtn.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    themeBtn.innerHTML = next === 'dark' ? sunIcon : moonIcon;
+  });
+}
+
+
+/* ============================= */
+/* PROFILE COMPLETE MODAL LOGIC */
+/* ============================= */
+
+function openProfileModal(nav) {
+  if (document.querySelector('.profile-modal-overlay')) return;
+
+  // Pre-load saved data if editing
+  const savedDate = localStorage.getItem('profileBirthday') || '';
+  const savedInterests = JSON.parse(localStorage.getItem('profileInterests') || '[]');
+  const isEdit = localStorage.getItem('profileComplete') === 'true';
+ 
+  const overlay = document.createElement('div');
+  overlay.className = 'profile-modal-overlay';
+ 
+  overlay.innerHTML = `
+    <div class="profile-modal">
+      <div class="profile-modal-header">
+        <h3>${isEdit ? 'Edit Your Profile' : 'Complete Your Profile'}</h3>
+        <button class="modal-close">✕</button>
+      </div>
+ 
+      <div class="profile-modal-body">
+        <label>Birthday</label>
+        <div class="date-field">
+          <input type="date" value="${savedDate}" />
+        </div>
+ 
+        <div class="interests-header">
+          <span>Interests</span>
+          <span class="interest-count">${savedInterests.length} selected (min 3)</span>
+        </div>
+ 
+        <div class="interest-list">
+          ${[
+            'UI/UX Design','Development','Marketing','Music',
+            'Leadership','Mentoring','Sports','Photography',
+            'Travelling','Psychology','Fitness', 'Gaming', 'Art', 'Dancing', 'Fashion'
+          ].map(i => `<button class="interest-chip${savedInterests.includes(i) ? ' selected' : ''}">${i}</button>`).join('')}
+        </div>
+ 
+        <button class="update-btn" ${savedInterests.length >= 3 ? '' : 'disabled'}>Update Profile</button>
+      </div>
+    </div>
+  `;
+ 
+  document.body.appendChild(overlay);
+ 
+  const chips = overlay.querySelectorAll('.interest-chip');
+  const countText = overlay.querySelector('.interest-count');
+  const updateBtn = overlay.querySelector('.update-btn');
+ 
+  function updateState() {
+    const selected = overlay.querySelectorAll('.interest-chip.selected').length;
+    countText.textContent = `${selected} selected (min 3)`;
+    updateBtn.disabled = selected < 3;
+  }
+ 
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chip.classList.toggle('selected');
+      updateState();
     });
-  }
+  });
 
-  // hamburger for mobile
-  const hamburger = document.createElement('div');
-  hamburger.classList.add('nav-hamburger');
-  hamburger.innerHTML = `<button type="button" aria-controls="nav" aria-label="Open navigation">
-      <span class="nav-hamburger-icon"></span>
-    </button>`;
-  hamburger.addEventListener('click', () => toggleMenu(nav, navSections));
-  nav.prepend(hamburger);
-  nav.setAttribute('aria-expanded', 'false');
-  // prevent mobile nav behavior on window resize
-  toggleMenu(nav, navSections, isDesktop.matches);
-  isDesktop.addEventListener('change', () => toggleMenu(nav, navSections, isDesktop.matches));
+  // Update Profile button click
+  updateBtn.addEventListener('click', () => {
+    const dateInput = overlay.querySelector('input[type="date"]');
 
-  const navWrapper = document.createElement('div');
-  navWrapper.className = 'nav-wrapper';
-  navWrapper.append(nav);
-  block.append(navWrapper);
+    if (!dateInput.value) {
+      dateInput.setAttribute('required', 'true');
+      dateInput.reportValidity();
+      return;
+    }
+
+    const selectedInterests = [...overlay.querySelectorAll('.interest-chip.selected')].map(c => c.textContent.trim());
+
+    // Save to localStorage
+    localStorage.setItem('profileBirthday', dateInput.value);
+    localStorage.setItem('profileInterests', JSON.stringify(selectedInterests));
+    localStorage.setItem('profileComplete', 'true');
+
+    // Update the menu label to "Edit Info"
+    const label = nav?.querySelector('.add-info-label');
+    if (label) label.textContent = 'Edit Info';
+
+    console.log('Profile updated successfully');
+    overlay.remove();
+  });
+ 
+  overlay.querySelector('.modal-close').onclick = () => overlay.remove();
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) overlay.remove();
+  });
 }
