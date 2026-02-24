@@ -125,6 +125,42 @@
 
   /* nav height — unchanged */
   --nav-height: 64px;
+
+  /* Post-bar */
+  --post-bar-bg: #fff;
+  --post-bar-border: #e2e6ea;
+  --post-bar-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+  --post-bar-radius: 12px;
+  --avatar-size: 40px;
+  --input-bg: #f4f6f8;
+  --input-border: #dde1e7;
+  --input-radius: 24px;
+  --input-color: #8a94a6;
+  --input-font: 0.9375rem;
+  --btn-bg: #0073e6;
+  --btn-bg-hover: #005bbf;
+  --btn-color: #fff;
+  --btn-radius: 24px;
+  --btn-font: 0.875rem;
+  --btn-padding: 8px 22px;
+
+  /* Modal */
+  --modal-overlay: rgb(15 23 42 / 55%);
+  --modal-bg: #fff;
+  --modal-radius: 16px;
+  --modal-shadow: 0 24px 60px rgb(0 0 0 / 18%), 0 4px 16px rgb(0 0 0 / 8%);
+  --modal-width: 480px;
+  --modal-max-width: 560px;
+  --modal-overlay-bg: rgb(0 0 0 / 45%);
+  --modal-padding: 28px;
+  --modal-z: 9999;
+  --accent: #0073e6;
+  --accent-light: #e8f0fe;
+  --text-primary: #1a2332;
+  --text-secondary: #5a6474;
+  --text-muted: #8a94a6;
+  --danger: #d93025;
+  --transition: 0.2s ease;
 }
 
 /* fallback fonts */
@@ -341,4 +377,136 @@ main .section.highlight {
   background-color: var(--light-color);
   margin: 0;
   padding: 40px 0;
+}
+
+/* ==========================================================================
+   Reusable Modal Component (helpers/helper.js)
+   Add this block into your global styles/styles.css
+   
+   Theming — override these variables to customize per-page or per-block:
+     --modal-max-width   (default: 560px)
+     --modal-radius      (default: 16px)
+     --modal-bg          (default: #ffffff)
+     --modal-overlay-bg  (default: rgba(0, 0, 0, 0.45))
+     --modal-shadow      (default: layered drop-shadow)
+     --modal-padding     (default: 28px)
+     --modal-z           (default: 9999)
+   ========================================================================== */
+
+/* ── Overlay (backdrop) ──────────────────────────────────────────────────── */
+.hc-modal-overlay {
+  position:        fixed;
+  inset:           0;
+  z-index:         var(--modal-z);
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  background:      var(--modal-overlay-bg);
+  padding:         16px;
+  backdrop-filter: blur(3px);
+
+  /* hidden by default */
+  opacity:         0;
+  pointer-events:  none;
+  transition:      opacity 0.22s ease;
+}
+
+.hc-modal-overlay.is-open {
+  opacity:        1;
+  pointer-events: all;
+}
+
+/* ── Dialog box ──────────────────────────────────────────────────────────── */
+.hc-modal-dialog {
+  position:        relative;
+  width:           100%;
+  max-width:       var(--modal-max-width);
+  max-height:      calc(100dvh - 40px);
+  display:         flex;
+  flex-direction:  column;
+  background:      var(--modal-bg);
+  border-radius:   var(--modal-radius);
+  box-shadow:      var(--modal-shadow);
+  overflow:        hidden;
+
+  /* enter animation */
+  transform:  translateY(18px) scale(0.97);
+  opacity:    0;
+  transition: transform 0.26s cubic-bezier(0.34, 1.46, 0.64, 1),
+              opacity   0.22s ease;
+}
+
+.hc-modal-overlay.is-open .hc-modal-dialog {
+  transform: translateY(0) scale(1);
+  opacity:   1;
+}
+
+/* ── Close button (top-right) ────────────────────────────────────────────── */
+.hc-modal-close-btn {
+  position:        absolute;
+  top:             14px;
+  right:           14px;
+  z-index:         10;
+  width:           32px;
+  height:          32px;
+  padding:         0;
+  border:          none;
+  background:      #f3f4f6;
+  border-radius:   50%;
+  cursor:          pointer;
+  color:           #6b7280;
+  display:         flex;
+  align-items:     center;
+  justify-content: center;
+  transition:      background 0.15s, color 0.15s;
+  flex-shrink:     0;
+}
+
+.hc-modal-close-btn:hover {
+  background: #e2e6ea;
+  color:      #111827;
+}
+
+.hc-modal-close-btn svg {
+  width:   16px;
+  height:  16px;
+  display: block;
+}
+
+/* ── Body (scrollable) ───────────────────────────────────────────────────── */
+.hc-modal-body {
+  flex:       1 1 auto;
+  overflow-y: auto;
+  padding:    var(--modal-padding);
+}
+
+/* ── Footer (pinned) ─────────────────────────────────────────────────────── */
+.hc-modal-footer {
+  flex-shrink:     0;
+  padding:         16px var(--modal-padding);
+  border-top:      1px solid #e5e7eb;
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  gap:             12px;
+}
+
+/* ── Mobile — slide up from bottom ───────────────────────────────────────── */
+@media (width <= 480px) {
+  .hc-modal-overlay {
+    align-items: flex-end;
+    padding:     0;
+  }
+
+  .hc-modal-dialog {
+    max-width:     100%;
+    max-height:    92dvh;
+    border-radius: var(--modal-radius) var(--modal-radius) 0 0;
+    transform:     translateY(100%);
+  }
+
+  .hc-modal-overlay.is-open .hc-modal-dialog {
+    transform: translateY(0);
+    opacity:   1;
+  }
 }
