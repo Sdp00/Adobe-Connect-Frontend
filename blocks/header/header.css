@@ -39,7 +39,7 @@ body {
   box-sizing: border-box;
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 5000;
 }
 
 /* LEFT */
@@ -74,7 +74,7 @@ body {
   color: var(--spectrum-text-primary);
 }
 
-/* (SEARCH) */
+/* SEARCH */
 .nav-center {
   display: flex;
   justify-content: center;
@@ -194,7 +194,6 @@ body {
 }
 
 /* Profile Menu */
-
 .profile-menu {
   position: absolute;
   right: 0;
@@ -205,6 +204,7 @@ body {
   border-radius: 14px;
   box-shadow: 0 16px 32px rgb(0 0 0 / 12%);
   display: none;
+  z-index: 9000;
 }
 
 html[data-theme="dark"] .profile-menu {
@@ -254,6 +254,7 @@ html[data-theme="dark"] .profile-menu {
   background: var(--spectrum-gray-100);
 }
 
+/* Danger */
 .profile-menu .danger {
   color: #dc2626;
 }
@@ -262,7 +263,6 @@ html[data-theme="dark"] .profile-menu {
   stroke: #dc2626;
 }
 
-
 main > .section.nav-container > .nav-wrapper {
   max-width: 100% !important;
   margin: 0 !important;
@@ -270,8 +270,6 @@ main > .section.nav-container > .nav-wrapper {
 }
 
 /* PROFILE COMPLETE MODAL STYLE */
-
- 
 .profile-modal {
   width: 420px;
   background: #fff;
@@ -370,7 +368,6 @@ main > .section.nav-container > .nav-wrapper {
   border-color: var(--spectrum-gray-800);
 }
 
-
 .interest-pill {
   color: #1f2937;
   background: #fff;
@@ -426,7 +423,6 @@ main > .section.nav-container > .nav-wrapper {
 }
 
 /* Update */
-
 .update-btn {
   margin-top: 18px;
   width: 100%;
@@ -470,7 +466,6 @@ main > .section.nav-container > .nav-wrapper {
 }
 
 /* DARK MODE — SPECTRUM TOKEN OVERRIDES */
-
 html[data-theme="dark"] {
   --spectrum-gray-50: #1e1e1e;
   --spectrum-gray-75: #181818;
@@ -488,7 +483,6 @@ html[data-theme="dark"] {
   color: #fff;
 }
 
-
 html[data-theme="dark"] .nav-inner {
   background: var(--spectrum-gray-50);
   color: var(--spectrum-text-primary);
@@ -500,7 +494,6 @@ html[data-theme="dark"] .profile-modal {
 }
 
 /* Mobile Responsive */
-
 @media (width <= 768px) {
   .nav-inner {
     grid-template-columns: auto auto;
@@ -527,7 +520,6 @@ html[data-theme="dark"] .profile-modal {
   }
 }
 
-
 @media (width <= 480px) {
   .nav-inner {
     padding: 0 12px;
@@ -547,7 +539,6 @@ html[data-theme="dark"] .profile-modal {
     gap: 4px;
   }
 
-  
   .theme-toggle-btn {
     display: none;
   }
