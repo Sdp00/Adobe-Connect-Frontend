@@ -7,7 +7,7 @@
  *
  * USAGE:
  * ──────
- *   import { createModal } from '../../helpers/helper.js';
+ *   import createModal from '../../helper/helper.js';
  *
  *   const { open, close, overlay, dialog } = createModal({
  *     content        : domElement | htmlString,  // required – modal body content

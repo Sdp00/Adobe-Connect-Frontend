@@ -5,7 +5,7 @@
  * Allowed attachments: PNG / JPG / JPEG images, PDF documents, MP4 videos.
  */
 
-import { createModal } from '../../helpers/helper.js';
+import createModal from '../../helper/helper.js';
 
 /* ── SVG Icons ────────────────────────────────────────────────────────────── */
 const ICONS = {
@@ -19,8 +19,7 @@ const ICONS = {
 
 /* ── Allowed file types ───────────────────────────────────────────────────── */
 const ALLOWED_IMAGE_TYPES = new Set(['image/png', 'image/jpeg']);
-const ALLOWED_DOC_TYPES   = new Set(['application/pdf']);
-const ALLOWED_VIDEO_TYPES = new Set(['video/mp4']);
+const ALLOWED_CHIP_TYPES  = new Set(['application/pdf', 'video/mp4']);
 
 /* ── Helpers ──────────────────────────────────────────────────────────────── */
 function truncateName(name, max = 24) {
@@ -52,7 +51,6 @@ function showToast(message, type = 'info') {
 /* ── Build modal body content ─────────────────────────────────────────────── */
 function buildModalBody() {
   const body = document.createElement('div');
-  body.className = 'post-bar-modal-body';
 
   // Drag & Drop overlay
   const dropZone = document.createElement('div');
@@ -340,7 +338,7 @@ export default function decorate(block) {
     [...files].forEach((file) => {
       if (ALLOWED_IMAGE_TYPES.has(file.type)) {
         imageEntries.push({ url: URL.createObjectURL(file), name: file.name });
-      } else if (ALLOWED_DOC_TYPES.has(file.type) || ALLOWED_VIDEO_TYPES.has(file.type)) {
+      } else if (ALLOWED_CHIP_TYPES.has(file.type)) {
         addAttachmentChip(file, chips);
       } else {
         rejected.push(file.name);

@@ -3,29 +3,28 @@ import PropTypes from 'prop-types';
 
 const POSTS_PER_PAGE = 2; // Define POSTS_PER_PAGE at the top
 
-const HeartIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-  </svg>
-);
+/* ── SVG Icon — fetches from /icons/{name}.svg and renders inline ──────────── */
+const SvgIcon = ({ name }) => {
+  const [svgContent, setSvgContent] = useState('');
 
-const CommentIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-  </svg>
-);
+  useEffect(() => {
+    fetch(`/icons/${name}.svg`)
+      .then((res) => res.text())
+      .then((text) => setSvgContent(text))
+      .catch(() => setSvgContent(''));
+  }, [name]);
 
-const BookmarkIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
-  </svg>
-);
+  return (
+    <span
+      aria-hidden="true"
+      dangerouslySetInnerHTML={{ __html: svgContent }}
+    />
+  );
+};
 
-const PaperclipIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
-  </svg>
-);
+SvgIcon.propTypes = {
+  name: PropTypes.string.isRequired,
+};
 
 /* ── Single Post Card ──────────────────────────────────────────────────────── */
 const FeedCard = ({ post }) => {
@@ -81,7 +80,7 @@ const FeedCard = ({ post }) => {
 
       {post.attachment && (
         <div className="feed-card-attachment">
-          <span className="feed-card-attachment-icon"><PaperclipIcon /></span>
+          <span className="feed-card-attachment-icon"><SvgIcon name="paperclip" /></span>
           <div className="feed-card-attachment-info">
             <span className="feed-card-attachment-name">{post.attachment.name}</span>
             <span className="feed-card-attachment-type">{post.attachment.type}</span>
@@ -97,11 +96,11 @@ const FeedCard = ({ post }) => {
             onClick={handleLike}
             aria-label={liked ? 'Unlike' : 'Like'}
           >
-            <HeartIcon />
+            <SvgIcon name="heart" />
             <span>{likeCount}</span>
           </button>
           <button type="button" className="feed-action-btn" aria-label="Comment">
-            <CommentIcon />
+            <SvgIcon name="comment" />
             <span>{post.comments}</span>
           </button>
         </div>
@@ -111,7 +110,7 @@ const FeedCard = ({ post }) => {
           onClick={() => setSaved(!saved)}
           aria-label={saved ? 'Unsave' : 'Save'}
         >
-          <BookmarkIcon />
+          <SvgIcon name="bookmark" />
         </button>
       </div>
     </article>
