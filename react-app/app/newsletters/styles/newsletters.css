@@ -1,0 +1,126 @@
+
+.newsletters-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 32px;
+  padding-top: calc(64px + 40px);
+  margin-left: 80px;
+  transition: margin-left 0.3s ease;
+}
+.newsletters-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.newsletters-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 4px 0;
+}
+
+.newsletters-subtitle {
+  font-size: 16px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.newsletters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 24px;
+}
+
+.newsletter-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #f3f4f6;
+  position: relative;
+  transition: all 0.2s;
+}
+
+.newsletter-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.newsletter-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: #eb5146;
+  color: white;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 2;
+}
+
+.newsletter-img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+}
+
+.newsletter-content {
+  padding: 24px;
+}
+
+.newsletter-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 12px 0;
+}
+
+.newsletter-desc {
+  font-size: 15px;
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0 0 20px 0;
+}
+
+.newsletter-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.newsletter-btn {
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.newsletter-btn--read {
+  background: #eb5146;
+  color: white;
+  border: none;
+}
+
+.newsletter-btn--read:hover {
+  background: #dc2626;
+}
+
+@media (max-width: 1024px) {
+  .newsletters-page {
+    margin-left: 0;
+    padding: 24px 16px;
+    padding-top: calc(64px + 24px);
+  }
+
+  .newsletters-grid {
+    grid-template-columns: 1fr;
+  }
+}

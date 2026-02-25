@@ -1,0 +1,59 @@
+{
+  "events": [
+    {
+      "id": "evt-001",
+      "title": "Q1 All Hands Meeting",
+      "date": "2026-02-20",
+      "time": "10:00 AM",
+      "location": "Main Auditorium",
+      "image": "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800",
+      "status": "overdue",
+      "daysToRespond": -2,
+      "rsvp": null
+    },
+    {
+      "id": "evt-002",
+      "title": "Design System Workshop",
+      "date": "2026-03-15",
+      "time": "02:00 PM",
+      "location": "Workshop Room A",
+      "image": "https://images.unsplash.com/photo-1552664730-d307ca884978?w=800",
+      "status": "pending",
+      "daysToRespond": 19,
+      "rsvp": null
+    },
+    {
+      "id": "evt-003",
+      "title": "Adobe Summit Preview",
+      "date": "2026-03-28",
+      "time": "09:00 AM",
+      "location": "Online",
+      "image": "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=800",
+      "status": "pending",
+      "daysToRespond": 34,
+      "rsvp": null
+    },
+    {
+      "id": "evt-004",
+      "title": "Team Building Retreat",
+      "date": "2026-01-15",
+      "time": "09:00 AM",
+      "location": "Mountain Resort",
+      "image": "https://images.unsplash.com/photo-1511578314322-379afb476865?w=800",
+      "status": "past",
+      "daysToRespond": null,
+      "rsvp": "accepted"
+    },
+    {
+      "id": "evt-005",
+      "title": "Holiday Party 2025",
+      "date": "2025-12-20",
+      "time": "06:00 PM",
+      "location": "Grand Ballroom",
+      "image": "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800",
+      "status": "past",
+      "daysToRespond": null,
+      "rsvp": "accepted"
+    }
+  ]
+}
