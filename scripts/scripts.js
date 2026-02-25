@@ -11,6 +11,7 @@ import {
   loadSection,
   loadSections,
   loadCSS,
+  loadScript,
 } from './aem.js';
 
 /**
@@ -97,6 +98,9 @@ async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
   const main = doc.querySelector('main');
+  loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', { nonce: 'aem' });
+  loadScript('server/config.js', { nonce: 'aem' });
+  loadScript('server/supabase-utils.js', { nonce: 'aem' });
   if (main) {
     decorateMain(main);
     document.body.classList.add('appear');

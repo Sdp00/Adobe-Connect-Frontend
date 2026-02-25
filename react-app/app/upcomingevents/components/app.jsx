@@ -1,8 +1,5 @@
 import { useEffect, useState } from 'react';
 
-const SUPABASE_URL = 'https://oyzykffjsorswwnwnmmh.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_QnxPOzTnbH9VxsXziU0XPQ_DKwIOf0I';
-
 const calendarIcon = '/icons/calendar.svg';
 const clockIcon = '/icons/clock.svg';
 const locationIcon = '/icons/location.svg';
@@ -11,39 +8,29 @@ export default function App() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [responses, setResponses] = useState({}); // accept/decline state
 
-  // Store accept/decline state per event
-  // { [eventId]: 'accepted' | 'declined' }
-  const [responses, setResponses] = useState({});
-
-  async function fetchEvents() {
-    try {
-      const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/events?select=id,title,date,time,location,image,deadline&order=date.asc`,
-        {
-          headers: {
-            apikey: SUPABASE_ANON_KEY,
-            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-          },
-        },
-      );
-
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text);
-      }
-
-      const data = await res.json();
-      setEvents(data);
-    } catch (err) {
-      console.error(err);
-      setError('Failed to fetch events');
-    } finally {
-      setLoading(false);
-    }
-  }
-
+  // Fetch events from Supabase
   useEffect(() => {
+    async function fetchEvents() {
+      setLoading(true);
+      try {
+        const { data, error: fetchError } = await window.SupabaseUtils.getRecords('events', {
+          select: 'id,title,date,time,location,image,deadline',
+          orderBy: 'date',
+          ascending: true,
+        });
+
+        if (fetchError) throw fetchError;
+        setEvents(data || []);
+      } catch (err) {
+        console.error(err);
+        setError('Failed to fetch events');
+      } finally {
+        setLoading(false);
+      }
+    }
+
     fetchEvents();
   }, []);
 
@@ -53,19 +40,9 @@ export default function App() {
     return Math.ceil(diff / (1000 * 60 * 60 * 24));
   };
 
-  const handleAccept = (id) => {
-    setResponses((prev) => ({
-      ...prev,
-      [id]: 'accepted',
-    }));
-  };
-
-  const handleDecline = (id) => {
-    setResponses((prev) => ({
-      ...prev,
-      [id]: 'declined',
-    }));
-  };
+  // Handle local accept/decline
+  const handleAccept = (id) => setResponses((prev) => ({ ...prev, [id]: 'accepted' }));
+  const handleDecline = (id) => setResponses((prev) => ({ ...prev, [id]: 'declined' }));
 
   if (loading) return <p style={{ padding: 20 }}>Loading events…</p>;
   if (error) return <p style={{ padding: 20, color: 'red' }}>{error}</p>;
@@ -113,7 +90,6 @@ export default function App() {
                   </p>
                 )}
 
-                {/* ACTIONS */}
                 <div className="event-card-actions">
                   {!response && (
                     <>
