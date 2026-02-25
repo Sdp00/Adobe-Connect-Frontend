@@ -13,6 +13,9 @@
 .feed-status-error {
   color: #dc2626;
 }
+.feed-wrapper {
+  padding: 0 !important;
+}
  
 /* ── Feed Container ──────────────────────────────────────────────────────── */
 .feed {
@@ -347,7 +350,7 @@
 }
  
 /* ── Responsive ──────────────────────────────────────────────────────────── */
-@media (width <= 640px) {
+@media (width <= 630px) {
   .feed {
     padding: 12px 8px;
     gap: 12px;
