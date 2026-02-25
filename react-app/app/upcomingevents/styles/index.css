@@ -1,6 +1,9 @@
-/* ===============================
-   UPCOMING EVENTS – RIGHT SIDEBAR
-================================ */
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+/*  UPCOMING EVENTS – RIGHT SIDEBAR */
 .upcoming-events-wrapper {
   position: fixed;
   top: 64px;
@@ -229,4 +232,58 @@ html[data-theme="dark"] .upcoming-events-list::-webkit-scrollbar-thumb {
 
 html[data-theme="dark"] .upcoming-events-list::-webkit-scrollbar-thumb:hover {
   background: var(--spectrum-gray-500);
+}
+/* responsive */
+
+/* Tablet & Mobile */
+@media (max-width: 1024px) {
+  .upcoming-events-wrapper {
+    position: static !important;
+    inset: auto !important;
+    width: 100%;
+    height: auto;
+    max-height: none;
+    box-shadow: none;
+    border-left: none;
+    border-top: 1px solid var(--spectrum-gray-200);
+    margin: 24px 0 0;
+    padding: 16px;
+    z-index: auto;
+  }
+
+  .upcoming-events-list {
+    overflow: visible;
+    flex: unset;
+    min-height: unset;
+    padding-right: 0;
+    max-height: none;
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .event-card-image img {
+    height: 120px;
+  }
+
+  .event-card-content {
+    padding: 12px;
+  }
+
+  .event-card-title {
+    font-size: 14px;
+  }
+
+  .event-card-meta,
+  .event-card-deadline {
+    font-size: 12px;
+  }
+
+  .event-card-actions {
+    flex-direction: column;
+  }
+
+  .event-card-button {
+    width: 100%;
+  }
 }
