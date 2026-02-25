@@ -1,22 +1,56 @@
 /* =========================================================
-   SIDEBAR — ADOBE SPECTRUM STYLE (DESIGN ONLY)
+   SIDEBAR — FIXED (NO HOVER) WITH HAMBURGER
    ========================================================= */
 
 /* Token bridge — map sidebar vars to Spectrum tokens */
 :root {
-  --sb-red: var(--spectrum-red-600);
-  --sb-red-light: var(--spectrum-gray-100);
-  --sb-text: var(--spectrum-text-primary);
-  --sb-text-light: var(--spectrum-text-secondary);
-  --sb-white: var(--spectrum-gray-50);
-  --sb-border: var(--spectrum-border-divider);
-  --sb-w-collapsed: 80px;
-  --sb-w-expanded: 240px;
+  --sb-red: #eb5146;
+  --sb-red-light: #f3f4f6;
+  --sb-text: #111827;
+  --sb-text-light: #6b7280;
+  --sb-white: #fff;
+  --sb-border: #f3f4f6;
+  --sb-w-fixed: 240px;
   --sb-header-h: 64px;
 }
 
 /* =========================================================
-   BASE SIDEBAR
+   HAMBURGER (MOBILE/TABLET ONLY) - REPLACES LOGO POSITION
+   ========================================================= */
+
+.sb-hamburger {
+  display: none;
+  position: fixed;
+  top: 14px;
+  left: 24px;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  z-index: 102;
+  transition: all 0.3s ease;
+}
+
+.sb-hamburger:hover {
+  background: var(--sb-red-light);
+}
+
+.sb-hamburger-line {
+  width: 24px;
+  height: 2px;
+  background: var(--sb-text);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+/* =========================================================
+   BASE SIDEBAR (FIXED, NO HOVER)
    ========================================================= */
 
 .sb-sidebar {
@@ -24,19 +58,15 @@
   top: var(--sb-header-h);
   left: 0;
   bottom: 0;
-  width: var(--sb-w-collapsed);
+  width: var(--sb-w-fixed);
   background: var(--sb-white);
   border-right: 1px solid var(--sb-border);
   display: flex;
   flex-direction: column;
   padding: 32px 0;
-  overflow: hidden;
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
   z-index: 100;
-}
-
-.sb-sidebar-expanded {
-  width: var(--sb-w-expanded);
+  transition: none;
 }
 
 /* =========================================================
@@ -116,19 +146,13 @@
 }
 
 /* =========================================================
-   LABEL ANIMATION
+   LABEL (ALWAYS VISIBLE)
    ========================================================= */
 
 .sb-nav-label {
-  opacity: 0;
-  transform: translateX(-10px);
-  transition: opacity 0.2s ease 0.05s, transform 0.2s ease 0.05s;
-  pointer-events: none;
-}
-
-.sb-sidebar-expanded .sb-nav-label {
   opacity: 1;
   transform: translateX(0);
+  pointer-events: auto;
 }
 
 /* =========================================================
@@ -150,13 +174,6 @@
   padding: 0 16px;
   margin: 0;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  transition: flex-direction 0.3s ease;
-}
-
-.sb-sidebar-expanded .sb-social-list {
   flex-direction: row;
   justify-content: center;
   gap: 16px;
@@ -190,27 +207,101 @@
   fill: none;
 }
 
-/* Filled icons (X / Twitter) */
 .sb-social-icon svg[fill="currentColor"] {
   fill: currentcolor;
   stroke: none;
 }
 
 /* =========================================================
-   RESPONSIVE
+   RESPONSIVE — HAMBURGER FOR MOBILE/TABLET
    ========================================================= */
 
-@media (width <= 767px) {
+@media (width <= 1024px) {
+  .sb-hamburger {
+    display: flex;
+  }
+
   .sb-sidebar {
-    display: none;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+
+  .sb-sidebar-open {
+    transform: translateX(0);
+  }
+
+  body.sb-menu-open {
+    overflow: hidden;
   }
 }
 
 /* =========================================================
-   DARK MODE — AUTO VIA SPECTRUM TOKENS
+   DARK MODE
    ========================================================= */
 
+html[data-theme="dark"] {
+  --sb-red: #eb5146;
+  --sb-red-light: #2a2a2a;
+  --sb-text: #fff;
+  --sb-text-light: #b3b3b3;
+  --sb-white: #1e1e1e;
+  --sb-border: #333;
+}
+
 html[data-theme="dark"] .sb-sidebar {
-  background: var(--spectrum-gray-50);
-  border-right-color: var(--spectrum-border-divider);
+  background: var(--sb-white);
+  border-right-color: var(--sb-border);
+}
+
+html[data-theme="dark"] .sb-hamburger {
+  background: transparent;
+}
+
+html[data-theme="dark"] .sb-hamburger:hover {
+  background: var(--sb-red-light);
+}
+
+html[data-theme="dark"] .sb-hamburger-line {
+  background: var(--sb-text);
+}
+
+html[data-theme="dark"] .sb-nav-link {
+  color: var(--sb-text);
+}
+
+html[data-theme="dark"] .sb-nav-link:hover {
+  background: var(--sb-red-light);
+}
+
+html[data-theme="dark"] .sb-nav-link-active {
+  background: var(--sb-red-light);
+}
+
+html[data-theme="dark"] .sb-social-link {
+  color: var(--sb-text-light);
+}
+
+html[data-theme="dark"] .sb-social-link:hover {
+  background: var(--sb-red-light);
+  color: var(--sb-text);
+}
+
+html[data-theme="dark"] .sb-divider {
+  background: var(--sb-border);
+}
+
+/* =========================================================
+   HAMBURGER OPEN STATE (MOVED TO FIX STYLELINT)
+   ========================================================= */
+
+.sb-hamburger-open .sb-hamburger-line:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.sb-hamburger-open .sb-hamburger-line:nth-child(2) {
+  opacity: 0;
+}
+
+.sb-hamburger-open .sb-hamburger-line:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
 }

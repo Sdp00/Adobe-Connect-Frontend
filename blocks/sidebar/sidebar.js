@@ -1,10 +1,12 @@
 /**
-* Sidebar Block
-* Shows on every page - not a separate route
-*/
+ * Sidebar Block
+ * Fixed sidebar with hamburger for mobile/tablet
+ */
 import { loadCSS } from '../../scripts/aem.js';
+
 // Load sidebar CSS
 loadCSS('/blocks/sidebar/sidebar.css');
+
 const NAV_ITEMS = [
   { id: 'home', label: 'Home', href: '/' },
   { id: 'events', label: 'Events', href: '/events' },
@@ -13,18 +15,21 @@ const NAV_ITEMS = [
   { id: 'techtalks', label: 'Tech Talks', href: '/tech-talks' },
   { id: 'saved', label: 'Saved', href: '/saved' },
 ];
+
 const SOCIAL_ITEMS = [
   { id: 'instagram', href: 'https://www.instagram.com/adobe/' },
   { id: 'facebook', href: 'https://www.facebook.com/adobe/' },
   { id: 'x', href: 'https://x.com/adobe' },
   { id: 'linkedin', href: 'https://www.linkedin.com/company/adobe/' },
 ];
+
 function createElement(tag, className, attrs = {}) {
   const el = document.createElement(tag);
   if (className) el.className = className;
   Object.entries(attrs).forEach(([k, v]) => v != null && el.setAttribute(k, v));
   return el;
 }
+
 async function loadIcon(id) {
   try {
     const response = await fetch(`/icons/${id}.svg`);
@@ -35,8 +40,10 @@ async function loadIcon(id) {
     return '';
   }
 }
+
 export default async function decorate(block) {
   block.textContent = '';
+
   const currentPath = window.location.pathname;
   let activeId = 'home';
   NAV_ITEMS.forEach((item) => {
@@ -44,32 +51,49 @@ export default async function decorate(block) {
       activeId = item.id;
     }
   });
+
   // Pre-fetch all icons in parallel
   const allIconIds = [...NAV_ITEMS.map((i) => i.id), ...SOCIAL_ITEMS.map((i) => i.id)];
   const iconMap = Object.fromEntries(
     await Promise.all(allIconIds.map(async (id) => [id, await loadIcon(id)])),
   );
+
+  // Hamburger button (mobile/tablet only)
+  const hamburger = createElement('button', 'sb-hamburger', { 'aria-label': 'Toggle menu' });
+  hamburger.innerHTML = `
+    <span class="sb-hamburger-line"></span>
+    <span class="sb-hamburger-line"></span>
+    <span class="sb-hamburger-line"></span>
+  `;
+
   const sidebar = createElement('aside', 'sb-sidebar', { 'aria-label': 'Main navigation' });
   const nav = createElement('nav');
   const navList = createElement('ul', 'sb-nav-list');
+
   NAV_ITEMS.forEach((item) => {
     const li = createElement('li', 'sb-nav-item');
     const link = createElement('a', `sb-nav-link${item.id === activeId ? ' sb-nav-link-active' : ''}`, {
       href: item.href,
       'aria-current': item.id === activeId ? 'page' : 'false',
     });
+
     const iconSpan = createElement('span', 'sb-nav-icon');
     iconSpan.innerHTML = iconMap[item.id];
+
     const labelSpan = createElement('span', 'sb-nav-label');
     labelSpan.textContent = item.label;
+
     link.append(iconSpan, labelSpan);
     li.appendChild(link);
     navList.appendChild(li);
   });
+
   nav.appendChild(navList);
   sidebar.appendChild(nav);
+
   const divider = createElement('div', 'sb-divider', { 'aria-hidden': 'true' });
   sidebar.appendChild(divider);
+
   const socialList = createElement('ul', 'sb-social-list');
   SOCIAL_ITEMS.forEach((item) => {
     const li = createElement('li', 'sb-social-item');
@@ -85,8 +109,27 @@ export default async function decorate(block) {
     li.appendChild(link);
     socialList.appendChild(li);
   });
+
   sidebar.appendChild(socialList);
-  sidebar.addEventListener('mouseenter', () => sidebar.classList.add('sb-sidebar-expanded'));
-  sidebar.addEventListener('mouseleave', () => sidebar.classList.remove('sb-sidebar-expanded'));
+
+  // Hamburger toggle for mobile/tablet
+  hamburger.addEventListener('click', () => {
+    sidebar.classList.toggle('sb-sidebar-open');
+    hamburger.classList.toggle('sb-hamburger-open');
+    document.body.classList.toggle('sb-menu-open');
+  });
+
+  // Close sidebar when clicking outside (mobile/tablet)
+  document.addEventListener('click', (e) => {
+    if (window.innerWidth <= 1024) {
+      if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+        sidebar.classList.remove('sb-sidebar-open');
+        hamburger.classList.remove('sb-hamburger-open');
+        document.body.classList.remove('sb-menu-open');
+      }
+    }
+  });
+
+  block.appendChild(hamburger);
   block.appendChild(sidebar);
 }
