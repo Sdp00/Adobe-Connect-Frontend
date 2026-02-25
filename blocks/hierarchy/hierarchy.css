@@ -1,5 +1,6 @@
 .org-page {
   padding: 32px;
+  padding-top: 40px;
   background: #f8f8f8;
   font-family: "Adobe Clean", system-ui, sans-serif;
 }
@@ -138,8 +139,6 @@ html[data-theme="dark"] .card.small .role {
   height: 2px;
   background: #d1d5db;
 }
-
-
 
 html[data-theme="dark"] .org-page {
   background: #181818;
