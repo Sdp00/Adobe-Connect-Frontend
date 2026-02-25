@@ -2,10 +2,10 @@ export default function decorate(block) {
   block.innerHTML = `
     <section class="org-page">
 
-      <header class="org-header">
+      <div class="org-header">
         <h1>Organization Hierarchy</h1>
         <p>View the organizational structure and reporting lines</p>
-      </header>
+      </div>
 
       <div class="org-chart">
 

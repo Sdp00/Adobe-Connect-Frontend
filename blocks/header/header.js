@@ -1,38 +1,33 @@
 import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
 
-/**
- * loads and decorates the header, mainly the nav
- * @param {Element} block The header block element
- */
+
 export default async function decorate(block) {
-  // load nav as fragment
   const navMeta = getMetadata('nav');
   const navPath = navMeta ? new URL(navMeta, window.location).pathname : '/nav';
   const fragment = await loadFragment(navPath);
 
   const content = fragment.querySelector(':scope > div > div');
   if (!content) return;
- 
+
   const items = [...content.querySelectorAll('p')];
   const title = items[0]?.textContent?.trim() || '';
   const searchText = items[1]?.textContent?.trim() || '';
- 
+
   block.textContent = '';
 
-  // Check if profile info was previously saved
   const profileSaved = localStorage.getItem('profileComplete') === 'true';
   const addInfoLabel = profileSaved ? 'Edit Info' : 'Add Info';
- 
+
   const nav = document.createElement('nav');
   nav.className = 'nav-inner';
- 
+
   nav.innerHTML = `
     <div class="nav-left">
-      <img class="nav-logo-img" src="/blocks/header/Adobe-logo.jpeg" alt="Adobe" />
+      <a href="/"><img class="nav-logo-img" src="/blocks/header/Adobe-logo.jpeg" alt="Adobe" /></a>
       <span class="nav-title">${title}</span>
     </div>
- 
+
     <div class="nav-center">
       <div class="nav-search">
         <svg class="nav-icon" viewBox="0 0 24 24">
@@ -42,19 +37,27 @@ export default async function decorate(block) {
         <input type="search" placeholder="${searchText}" />
       </div>
     </div>
- 
+
     <div class="nav-right">
- 
-      <!-- Theme -->
-      <button class="icon-btn theme-toggle-btn">
+
+      <!-- Mobile Search Button (shown only on mobile via CSS) -->
+      <button class="icon-btn mobile-search-btn" aria-label="Search">
+        <svg class="nav-icon" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="7"></circle>
+          <line x1="16.65" y1="16.65" x2="21" y2="21"></line>
+        </svg>
+      </button>
+
+      <!-- Theme toggle -->
+      <button class="icon-btn theme-toggle-btn" aria-label="Toggle theme">
         <svg class="nav-icon" viewBox="0 0 24 24">
           <path d="M21 12.79A9 9 0 0111.21 3a7 7 0 109.79 9.79z"/>
         </svg>
       </button>
- 
+
       <!-- Notifications -->
       <div class="notify">
-        <button class="icon-btn notify-trigger">
+        <button class="icon-btn notify-trigger" aria-label="Notifications">
           <svg class="nav-icon" viewBox="0 0 24 24">
             <path d="M18 8a6 6 0 10-12 0v5l-2 2h16l-2-2z"/>
             <path d="M13.73 21a2 2 0 01-3.46 0"/>
@@ -62,24 +65,23 @@ export default async function decorate(block) {
           <span class="notify-dot"></span>
         </button>
       </div>
- 
+
       <!-- Profile -->
       <div class="profile">
-        <div class="profile-trigger">
+        <div class="profile-trigger" aria-label="Profile menu">
           <div class="avatar">J</div>
           <svg class="chevron" viewBox="0 0 24 24">
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </div>
- 
+
         <div class="profile-menu">
           <div class="profile-info">
             <div class="profile-name">Jaishree D G</div>
             <div class="profile-role">Apprentice Tech</div>
           </div>
- 
+
           <ul>
-            <!-- Add Info / Edit Info -->
             <li class="menu-add-info">
               <svg class="menu-icon" viewBox="0 0 24 24">
                 <circle cx="12" cy="7" r="4"></circle>
@@ -87,8 +89,7 @@ export default async function decorate(block) {
               </svg>
               <span class="add-info-label">${addInfoLabel}</span>
             </li>
- 
-            <!-- My Posts -->
+
             <li class="menu-posts">
               <svg class="menu-icon" viewBox="0 0 24 24">
                 <rect x="4" y="4" width="16" height="16" rx="2"></rect>
@@ -97,8 +98,7 @@ export default async function decorate(block) {
               </svg>
               My Posts
             </li>
- 
-            <!-- Hierarchy -->
+
             <li class="menu-hierarchy">
               <svg class="menu-icon" viewBox="0 0 24 24">
                 <rect x="10" y="3" width="4" height="4" rx="1"></rect>
@@ -109,8 +109,7 @@ export default async function decorate(block) {
               </svg>
               Hierarchy
             </li>
- 
-            <!-- Logout -->
+
             <li class="danger menu-logout">
               <svg class="menu-icon" viewBox="0 0 24 24">
                 <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
@@ -122,40 +121,76 @@ export default async function decorate(block) {
           </ul>
         </div>
       </div>
- 
+
     </div>
   `;
- 
+
+  // Force profile menu above ALL other panels
+  nav.querySelector('.profile-menu').style.zIndex = '99999';
+
   const profile = nav.querySelector('.profile');
- 
-  nav.querySelector('.profile-trigger').onclick = (e) => {
-    e.stopPropagation();
-    profile.classList.toggle('open');
-  };
- 
-  document.addEventListener('click', () => {
+  const profileMenu = nav.querySelector('.profile-menu');
+
+  // Mobile search bar (appended to nav)
+  const mobileSearchBar = document.createElement('div');
+  mobileSearchBar.className = 'mobile-search-bar';
+  mobileSearchBar.innerHTML = `<input type="search" placeholder="${searchText}" />`;
+  nav.appendChild(mobileSearchBar);
+
+  // Helper: close everything
+  function closeAll() {
     profile.classList.remove('open');
+    mobileSearchBar.classList.remove('open');
+  }
+
+  // Profile toggle — closes search bar first (mutual exclusion)
+  nav.querySelector('.profile-trigger').addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = profile.classList.contains('open');
+    closeAll();
+    if (!isOpen) {
+      profile.classList.add('open');
+    }
   });
- 
-  /* Optional navigation hooks (safe placeholders) */
+
+  // Clicks inside profile menu must NOT bubble and close it
+  profileMenu.addEventListener('click', (e) => {
+    e.stopPropagation();
+  });
+
+  // Mobile search toggle — closes profile menu first (mutual exclusion)
+  nav.querySelector('.mobile-search-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = mobileSearchBar.classList.contains('open');
+    closeAll();
+    if (!isOpen) {
+      mobileSearchBar.classList.add('open');
+      mobileSearchBar.querySelector('input').focus();
+    }
+  });
+
+  // Close everything when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!nav.contains(e.target)) {
+      closeAll();
+    }
+  });
+
   nav.querySelector('.menu-hierarchy')?.addEventListener('click', () => {
     window.location.href = '/hierarchy';
   });
- 
+
   nav.querySelector('.menu-posts')?.addEventListener('click', () => {
     window.location.href = '/myposts';
   });
- 
+
   nav.querySelector('.menu-add-info')?.addEventListener('click', () => {
     openProfileModal(nav);
   });
 
   block.append(nav);
 
-  /* ============================= */
-  /* DARK / LIGHT MODE TOGGLE     */
-  /* ============================= */
-
+  /* Dark/Light Mode */
   const moonIcon = `
     <svg class="nav-icon" viewBox="0 0 24 24">
       <path d="M21 12.79A9 9 0 0111.21 3a7 7 0 109.79 9.79z"/>
@@ -178,12 +213,10 @@ export default async function decorate(block) {
 
   const themeBtn = nav.querySelector('.theme-toggle-btn');
 
-  // Apply saved theme on load
   const savedTheme = localStorage.getItem('theme') || 'light';
   document.documentElement.setAttribute('data-theme', savedTheme);
   themeBtn.innerHTML = savedTheme === 'dark' ? sunIcon : moonIcon;
 
-  // Toggle on click
   themeBtn.addEventListener('click', () => {
     const current = document.documentElement.getAttribute('data-theme');
     const next = current === 'dark' ? 'light' : 'dark';
@@ -194,39 +227,35 @@ export default async function decorate(block) {
 }
 
 
-/* ============================= */
-/* PROFILE COMPLETE MODAL LOGIC */
-/* ============================= */
-
+/* Profile Modal */
 function openProfileModal(nav) {
   if (document.querySelector('.profile-modal-overlay')) return;
 
-  // Pre-load saved data if editing
   const savedDate = localStorage.getItem('profileBirthday') || '';
   const savedInterests = JSON.parse(localStorage.getItem('profileInterests') || '[]');
   const isEdit = localStorage.getItem('profileComplete') === 'true';
- 
+
   const overlay = document.createElement('div');
   overlay.className = 'profile-modal-overlay';
- 
+
   overlay.innerHTML = `
     <div class="profile-modal">
       <div class="profile-modal-header">
         <h3>${isEdit ? 'Edit Your Profile' : 'Complete Your Profile'}</h3>
         <button class="modal-close">✕</button>
       </div>
- 
+
       <div class="profile-modal-body">
         <label>Birthday</label>
         <div class="date-field">
           <input type="date" value="${savedDate}" />
         </div>
- 
+
         <div class="interests-header">
           <span>Interests</span>
           <span class="interest-count">${savedInterests.length} selected (min 3)</span>
         </div>
- 
+
         <div class="interest-list">
           ${[
             'UI/UX Design','Development','Marketing','Music',
@@ -234,24 +263,24 @@ function openProfileModal(nav) {
             'Travelling','Psychology','Fitness', 'Gaming', 'Art', 'Dancing', 'Fashion'
           ].map(i => `<button class="interest-chip${savedInterests.includes(i) ? ' selected' : ''}">${i}</button>`).join('')}
         </div>
- 
+
         <button class="update-btn" ${savedInterests.length >= 3 ? '' : 'disabled'}>Update Profile</button>
       </div>
     </div>
   `;
- 
+
   document.body.appendChild(overlay);
- 
+
   const chips = overlay.querySelectorAll('.interest-chip');
   const countText = overlay.querySelector('.interest-count');
   const updateBtn = overlay.querySelector('.update-btn');
- 
+
   function updateState() {
     const selected = overlay.querySelectorAll('.interest-chip.selected').length;
     countText.textContent = `${selected} selected (min 3)`;
     updateBtn.disabled = selected < 3;
   }
- 
+
   chips.forEach(chip => {
     chip.addEventListener('click', () => {
       chip.classList.toggle('selected');
@@ -259,7 +288,6 @@ function openProfileModal(nav) {
     });
   });
 
-  // Update Profile button click
   updateBtn.addEventListener('click', () => {
     const dateInput = overlay.querySelector('input[type="date"]');
 
@@ -271,19 +299,17 @@ function openProfileModal(nav) {
 
     const selectedInterests = [...overlay.querySelectorAll('.interest-chip.selected')].map(c => c.textContent.trim());
 
-    // Save to localStorage
     localStorage.setItem('profileBirthday', dateInput.value);
     localStorage.setItem('profileInterests', JSON.stringify(selectedInterests));
     localStorage.setItem('profileComplete', 'true');
 
-    // Update the menu label to "Edit Info"
     const label = nav?.querySelector('.add-info-label');
     if (label) label.textContent = 'Edit Info';
 
     console.log('Profile updated successfully');
     overlay.remove();
   });
- 
+
   overlay.querySelector('.modal-close').onclick = () => overlay.remove();
   overlay.addEventListener('click', (e) => {
     if (e.target === overlay) overlay.remove();
