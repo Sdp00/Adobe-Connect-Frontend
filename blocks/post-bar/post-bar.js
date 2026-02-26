@@ -66,20 +66,28 @@ export default function decorate(block) {
   modalAvatar.className = 'post-bar-avatar post-bar-modal-avatar';
   modalAvatar.textContent = 'U';
 
+  const authorInfo = document.createElement('div');
+  authorInfo.className = 'post-bar-modal-author-info';
+
   const authorName = document.createElement('span');
   authorName.className = 'post-bar-modal-name';
-  authorName.textContent = 'User';
+  authorName.textContent = 'You';
 
-  authorRow.append(modalAvatar, authorName);
+  const authorSubtitle = document.createElement('span');
+  authorSubtitle.className = 'post-bar-modal-subtitle';
+  authorSubtitle.textContent = 'Sharing to: Everyone';
+
+  authorInfo.append(authorName, authorSubtitle);
+  authorRow.append(modalAvatar, authorInfo);
 
   const titleInput = document.createElement('input');
   titleInput.type = 'text';
   titleInput.className = 'post-bar-modal-title';
-  titleInput.placeholder = 'Post title (optional)';
+  titleInput.placeholder = 'Title';
 
   const bodyTextarea = document.createElement('textarea');
   bodyTextarea.className = 'post-bar-modal-body';
-  bodyTextarea.placeholder = "What's on your mind?";
+  bodyTextarea.placeholder = 'What do you want to share?';
   bodyTextarea.rows = 4;
 
   /* ── Drop zone ── */
@@ -110,41 +118,53 @@ export default function decorate(block) {
   const carousel = document.createElement('div');
   carousel.className = 'post-bar-carousel';
 
+  /* prevent wheel scroll on the carousel from scrolling the modal body */
+  carousel.addEventListener('wheel', (e) => { e.stopPropagation(); }, { passive: true });
+
   const chipList = document.createElement('div');
   chipList.className = 'post-bar-chip-list';
 
   let attachedFiles = [];
+  let carouselIndex = 0;
 
-  function renderAttachments() {
-    chipList.innerHTML = '';
+  /* Animate to already-built slide — only swaps CSS classes, no DOM rebuild */
+  function goToSlide(direction = 'next') {
+    const slides = carousel.querySelectorAll('.post-bar-carousel-slide');
+    const dots = carousel.querySelectorAll('.post-bar-carousel-dot');
+
+    slides.forEach((slide, i) => {
+      slide.classList.remove('is-active', 'slide-from-left');
+      if (i === carouselIndex) {
+        slide.classList.add('is-active');
+        if (direction === 'prev') slide.classList.add('slide-from-left');
+      }
+    });
+
+    dots.forEach((dot, i) => dot.classList.toggle('is-active', i === carouselIndex));
+  }
+
+  /* Full DOM rebuild — called when the file list changes */
+  function buildCarousel() {
     carousel.innerHTML = '';
-    carousel.style.display = attachedFiles.length ? 'flex' : 'none';
 
-    attachedFiles.forEach((file, idx) => {
-      /* Chip */
-      const chip = document.createElement('div');
-      chip.className = 'post-bar-chip';
+    if (attachedFiles.length === 0) {
+      carousel.style.display = 'none';
+      return;
+    }
 
-      const chipName = document.createElement('span');
-      chipName.className = 'post-bar-chip-name';
-      chipName.textContent = file.name;
+    if (carouselIndex >= attachedFiles.length) {
+      carouselIndex = attachedFiles.length - 1;
+    }
 
-      const removeBtn = document.createElement('button');
-      removeBtn.type = 'button';
-      removeBtn.className = 'post-bar-chip-remove';
-      removeBtn.setAttribute('aria-label', `Remove ${file.name}`);
-      removeBtn.textContent = '×';
-      removeBtn.addEventListener('click', () => {
-        attachedFiles.splice(idx, 1);
-        renderAttachments();
-      });
+    carousel.style.display = 'block';
 
-      chip.append(chipName, removeBtn);
-      chipList.appendChild(chip);
+    /* ── Track (all slides side-by-side) ── */
+    const track = document.createElement('div');
+    track.className = 'post-bar-carousel-track';
 
-      /* Carousel slide */
+    attachedFiles.forEach((file, i) => {
       const slide = document.createElement('div');
-      slide.className = 'post-bar-carousel-slide';
+      slide.className = `post-bar-carousel-slide${i === carouselIndex ? ' is-active' : ''}`;
 
       if (file.type.startsWith('image/')) {
         const img = document.createElement('img');
@@ -152,38 +172,114 @@ export default function decorate(block) {
         img.alt = file.name;
         slide.appendChild(img);
       } else {
-        const filePreview = document.createElement('div');
-        filePreview.className = 'post-bar-carousel-file';
-        filePreview.innerHTML = ICONS.attach;
+        const preview = document.createElement('div');
+        preview.className = 'post-bar-carousel-file';
+        preview.innerHTML = file.type.startsWith('video/') ? ICONS.video : ICONS.attach;
         const nameSpan = document.createElement('span');
         nameSpan.textContent = file.name;
-        filePreview.appendChild(nameSpan);
-        slide.appendChild(filePreview);
+        preview.appendChild(nameSpan);
+        slide.appendChild(preview);
       }
 
-      carousel.appendChild(slide);
+      track.appendChild(slide);
     });
+
+    carousel.appendChild(track);
+
+    /* ── Remove button (top-right of slide) ── */
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'post-bar-carousel-remove';
+    removeBtn.setAttribute('aria-label', `Remove ${attachedFiles[carouselIndex].name}`);
+    removeBtn.textContent = '×';
+    removeBtn.addEventListener('click', () => {
+      removeBtn.blur();
+      const modalBody = carousel.closest('.hc-modal-body');
+      const savedScroll = modalBody ? modalBody.scrollTop : 0;
+      attachedFiles.splice(carouselIndex, 1);
+      if (carouselIndex >= attachedFiles.length) {
+        carouselIndex = Math.max(0, attachedFiles.length - 1);
+      }
+      buildCarousel();
+      /* restore scroll — immediate catches sync adjustments, rAF catches async ones */
+      if (modalBody) {
+        modalBody.scrollTop = savedScroll;
+        requestAnimationFrame(() => { modalBody.scrollTop = savedScroll; });
+      }
+    });
+    carousel.appendChild(removeBtn);
+
+    /* ── Navigation arrows (only when multiple files) ── */
+    if (attachedFiles.length > 1) {
+      const prevBtn = document.createElement('button');
+      prevBtn.type = 'button';
+      prevBtn.className = 'post-bar-carousel-nav post-bar-carousel-prev';
+      prevBtn.setAttribute('aria-label', 'Previous');
+      prevBtn.innerHTML = '&#8249;';
+      prevBtn.addEventListener('click', () => {
+        carouselIndex = (carouselIndex - 1 + attachedFiles.length) % attachedFiles.length;
+        goToSlide('prev');
+      });
+
+      const nextBtn = document.createElement('button');
+      nextBtn.type = 'button';
+      nextBtn.className = 'post-bar-carousel-nav post-bar-carousel-next';
+      nextBtn.setAttribute('aria-label', 'Next');
+      nextBtn.innerHTML = '&#8250;';
+      nextBtn.addEventListener('click', () => {
+        carouselIndex = (carouselIndex + 1) % attachedFiles.length;
+        goToSlide('next');
+      });
+
+      carousel.appendChild(prevBtn);
+      carousel.appendChild(nextBtn);
+
+      /* ── Dots ── */
+      const dots = document.createElement('div');
+      dots.className = 'post-bar-carousel-dots';
+      attachedFiles.forEach((_, i) => {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = `post-bar-carousel-dot${i === carouselIndex ? ' is-active' : ''}`;
+        dot.setAttribute('aria-label', `Slide ${i + 1}`);
+        dot.addEventListener('click', () => {
+          const dir = i > carouselIndex ? 'next' : 'prev';
+          carouselIndex = i;
+          goToSlide(dir);
+        });
+        dots.appendChild(dot);
+      });
+      carousel.appendChild(dots);
+    }
   }
 
   function handleFiles(files) {
     attachedFiles = [...attachedFiles, ...Array.from(files)];
-    renderAttachments();
+    carouselIndex = attachedFiles.length - 1;
+    buildCarousel();
   }
 
   fileInput.addEventListener('change', () => handleFiles(fileInput.files));
 
-  dropZone.addEventListener('dragover', (e) => {
+  modalContent.addEventListener('dragover', (e) => {
     e.preventDefault();
-    dropZone.classList.add('is-over');
+    modalContent.classList.add('is-drag-over');
   });
-  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('is-over'));
-  dropZone.addEventListener('drop', (e) => {
+  modalContent.addEventListener('dragleave', (e) => {
+    if (!modalContent.contains(e.relatedTarget)) {
+      modalContent.classList.remove('is-drag-over');
+    }
+  });
+  modalContent.addEventListener('drop', (e) => {
     e.preventDefault();
-    dropZone.classList.remove('is-over');
+    modalContent.classList.remove('is-drag-over');
     handleFiles(e.dataTransfer.files);
   });
 
-  modalContent.append(authorRow, titleInput, bodyTextarea, dropZone, carousel, chipList);
+  const titleDivider = document.createElement('hr');
+  titleDivider.className = 'post-bar-modal-divider';
+
+  modalContent.append(authorRow, titleInput, titleDivider, bodyTextarea, carousel, chipList);
 
   /* ── Modal footer ── */
   const modalFooter = document.createElement('div');
@@ -192,19 +288,12 @@ export default function decorate(block) {
   const attachActions = document.createElement('div');
   attachActions.className = 'post-bar-modal-attach-actions';
 
-  [
-    { icon: ICONS.image, title: 'Add image' },
-    { icon: ICONS.video, title: 'Add video' },
-    { icon: ICONS.attach, title: 'Add attachment' },
-  ].forEach(({ icon, title }) => {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'post-bar-attach-btn';
-    btn.title = title;
-    btn.innerHTML = icon;
-    btn.addEventListener('click', () => fileInput.click());
-    attachActions.appendChild(btn);
-  });
+  const mediaBtn = document.createElement('button');
+  mediaBtn.type = 'button';
+  mediaBtn.className = 'post-bar-attach-btn post-bar-media-btn';
+  mediaBtn.innerHTML = `${ICONS.attach}<span>Media</span>`;
+  mediaBtn.addEventListener('click', () => fileInput.click());
+  attachActions.appendChild(mediaBtn);
 
   const footerActions = document.createElement('div');
   footerActions.className = 'post-bar-modal-footer-actions';
@@ -234,7 +323,7 @@ export default function decorate(block) {
       titleInput.value = '';
       bodyTextarea.value = '';
       attachedFiles = [];
-      renderAttachments();
+      buildCarousel();
     },
   });
 

@@ -1,2 +1,126 @@
-/* stylelint-disable */
-.myposts-page{background:#f8f8f8;font-family:Adobe Clean,system-ui,sans-serif;min-height:100vh;padding:32px}.myposts-title{font-size:24px;font-weight:700;margin:0}.myposts-subtitle{color:#8e8e8e;font-size:14px;margin-top:6px}.myposts-grid{display:grid;gap:24px;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));margin-top:28px}.post-card{background:#fff;border:1px solid #eaeaea;border-radius:16px;box-shadow:0 12px 24px rgba(0,0,0,.12);display:flex;flex-direction:column;overflow:hidden}.post-card img{height:180px;object-fit:cover;width:100%}.post-content{padding:18px}.post-content h3{font-size:18px;font-weight:600;margin:0}.post-content p{color:#4b4b4b;font-size:14px;line-height:1.5;margin:10px 0 16px}.remove-btn{background:transparent;border:1px solid #e11d48;border-radius:999px;color:#e11d48;cursor:pointer;font-size:14px;font-weight:600;padding:8px 16px;transition:all .2s ease}.remove-btn:hover{background:#e11d48;color:#fff}.empty-state{color:#8e8e8e;font-size:14px;padding:40px}html[data-theme=dark] .myposts-page{background:#181818;color:#fff}html[data-theme=dark] .myposts-title{color:#fff}html[data-theme=dark] .myposts-subtitle{color:#b3b3b3}html[data-theme=dark] .post-card{background:#1e1e1e;border-color:#333;box-shadow:0 12px 24px rgba(0,0,0,.3)}html[data-theme=dark] .post-content h3{color:#fff}html[data-theme=dark] .empty-state,html[data-theme=dark] .post-content p{color:#b3b3b3}
+/*!******************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./react-app/app/Myposts/styles/index.css ***!
+  \******************************************************************************************/
+/* Adobe Spectrum */
+
+.myposts-page {
+  padding: 32px;
+  font-family: "Adobe Clean", system-ui, sans-serif;
+  background: #f8f8f8;
+  min-height: 100vh;
+}
+
+/* Header */
+.myposts-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.myposts-subtitle {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #8e8e8e;
+}
+
+/* Grid */
+.myposts-grid {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+/* Card */
+.post-card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 24px rgb(0 0 0 / 12%);
+  border: 1px solid #eaeaea;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Image */
+.post-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+/* Content */
+.post-content {
+  padding: 18px;
+}
+
+.post-content h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.post-content p {
+  margin: 10px 0 16px;
+  font-size: 14px;
+  color: #4b4b4b;
+  line-height: 1.5;
+}
+
+/* Remove button */
+.remove-btn {
+  border: 1px solid #e11d48;
+  background: transparent;
+  color: #e11d48;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.remove-btn:hover {
+  background: #e11d48;
+  color: #fff;
+}
+
+/* Empty state */
+.empty-state {
+  font-size: 14px;
+  color: #8e8e8e;
+  padding: 40px;
+}
+
+/* Dark Mode */
+
+html[data-theme="dark"] .myposts-page {
+  background: #181818;
+  color: #fff;
+}
+
+html[data-theme="dark"] .myposts-title {
+  color: #fff;
+}
+
+html[data-theme="dark"] .myposts-subtitle {
+  color: #b3b3b3;
+}
+
+html[data-theme="dark"] .post-card {
+  background: #1e1e1e;
+  border-color: #333;
+  box-shadow: 0 12px 24px rgb(0 0 0 / 30%);
+}
+
+html[data-theme="dark"] .post-content h3 {
+  color: #fff;
+}
+
+html[data-theme="dark"] .post-content p {
+  color: #b3b3b3;
+}
+
+html[data-theme="dark"] .empty-state {
+  color: #b3b3b3;
+}
