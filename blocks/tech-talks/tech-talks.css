@@ -1,0 +1,83 @@
+.tech-talks-block {
+  min-height: calc(100vh - 128px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.tech-talks-container {
+  max-width: 600px;
+  text-align: center;
+}
+
+.tech-talks-title {
+  font-size: 36px;
+  font-weight: 700;
+  color: #2c2c2c;
+  margin-bottom: 12px;
+}
+
+.tech-talks-subtitle {
+  font-size: 18px;
+  color: #6b7280;
+  margin-bottom: 40px;
+}
+
+.tech-talks-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+.tech-talk-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  min-width: 280px;
+  justify-content: center;
+}
+
+.tech-talk-btn-primary {
+  background: #e0322a;
+  color: #fff;
+  box-shadow: 0 4px 12px rgb(224 50 42 / 30%);
+}
+
+.tech-talk-btn-primary:hover {
+  background: #c82a23;
+  box-shadow: 0 6px 20px rgb(224 50 42 / 40%);
+  transform: translateY(-2px);
+}
+
+.tech-talk-btn-secondary {
+  background: #fff;
+  color: #e0322a;
+  border: 2px solid #e0322a;
+}
+
+.tech-talk-btn-secondary:hover {
+  background: #fef2f2;
+  transform: translateY(-2px);
+}
+
+.tech-talk-btn svg {
+  flex-shrink: 0;
+}
+
+@media (width >= 768px) {
+  .tech-talks-buttons {
+    flex-direction: row;
+  }
+
+  .tech-talks-title {
+    font-size: 48px;
+  }
+}

@@ -14,9 +14,11 @@ export default async function decorate(block) {
   const content = fragment.querySelector(':scope > div > div');
   if (!content) return;
 
+
   const items = [...content.querySelectorAll('p')];
   const title = items[0]?.textContent?.trim() || '';
   const searchText = items[1]?.textContent?.trim() || '';
+
 
   block.textContent = '';
 
@@ -27,11 +29,13 @@ export default async function decorate(block) {
   const nav = document.createElement('nav');
   nav.className = 'nav-inner';
 
+
   nav.innerHTML = `
     <div class="nav-left">
-      <img class="nav-logo-img" src="/blocks/header/Adobe-logo.jpeg" alt="Adobe" />
+      <a href="/"><img class="nav-logo-img" src="/blocks/header/Adobe-logo.jpeg" alt="Adobe" /></a>
       <span class="nav-title">${title}</span>
     </div>
+
 
     <div class="nav-center">
       <div class="nav-search">
@@ -42,6 +46,7 @@ export default async function decorate(block) {
         <input type="search" placeholder="${searchText}" />
       </div>
     </div>
+
 
     <div class="nav-right">
 
@@ -56,7 +61,7 @@ export default async function decorate(block) {
       <button class="icon-btn theme-toggle-btn"></button>
 
       <div class="notify">
-        <button class="icon-btn notify-trigger">
+        <button class="icon-btn notify-trigger" aria-label="Notifications">
           <svg class="nav-icon" viewBox="0 0 24 24">
             <path d="M18 8a6 6 0 10-12 0v5l-2 2h16l-2-2z"/>
             <path d="M13.73 21a2 2 0 01-3.46 0"/>
@@ -66,18 +71,20 @@ export default async function decorate(block) {
       </div>
 
       <div class="profile">
-        <div class="profile-trigger">
+        <div class="profile-trigger" aria-label="Profile menu">
           <div class="avatar">J</div>
           <svg class="chevron" viewBox="0 0 24 24">
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </div>
 
+
         <div class="profile-menu">
           <div class="profile-info">
             <div class="profile-name">Jaishree D G</div>
             <div class="profile-role">Apprentice Tech</div>
           </div>
+
 
           <ul>
             <li class="menu-add-info">
@@ -88,6 +95,7 @@ export default async function decorate(block) {
               <span class="add-info-label">${addInfoLabel}</span>
             </li>
 
+
             <li class="menu-posts">
               <svg class="menu-icon" viewBox="0 0 24 24">
                 <rect x="4" y="4" width="16" height="16" rx="2"></rect>
@@ -96,6 +104,7 @@ export default async function decorate(block) {
               </svg>
               My Posts
             </li>
+
 
             <li class="menu-hierarchy">
               <svg class="menu-icon" viewBox="0 0 24 24">
@@ -108,6 +117,7 @@ export default async function decorate(block) {
               Hierarchy
             </li>
 
+
             <li class="danger menu-logout">
               <svg class="menu-icon" viewBox="0 0 24 24">
                 <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
@@ -119,6 +129,7 @@ export default async function decorate(block) {
           </ul>
         </div>
       </div>
+
 
     </div>
   `;
@@ -138,9 +149,11 @@ export default async function decorate(block) {
     window.location.href = '/hierarchy';
   });
 
+
   nav.querySelector('.menu-posts')?.addEventListener('click', () => {
     window.location.href = '/myposts';
   });
+
 
   nav.querySelector('.menu-add-info')?.addEventListener('click', () => {
     openProfileModal(nav);
@@ -386,8 +399,10 @@ function openProfileModal(nav) {
   const savedInterests = JSON.parse(localStorage.getItem('profileInterests') || '[]');
   const isEdit = localStorage.getItem('profileComplete') === 'true';
 
+
   const overlay = document.createElement('div');
   overlay.className = 'profile-modal-overlay';
+
 
   overlay.innerHTML = `
     <div class="profile-modal">
@@ -396,16 +411,19 @@ function openProfileModal(nav) {
         <button class="modal-close">✕</button>
       </div>
 
+
       <div class="profile-modal-body">
         <label>Birthday</label>
         <div class="date-field">
           <input type="date" value="${savedDate}" />
         </div>
 
+
         <div class="interests-header">
           <span>Interests</span>
           <span class="interest-count">${savedInterests.length} selected (min 3)</span>
         </div>
+
 
         <div class="interest-list">
           ${[
@@ -415,16 +433,20 @@ function openProfileModal(nav) {
           ].map((i) => `<button class="interest-chip${savedInterests.includes(i) ? ' selected' : ''}">${i}</button>`).join('')}
         </div>
 
+
         <button class="update-btn" ${savedInterests.length >= 3 ? '' : 'disabled'}>Update Profile</button>
       </div>
     </div>
   `;
 
+
   document.body.appendChild(overlay);
+
 
   const chips = overlay.querySelectorAll('.interest-chip');
   const countText = overlay.querySelector('.interest-count');
   const updateBtn = overlay.querySelector('.update-btn');
+
 
   function updateState() {
     const selected = overlay.querySelectorAll('.interest-chip.selected').length;
@@ -459,6 +481,7 @@ function openProfileModal(nav) {
 
     overlay.remove();
   });
+
 
   overlay.querySelector('.modal-close').onclick = () => overlay.remove();
   overlay.addEventListener('click', (e) => {

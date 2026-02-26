@@ -13,6 +13,9 @@
 .feed-status-error {
   color: #dc2626;
 }
+.feed-wrapper {
+  padding: 0 !important;
+}
  
 /* ── Feed Container ──────────────────────────────────────────────────────── */
 .feed {
@@ -23,6 +26,7 @@
   margin: 0 auto;
   padding: 16px;
   box-sizing: border-box;
+  transform: translateX(-20px);
 }
  
 /* ── Post Card ───────────────────────────────────────────────────────────── */
@@ -347,7 +351,7 @@
 }
  
 /* ── Responsive ──────────────────────────────────────────────────────────── */
-@media (width <= 640px) {
+@media (width <= 630px) {
   .feed {
     padding: 12px 8px;
     gap: 12px;

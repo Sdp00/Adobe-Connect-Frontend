@@ -11,9 +11,7 @@
  */
 
 :root {
-  /* =====================================================
-     ADOBE SPECTRUM COLOUR TOKENS
-     ===================================================== */
+  /* Adobe Spectrum Tokens */
 
   /* Gray scale */
   --spectrum-gray-50: #fff;
@@ -28,7 +26,7 @@
   --spectrum-gray-800: #2c2c2c;
   --spectrum-gray-900: #1a1a1a;
 
-  /* Semantic colour aliases */
+  /* Semantic colours */
   --spectrum-text-primary: var(--spectrum-gray-800);
   --spectrum-text-secondary: var(--spectrum-gray-500);
   --spectrum-border-divider: var(--spectrum-gray-200);
@@ -46,7 +44,7 @@
   --light-color: var(--spectrum-gray-75);
   --dark-color: var(--spectrum-gray-700);
 
-  /* Legacy aliases kept for EDS compatibility */
+  /* EDS compatibility */
   --text-color: var(--spectrum-gray-900);
   --link-color: var(--spectrum-blue-600);
   --link-hover-color: var(--spectrum-blue-700);
