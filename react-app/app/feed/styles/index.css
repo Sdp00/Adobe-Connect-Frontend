@@ -26,6 +26,7 @@
   margin: 0 auto;
   padding: 16px;
   box-sizing: border-box;
+  transform: translateX(-20px);
 }
  
 /* ── Post Card ───────────────────────────────────────────────────────────── */
