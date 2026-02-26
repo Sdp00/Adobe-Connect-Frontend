@@ -23,9 +23,8 @@ function buildHeroBlock(main) {
   const picture = main.querySelector('picture');
   // eslint-disable-next-line no-bitwise
   if (h1 && picture && (h1.compareDocumentPosition(picture) & Node.DOCUMENT_POSITION_PRECEDING)) {
-    // Check if h1 or picture is already inside a hero block
     if (h1.closest('.hero') || picture.closest('.hero')) {
-      return; // Don't create a duplicate hero block
+      return;
     }
     const section = document.createElement('div');
     section.append(buildBlock('hero', { elems: [picture, h1] }));
@@ -51,7 +50,6 @@ async function loadFonts() {
  */
 function buildAutoBlocks(main) {
   try {
-    // auto block `*/fragments/*` references
     const fragments = main.querySelectorAll('a[href*="/fragments/"]');
     if (fragments.length > 0) {
       // eslint-disable-next-line import/no-cycle
@@ -82,7 +80,6 @@ function buildAutoBlocks(main) {
  */
 // eslint-disable-next-line import/prefer-default-export
 export function decorateMain(main) {
-  // hopefully forward compatible button decoration
   decorateButtons(main);
   decorateIcons(main);
   buildAutoBlocks(main);
@@ -98,9 +95,12 @@ async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
   const main = doc.querySelector('main');
-  loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', { nonce: 'aem' });
-  loadScript('server/config.js', { nonce: 'aem' });
-  loadScript('server/supabase-utils.js', { nonce: 'aem' });
+
+  // Load Supabase CDN first, then config, then utils — in strict order
+  await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', { nonce: 'aem' });
+  await loadScript('server/config.js', { nonce: 'aem' });
+  await loadScript('server/supabase-utils.js', { nonce: 'aem' });
+
   if (main) {
     decorateMain(main);
     document.body.classList.add('appear');
@@ -108,7 +108,6 @@ async function loadEager(doc) {
   }
 
   try {
-    /* if desktop (proxy for fast connection) or fonts already loaded, load fonts.css */
     if (window.innerWidth >= 900 || sessionStorage.getItem('fonts-loaded')) {
       loadFonts();
     }
@@ -144,7 +143,6 @@ async function loadLazy(doc) {
 function loadDelayed() {
   // eslint-disable-next-line import/no-cycle
   window.setTimeout(() => import('./delayed.js'), 3000);
-  // load anything that can be postponed to the latest here
 }
 
 async function loadPage() {
