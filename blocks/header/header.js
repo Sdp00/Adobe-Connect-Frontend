@@ -1,6 +1,111 @@
 import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
 
+/* ============================================================
+   SUPABASE CONFIG — read from server/config.js via window
+   ============================================================ */
+const SUPABASE_URL = window.SUPABASE_CONFIG?.url;
+const SUPABASE_ANON_KEY = window.SUPABASE_CONFIG?.anonKey;
+
+/* Search all three tables and return combined results */
+async function searchSupabase(query) {
+  if (!query || query.trim().length < 2) return [];
+  const q = encodeURIComponent(query.trim());
+
+  const headers = {
+    apikey: SUPABASE_ANON_KEY,
+    Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+  };
+
+  const [eventsRes, feedRes, peopleRes] = await Promise.all([
+    fetch(`${SUPABASE_URL}/rest/v1/events?or=(title.ilike.*${q}*,location.ilike.*${q}*)&select=id,title,date,location`, { headers }),
+    fetch(`${SUPABASE_URL}/rest/v1/feed?or=(title.ilike.*${q}*,description.ilike.*${q}*)&select=id,title,description`, { headers }),
+    fetch(`${SUPABASE_URL}/rest/v1/people?or=(name.ilike.*${q}*,role.ilike.*${q}*,competency.ilike.*${q}*,email.ilike.*${q}*)&select=id,name,role,competency,email`, { headers }),
+  ]);
+
+  const events = eventsRes.ok ? await eventsRes.json() : [];
+  const feed = feedRes.ok ? await feedRes.json() : [];
+  const people = peopleRes.ok ? await peopleRes.json() : [];
+
+  return [
+    ...people.map((p) => ({
+      type: 'person',
+      id: p.id,
+      title: p.name,
+      sub: `${p.role || ''}${p.competency ? ` · ${p.competency}` : ''}`,
+    })),
+    ...events.map((e) => ({
+      type: 'event',
+      id: e.id,
+      title: e.title,
+      sub: `${e.date || ''} · ${e.location || ''}`,
+    })),
+    ...feed.map((f) => ({
+      type: 'post',
+      id: f.id,
+      title: f.title,
+      sub: f.description || '',
+    })),
+  ];
+}
+
+/* Render dropdown results into a container */
+function renderDropdown(results, dropdownEl) {
+  if (results.length === 0) {
+    dropdownEl.innerHTML = '<div class="search-no-result">No results found</div>';
+  } else {
+    dropdownEl.innerHTML = results.map((r) => {
+      let badge;
+      if (r.type === 'event') badge = '📅 Event';
+      else if (r.type === 'post') badge = '📝 Post';
+      else badge = '👤 Person';
+
+      return `
+        <div class="search-result-item" data-type="${r.type}" data-id="${r.id}">
+          <span class="search-result-badge ${r.type}">${badge}</span>
+          <div class="search-result-text">
+            <span class="search-result-title">${r.title}</span>
+            <span class="search-result-sub">${r.sub}</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+  dropdownEl.classList.add('open');
+}
+
+/* Attach live search behaviour to an input + its dropdown */
+function attachSearch(inputEl, dropdownEl) {
+  let debounceTimer;
+
+  inputEl.addEventListener('input', () => {
+    clearTimeout(debounceTimer);
+    const q = inputEl.value.trim();
+
+    if (q.length < 2) {
+      dropdownEl.innerHTML = '';
+      dropdownEl.classList.remove('open');
+      return;
+    }
+
+    /* show loading state */
+    dropdownEl.innerHTML = '<div class="search-no-result">Searching…</div>';
+    dropdownEl.classList.add('open');
+
+    debounceTimer = setTimeout(async () => {
+      try {
+        const results = await searchSupabase(q);
+        renderDropdown(results, dropdownEl);
+      } catch {
+        dropdownEl.innerHTML = '<div class="search-no-result">Something went wrong</div>';
+      }
+    }, 300);
+  });
+
+  /* stop clicks inside dropdown closing it */
+  dropdownEl.addEventListener('click', (e) => e.stopPropagation());
+}
+
 
 export default async function decorate(block) {
   const navMeta = getMetadata('nav');
@@ -35,6 +140,7 @@ export default async function decorate(block) {
           <line x1="16.65" y1="16.65" x2="21" y2="21"></line>
         </svg>
         <input type="search" placeholder="${searchText}" />
+        <div class="search-dropdown"></div>
       </div>
     </div>
 
@@ -131,16 +237,33 @@ export default async function decorate(block) {
   const profile = nav.querySelector('.profile');
   const profileMenu = nav.querySelector('.profile-menu');
 
-  // Mobile search bar (appended to nav)
+  // Attach desktop search
+  const desktopInput = nav.querySelector('.nav-search input');
+  const desktopDropdown = nav.querySelector('.nav-search .search-dropdown');
+  attachSearch(desktopInput, desktopDropdown);
+
+  // Mobile search bar
   const mobileSearchBar = document.createElement('div');
   mobileSearchBar.className = 'mobile-search-bar';
-  mobileSearchBar.innerHTML = `<input type="search" placeholder="${searchText}" />`;
+  mobileSearchBar.innerHTML = `
+    <input type="search" placeholder="${searchText}" />
+    <div class="search-dropdown"></div>
+  `;
   nav.appendChild(mobileSearchBar);
+
+  // Attach mobile search
+  const mobileInput = mobileSearchBar.querySelector('input');
+  const mobileDropdown = mobileSearchBar.querySelector('.search-dropdown');
+  attachSearch(mobileInput, mobileDropdown);
 
   // Helper: close everything
   function closeAll() {
     profile.classList.remove('open');
     mobileSearchBar.classList.remove('open');
+    desktopDropdown.classList.remove('open');
+    mobileDropdown.classList.remove('open');
+    desktopDropdown.innerHTML = '';
+    mobileDropdown.innerHTML = '';
   }
 
   // Profile toggle — closes search bar first (mutual exclusion)
@@ -148,9 +271,7 @@ export default async function decorate(block) {
     e.stopPropagation();
     const isOpen = profile.classList.contains('open');
     closeAll();
-    if (!isOpen) {
-      profile.classList.add('open');
-    }
+    if (!isOpen) profile.classList.add('open');
   });
 
   // Clicks inside profile menu must NOT bubble and close it
@@ -165,15 +286,13 @@ export default async function decorate(block) {
     closeAll();
     if (!isOpen) {
       mobileSearchBar.classList.add('open');
-      mobileSearchBar.querySelector('input').focus();
+      mobileInput.focus();
     }
   });
 
   // Close everything when clicking outside
   document.addEventListener('click', (e) => {
-    if (!nav.contains(e.target)) {
-      closeAll();
-    }
+    if (!nav.contains(e.target)) closeAll();
   });
 
   nav.querySelector('.menu-hierarchy')?.addEventListener('click', () => {
@@ -258,10 +377,10 @@ function openProfileModal(nav) {
 
         <div class="interest-list">
           ${[
-            'UI/UX Design','Development','Marketing','Music',
-            'Leadership','Mentoring','Sports','Photography',
-            'Travelling','Psychology','Fitness', 'Gaming', 'Art', 'Dancing', 'Fashion'
-          ].map(i => `<button class="interest-chip${savedInterests.includes(i) ? ' selected' : ''}">${i}</button>`).join('')}
+            'UI/UX Design', 'Development', 'Marketing', 'Music',
+            'Leadership', 'Mentoring', 'Sports', 'Photography',
+            'Travelling', 'Psychology', 'Fitness', 'Gaming', 'Art', 'Dancing', 'Fashion',
+          ].map((i) => `<button class="interest-chip${savedInterests.includes(i) ? ' selected' : ''}">${i}</button>`).join('')}
         </div>
 
         <button class="update-btn" ${savedInterests.length >= 3 ? '' : 'disabled'}>Update Profile</button>
@@ -281,7 +400,7 @@ function openProfileModal(nav) {
     updateBtn.disabled = selected < 3;
   }
 
-  chips.forEach(chip => {
+  chips.forEach((chip) => {
     chip.addEventListener('click', () => {
       chip.classList.toggle('selected');
       updateState();
@@ -297,7 +416,7 @@ function openProfileModal(nav) {
       return;
     }
 
-    const selectedInterests = [...overlay.querySelectorAll('.interest-chip.selected')].map(c => c.textContent.trim());
+    const selectedInterests = [...overlay.querySelectorAll('.interest-chip.selected')].map((c) => c.textContent.trim());
 
     localStorage.setItem('profileBirthday', dateInput.value);
     localStorage.setItem('profileInterests', JSON.stringify(selectedInterests));
