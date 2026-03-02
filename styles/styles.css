@@ -1312,3 +1312,262 @@ header .header-wrapper {
   color: var(--spectrum-text-secondary, #888);
   margin-top: 2px;
 }
+/* ============================================================
+   DARK MODE
+   ============================================================ */
+
+[data-theme="dark"] header .nav-wrapper,
+[data-theme="dark"] header .header-wrapper {
+  background: #1a1a1a;
+  border-bottom-color: #333;
+}
+
+[data-theme="dark"] .nav-search input[type="search"] {
+  background: #2a2a2a;
+  border-color: #444;
+  color: #eee;
+}
+
+[data-theme="dark"] .icon-btn:hover,
+[data-theme="dark"] .profile-trigger:hover {
+  background: #333;
+}
+
+/* Modal backgrounds */
+[data-theme="dark"] .hc-modal-dialog,
+[data-theme="dark"] .profile-modal {
+  background: #181818;
+  border-color: #333;
+}
+
+[data-theme="dark"] .hc-modal-footer {
+  background: #181818;
+  border-top-color: #333;
+}
+
+[data-theme="dark"] .hc-modal-close-btn {
+  background: #2a2a2a;
+  color: #eee;
+}
+
+[data-theme="dark"] .hc-modal-close-btn:hover {
+  background: #333;
+}
+
+/* Profile menu */
+[data-theme="dark"] .profile-menu {
+  background: #1a1a1a;
+  border-color: #333;
+}
+
+[data-theme="dark"] .profile-menu ul li {
+  color: #eee;
+}
+
+[data-theme="dark"] .profile-menu ul li:hover {
+  background: #2a2a2a;
+}
+
+[data-theme="dark"] .profile-info {
+  border-bottom-color: #333;
+}
+
+[data-theme="dark"] .profile-name {
+  color: #fff;
+}
+
+[data-theme="dark"] .profile-role {
+  color: #999;
+}
+
+/* Create event form */
+[data-theme="dark"] .create-event-form {
+  color: #fff;
+}
+
+[data-theme="dark"] .create-event-form h2 {
+  color: #fff;
+}
+
+[data-theme="dark"] .create-event-form > p {
+  color: #b3b3b3;
+}
+
+[data-theme="dark"] .create-event-form label {
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .create-event-form > select,
+[data-theme="dark"] .create-event-form input,
+[data-theme="dark"] .create-event-form select,
+[data-theme="dark"] .create-event-form textarea {
+  background: #242424;
+  border-color: #3a3a3a;
+  color: #fff;
+}
+
+[data-theme="dark"] .create-event-form input::placeholder,
+[data-theme="dark"] .create-event-form textarea::placeholder {
+  color: #666;
+}
+
+[data-theme="dark"] .create-event-form input:focus,
+[data-theme="dark"] .create-event-form select:focus,
+[data-theme="dark"] .create-event-form textarea:focus {
+  border-color: #e11d48;
+  box-shadow: 0 0 0 2px rgb(225 29 72 / 25%);
+  background: #2c2c2c;
+}
+
+/* Date field inside profile modal */
+[data-theme="dark"] .date-field input[type="date"] {
+  background: #242424;
+  border-color: #3a3a3a;
+  color: #fff;
+}
+
+/* Interest chips */
+[data-theme="dark"] .interest-chip {
+  background: #242424;
+  border-color: #3a3a3a;
+  color: #eee;
+}
+
+[data-theme="dark"] .interest-chip:hover {
+  border-color: #e11d48;
+  color: #e11d48;
+}
+
+/* Modal action buttons */
+[data-theme="dark"] .modal-actions .btn-secondary {
+  background: #242424;
+  border-color: #3a3a3a;
+  color: #fff;
+}
+
+[data-theme="dark"] .modal-actions .btn-secondary:hover {
+  background: #2e2e2e;
+}
+
+[data-theme="dark"] .modal-actions .btn-primary {
+  background: #e11d48;
+}
+
+[data-theme="dark"] .modal-actions .btn-primary:hover {
+  background: #be123c;
+}
+
+/* File hint */
+[data-theme="dark"] .file-hint {
+  color: #999;
+}
+
+/* Profile modal header */
+[data-theme="dark"] .profile-modal-header {
+  border-bottom-color: #333;
+}
+
+[data-theme="dark"] .profile-modal-header h3 {
+  color: #fff;
+}
+
+[data-theme="dark"] .modal-close {
+  background: #2a2a2a;
+  color: #eee;
+}
+
+[data-theme="dark"] .modal-close:hover {
+  background: #333;
+}
+
+[data-theme="dark"] .profile-modal-body label {
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .interests-header {
+  color: #e0e0e0;
+}
+
+[data-theme="dark"] .interest-count {
+  color: #999;
+}
+/* ============================================================
+   DATE / TIME INPUT FIX FOR DARK MODE
+   ============================================================ */
+
+[data-theme="dark"] input[type="date"],
+[data-theme="dark"] input[type="time"] {
+  color: #ffffff;
+  color-scheme: dark;
+}
+
+[data-theme="dark"] .create-event-form input[type="date"],
+[data-theme="dark"] .create-event-form input[type="time"],
+[data-theme="dark"] .date-field input[type="date"] {
+  color: #ffffff;
+  color-scheme: dark;
+}
+/* ============================================================
+   MODAL SCROLLBAR FIX
+   ============================================================ */
+
+.hc-modal-body::-webkit-scrollbar {
+  width: 4px;
+}
+
+.hc-modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.hc-modal-body::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 4px;
+}
+
+[data-theme="dark"] .hc-modal-body::-webkit-scrollbar-thumb {
+  background: #555;
+}
+
+/* ============================================================
+   MODAL FOOTER LAYOUT FIX
+   ============================================================ */
+
+.hc-modal-footer {
+  padding: 14px 24px;
+  border-top: 1px solid var(--spectrum-gray-200, #e5e7eb);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+[data-theme="dark"] .hc-modal-footer {
+  border-top-color: #333;
+  background: #181818;
+}
+
+/* Fix button sizing consistency */
+.modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  width: 100%;
+}
+
+.modal-actions .btn-secondary,
+.modal-actions .btn-primary {
+  height: 40px;
+  min-width: 90px;
+  padding: 0 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, opacity 0.15s;
+  margin: 0;
+}

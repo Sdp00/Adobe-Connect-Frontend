@@ -369,12 +369,52 @@ function openCreateModal() {
         submitBtn.textContent = 'Submit';
       }
 
-    // ── training / newsletter / others → toast only, no DB ──
-    } else if (data.category) {
-      modal.close();
-      const label = data.category.charAt(0).toUpperCase() + data.category.slice(1);
-      showToast(`${label} submitted successfully!`);
+  } else if (data.category === 'training' || data.category === 'newsletter') {
+  modal.close();
+  const label = data.category.charAt(0).toUpperCase() + data.category.slice(1);
+  showToast(`${label} submitted successfully!`);
+
+} else if (data.category === 'others') {
+  if (!window.SupabaseUtils) {
+    showToast('Supabase not ready. Please try again.', 'error');
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Saving...';
+
+  try {
+    let imageUrl = null;
+    const imageFile = form.querySelector('input[name="image"]')?.files[0];
+
+    if (imageFile) {
+      submitBtn.textContent = 'Uploading image...';
+      imageUrl = await uploadMedia(imageFile);
     }
+
+    const { error: dbError } = await window.SupabaseUtils.createRecord('others', {
+      title: data.title,
+      description: data.description,
+      image: imageUrl,
+    });
+
+    if (dbError) {
+      showToast(`Failed to save: ${dbError.message}`, 'error');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit';
+      return;
+    }
+
+    modal.close();
+    showToast('Updated successfully!');
+
+  } catch (err) {
+    console.error(err);
+    showToast(err.message || 'Something went wrong.', 'error');
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Submit';
+  }
+}
   });
 
   modal.open();
