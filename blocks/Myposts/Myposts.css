@@ -8,6 +8,7 @@
   font-family: "Adobe Clean", system-ui, sans-serif;
   background: #f8f8f8;
   min-height: 100vh;
+  margin-left: 200px;
 }
 
 /* Header */
@@ -123,4 +124,10 @@ html[data-theme="dark"] .post-content p {
 
 html[data-theme="dark"] .empty-state {
   color: #b3b3b3;
+}
+
+@media (width <= 1024px) {
+  .myposts-page {
+    margin-left : 0;
+  }
 }
