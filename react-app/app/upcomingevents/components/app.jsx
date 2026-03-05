@@ -4,19 +4,37 @@ const calendarIcon = '/icons/calendar.svg';
 const clockIcon = '/icons/clock.svg';
 const locationIcon = '/icons/location.svg';
 
+function waitForSupabase() {
+  return new Promise((resolve, reject) => {
+    if (window.SupabaseUtils) { resolve(); return; }
+    let attempts = 0;
+    const interval = setInterval(() => {
+      attempts += 1;
+      if (window.SupabaseUtils) {
+        clearInterval(interval);
+        resolve();
+      } else if (attempts >= 30) {
+        clearInterval(interval);
+        reject(new Error('SupabaseUtils did not load in time'));
+      }
+    }, 100);
+  });
+}
+
 export default function App() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [responses, setResponses] = useState({}); // accept/decline state
+  const [responses, setResponses] = useState({});
 
-  // Fetch events from Supabase
   useEffect(() => {
     async function fetchEvents() {
       setLoading(true);
       try {
+        await waitForSupabase();
+
         const { data, error: fetchError } = await window.SupabaseUtils.getRecords('events', {
-          select: 'id,title,date,time,location,image,deadline',
+          select: 'id,title,date,time,location,Media,deadline',
           orderBy: 'date',
           ascending: true,
         });
@@ -32,6 +50,9 @@ export default function App() {
     }
 
     fetchEvents();
+
+    window.addEventListener('events-updated', fetchEvents);
+    return () => window.removeEventListener('events-updated', fetchEvents);
   }, []);
 
   const getDaysRemaining = (deadline) => {
@@ -40,7 +61,6 @@ export default function App() {
     return Math.ceil(diff / (1000 * 60 * 60 * 24));
   };
 
-  // Handle local accept/decline
   const handleAccept = (id) => setResponses((prev) => ({ ...prev, [id]: 'accepted' }));
   const handleDecline = (id) => setResponses((prev) => ({ ...prev, [id]: 'declined' }));
 
@@ -59,7 +79,7 @@ export default function App() {
           return (
             <article key={event.id} className="event-card">
               <div className="event-card-image">
-                {event.image && <img src={event.image} alt={event.title} />}
+                {event.Media && <img src={event.Media} alt={event.title} />}
               </div>
 
               <div className="event-card-content">
