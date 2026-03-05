@@ -1,90 +1,154 @@
 .org-page {
-  padding: 32px;
-  padding-top: 40px;
-  background: #f8f8f8;
+  padding: 40px 48px;
+  background: #f5f5f7;
   font-family: "Adobe Clean", system-ui, sans-serif;
+  box-sizing: border-box;
+  width: 100%;
+  margin-left: 190px;
+  min-height: 100vh;
 }
 
-/* Header */
+/* ── Header ── */
+.org-header {
+  margin-bottom: 8px;
+}
+
 .org-header h1 {
-  font-size: 24px;
+  font-size: 26px;
+  font-weight: 700;
   margin: 0;
+  color: #111827;
+  letter-spacing: -0.3px;
 }
 
 .org-header p {
   margin-top: 6px;
   color: #6b7280;
+  font-size: 14px;
 }
 
-/* Chart */
+/* ── Hint & chain title ── */
+.org-hint,
+.chain-title {
+  font-size: 13px;
+  color: #9ca3af;
+  margin: 0 0 24px;
+  text-align: center;
+  letter-spacing: 0.1px;
+}
+
+/* ── Breadcrumb ── */
+.org-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 24px;
+  background: #fff;
+  padding: 10px 16px;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 6%);
+  width: fit-content;
+}
+
+.bc-item {
+  background: none;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: #dc2626;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.bc-item:hover {
+  background: #fef2f2;
+}
+
+.bc-active {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.bc-sep {
+  color: #d1d5db;
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* ── Loading ── */
+.org-loading {
+  text-align: center;
+  padding: 64px;
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+/* ── Chart container ── */
 .org-chart {
-  margin-top: 48px;
+  margin-top: 24px;
+}
+
+.org-tree {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-/* Levels */
-.level {
-  display: flex;
-  gap: 32px;
-  justify-content: center;
-  position: relative;
-}
-
-.level-2,
-.level-3 {
   width: 100%;
 }
 
-/* Cards */
+/* ── Level rows (full org view) ── */
+.level {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  max-width: 960px;
+}
+
+/* ── Cards ── */
 .card {
-  width: 260px;
+  width: 230px;
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 20px 40px rgb(0 0 0 / 8%);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 6%), 0 0 0 1px rgb(0 0 0 / 4%);
   overflow: hidden;
   text-align: left;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  flex-shrink: 0;
+  position: relative;
 }
 
-.card.small {
-  width: 220px;
-  padding: 16px;
+.card.clickable {
+  cursor: pointer;
 }
 
-.name {
-  font-size: 15px;
-  font-weight: 600;
+.card.clickable:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 28px rgb(0 0 0 / 12%), 0 0 0 1px rgb(220 38 38 / 20%);
 }
 
-.role {
-  font-size: 13px;
-  opacity: 0.85;
+/* Top level — red border */
+.card.ceo {
+  border: 2px solid #ef4444;
+  box-shadow: 0 4px 16px rgb(239 68 68 / 15%);
 }
 
-/* Dark mode */
-html[data-theme="dark"] .name {
-  color: #fff;
+/* Selected card in chain view — blue */
+.card.selected {
+  border: 2px solid #2563eb;
+  box-shadow: 0 0 0 4px rgb(37 99 235 / 10%), 0 4px 16px rgb(37 99 235 / 15%);
 }
 
-html[data-theme="dark"] .role {
-  color: #b3b3b3;
+.card.selected .card-top.light {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
 }
 
-.card.small .name {
-  font-weight: 600;
-}
-
-.card.small .role {
-  font-size: 13px;
-  color: #6b7280;
-}
-
-html[data-theme="dark"] .card.small .role {
-  color: #b3b3b3;
-}
-
-/* Card top */
+/* ── Card top section ── */
 .card-top {
   padding: 16px;
   display: flex;
@@ -93,81 +157,212 @@ html[data-theme="dark"] .card.small .role {
 }
 
 .card-top.red {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
+  background: linear-gradient(135deg, #f87171, #dc2626);
   color: #fff;
+}
+
+.card-top.red .role {
+  color: rgb(255 255 255 / 75%);
 }
 
 .card-top.light {
   background: #fef2f2;
 }
 
-/* Avatar */
+/* ── Avatar ── */
 .avatar {
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   background: #fff;
   color: #dc2626;
   display: grid;
   place-items: center;
+  font-weight: 800;
+  font-size: 12px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 12%);
+  letter-spacing: 0.5px;
+}
+
+.card-top.red .avatar {
+  background: rgb(255 255 255 / 20%);
+  color: #fff;
+  box-shadow: none;
+}
+
+.card.selected .card-top.light .avatar {
+  background: #2563eb;
+  color: #fff;
+}
+
+/* ── Card text ── */
+.card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  font-size: 14px;
   font-weight: 700;
+  line-height: 1.3;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Body */
-.card-body {
-  padding: 14px;
-  font-size: 13px;
+.card-top.red .name {
+  color: #fff;
 }
 
-/* CEO */
-.ceo {
-  border: 2px solid #ef4444;
+.card.selected .card-top.light .name {
+  color: #1d4ed8;
 }
 
-/* Connectors */
+.role {
+  font-size: 12px;
+  color: #6b7280;
+  margin-top: 3px;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Chevron icon on clickable cards ── */
+.card-chevron {
+  font-size: 22px;
+  color: #dc2626;
+  font-weight: 300;
+  flex-shrink: 0;
+  line-height: 1;
+  opacity: 0.5;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.card.clickable:hover .card-chevron {
+  opacity: 1;
+  transform: translateX(2px);
+}
+
+/* ── "You" badge ── */
+.card-you {
+  font-size: 10px;
+  font-weight: 800;
+  background: #2563eb;
+  color: #fff;
+  padding: 3px 8px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+/* ── Connectors ── */
 .v-line {
   width: 2px;
   height: 40px;
-  background: #d1d5db;
+  background: linear-gradient(to bottom, #e5e7eb, #d1d5db);
+  border-radius: 2px;
 }
 
 .h-line {
   position: absolute;
   top: -20px;
-  left: 10%;
-  right: 10%;
+  left: 8%;
+  right: 8%;
   height: 2px;
-  background: #d1d5db;
+  background: #e5e7eb;
+  border-radius: 2px;
 }
 
+/* ── Dark mode ── */
 html[data-theme="dark"] .org-page {
-  background: #181818;
-  color: #fff;
+  background: #111111;
 }
 
 html[data-theme="dark"] .org-header h1 {
-  color: #fff;
+  color: #f9fafb;
 }
 
-html[data-theme="dark"] .org-header p {
-  color: #b3b3b3;
+html[data-theme="dark"] .org-header p,
+html[data-theme="dark"] .org-hint,
+html[data-theme="dark"] .chain-title {
+  color: #9ca3af;
+}
+
+html[data-theme="dark"] .org-breadcrumb {
+  background: #1e1e1e;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 30%);
+}
+
+html[data-theme="dark"] .bc-active {
+  color: #e5e7eb;
+}
+
+html[data-theme="dark"] .bc-item {
+  color: #fca5a5;
+}
+
+html[data-theme="dark"] .bc-item:hover {
+  background: #2a1a1a;
+}
+
+html[data-theme="dark"] .bc-sep {
+  color: #374151;
 }
 
 html[data-theme="dark"] .card {
   background: #1e1e1e;
-  box-shadow: 0 20px 40px rgb(0 0 0 / 30%);
-  color: #fff;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 30%), 0 0 0 1px rgb(255 255 255 / 5%);
+  color: #f9fafb;
+}
+
+html[data-theme="dark"] .card.ceo {
+  box-shadow: 0 4px 16px rgb(239 68 68 / 20%);
+}
+
+html[data-theme="dark"] .card.clickable:hover {
+  box-shadow: 0 10px 28px rgb(0 0 0 / 40%), 0 0 0 1px rgb(220 38 38 / 30%);
 }
 
 html[data-theme="dark"] .card-top.light {
-  background: #2a2a2a;
+  background: #262626;
 }
 
-html[data-theme="dark"] .card-body {
-  color: #b3b3b3;
+html[data-theme="dark"] .card.selected .card-top.light {
+  background: #1a2540;
 }
 
-html[data-theme="dark"] .v-line,
+html[data-theme="dark"] .name {
+  color: #f3f4f6;
+}
+
+html[data-theme="dark"] .card.selected .card-top.light .name {
+  color: #93c5fd;
+}
+
+html[data-theme="dark"] .role {
+  color: #9ca3af;
+}
+
+html[data-theme="dark"] .avatar {
+  box-shadow: 0 2px 6px rgb(0 0 0 / 30%);
+}
+
+html[data-theme="dark"] .card-chevron {
+  color: #fca5a5;
+}
+
+html[data-theme="dark"] .v-line {
+  background: linear-gradient(to bottom, #374151, #4b5563);
+}
+
 html[data-theme="dark"] .h-line {
-  background: #444;
+  background: #374151;
+}
+
+html[data-theme="dark"] .org-loading {
+  color: #6b7280;
 }
