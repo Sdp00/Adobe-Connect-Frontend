@@ -18,22 +18,40 @@ __webpack_require__.r(__webpack_exports__);
 const calendarIcon = '/icons/calendar.svg';
 const clockIcon = '/icons/clock.svg';
 const locationIcon = '/icons/location.svg';
+function waitForSupabase() {
+  return new Promise((resolve, reject) => {
+    if (window.SupabaseUtils) {
+      resolve();
+      return;
+    }
+    let attempts = 0;
+    const interval = setInterval(() => {
+      attempts += 1;
+      if (window.SupabaseUtils) {
+        clearInterval(interval);
+        resolve();
+      } else if (attempts >= 30) {
+        clearInterval(interval);
+        reject(new Error('SupabaseUtils did not load in time'));
+      }
+    }, 100);
+  });
+}
 function App() {
   const [events, setEvents] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
   const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(true);
   const [error, setError] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
-  const [responses, setResponses] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({}); // accept/decline state
-
-  // Fetch events from Supabase
+  const [responses, setResponses] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({});
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     async function fetchEvents() {
       setLoading(true);
       try {
+        await waitForSupabase();
         const {
           data,
           error: fetchError
         } = await window.SupabaseUtils.getRecords('events', {
-          select: 'id,title,date,time,location,image,deadline',
+          select: 'id,title,date,time,location,Media,deadline',
           orderBy: 'date',
           ascending: true
         });
@@ -47,14 +65,14 @@ function App() {
       }
     }
     fetchEvents();
+    window.addEventListener('events-updated', fetchEvents);
+    return () => window.removeEventListener('events-updated', fetchEvents);
   }, []);
   const getDaysRemaining = deadline => {
     if (!deadline) return null;
     const diff = new Date(deadline) - new Date();
     return Math.ceil(diff / (1000 * 60 * 60 * 24));
   };
-
-  // Handle local accept/decline
   const handleAccept = id => setResponses(prev => ({
     ...prev,
     [id]: 'accepted'
@@ -90,8 +108,8 @@ function App() {
           className: "event-card",
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
             className: "event-card-image",
-            children: event.image && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("img", {
-              src: event.image,
+            children: event.Media && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("img", {
+              src: event.Media,
               alt: event.title
             })
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {

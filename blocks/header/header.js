@@ -1,7 +1,6 @@
 import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
 
-
 export default async function decorate(block) {
   const navMeta = getMetadata('nav');
   const navPath = navMeta ? new URL(navMeta, window.location).pathname : '/nav';
@@ -18,6 +17,7 @@ export default async function decorate(block) {
 
   const profileSaved = localStorage.getItem('profileComplete') === 'true';
   const addInfoLabel = profileSaved ? 'Edit Info' : 'Add Info';
+  const isAdminPage = window.location.pathname.startsWith('/admin');
 
   const nav = document.createElement('nav');
   nav.className = 'nav-inner';
@@ -40,7 +40,7 @@ export default async function decorate(block) {
 
     <div class="nav-right">
 
-      <!-- Mobile Search Button (shown only on mobile via CSS) -->
+      <!-- Mobile Search Button -->
       <button class="icon-btn mobile-search-btn" aria-label="Search">
         <svg class="nav-icon" viewBox="0 0 24 24">
           <circle cx="11" cy="11" r="7"></circle>
@@ -48,12 +48,17 @@ export default async function decorate(block) {
         </svg>
       </button>
 
-      <!-- Theme toggle -->
-      <button class="icon-btn theme-toggle-btn" aria-label="Toggle theme">
-        <svg class="nav-icon" viewBox="0 0 24 24">
-          <path d="M21 12.79A9 9 0 0111.21 3a7 7 0 109.79 9.79z"/>
+      <!-- Admin + Button (only on /admin) -->
+      ${isAdminPage ? `
+      <button class="icon-btn admin-add-btn" title="Create Item" aria-label="Create Item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <line x1="5" y1="12" x2="19" y2="12"/>
         </svg>
-      </button>
+      </button>` : ''}
+
+      <!-- Theme toggle -->
+      <button class="icon-btn theme-toggle-btn" aria-label="Toggle theme"></button>
 
       <!-- Notifications -->
       <div class="notify">
@@ -125,40 +130,30 @@ export default async function decorate(block) {
     </div>
   `;
 
-  // Force profile menu above ALL other panels
   nav.querySelector('.profile-menu').style.zIndex = '99999';
 
   const profile = nav.querySelector('.profile');
   const profileMenu = nav.querySelector('.profile-menu');
 
-  // Mobile search bar (appended to nav)
   const mobileSearchBar = document.createElement('div');
   mobileSearchBar.className = 'mobile-search-bar';
   mobileSearchBar.innerHTML = `<input type="search" placeholder="${searchText}" />`;
   nav.appendChild(mobileSearchBar);
 
-  // Helper: close everything
   function closeAll() {
     profile.classList.remove('open');
     mobileSearchBar.classList.remove('open');
   }
 
-  // Profile toggle — closes search bar first (mutual exclusion)
   nav.querySelector('.profile-trigger').addEventListener('click', (e) => {
     e.stopPropagation();
     const isOpen = profile.classList.contains('open');
     closeAll();
-    if (!isOpen) {
-      profile.classList.add('open');
-    }
+    if (!isOpen) profile.classList.add('open');
   });
 
-  // Clicks inside profile menu must NOT bubble and close it
-  profileMenu.addEventListener('click', (e) => {
-    e.stopPropagation();
-  });
+  profileMenu.addEventListener('click', (e) => e.stopPropagation());
 
-  // Mobile search toggle — closes profile menu first (mutual exclusion)
   nav.querySelector('.mobile-search-btn').addEventListener('click', (e) => {
     e.stopPropagation();
     const isOpen = mobileSearchBar.classList.contains('open');
@@ -169,11 +164,8 @@ export default async function decorate(block) {
     }
   });
 
-  // Close everything when clicking outside
   document.addEventListener('click', (e) => {
-    if (!nav.contains(e.target)) {
-      closeAll();
-    }
+    if (!nav.contains(e.target)) closeAll();
   });
 
   nav.querySelector('.menu-hierarchy')?.addEventListener('click', () => {
@@ -188,14 +180,20 @@ export default async function decorate(block) {
     openProfileModal(nav);
   });
 
+  if (isAdminPage) {
+    nav.querySelector('.admin-add-btn')?.addEventListener('click', async () => {
+      const adminModule = await import('../admin/admin.js');
+      adminModule.openCreateModal();
+    });
+  }
+
   block.append(nav);
 
   /* Dark/Light Mode */
   const moonIcon = `
     <svg class="nav-icon" viewBox="0 0 24 24">
       <path d="M21 12.79A9 9 0 0111.21 3a7 7 0 109.79 9.79z"/>
-    </svg>
-  `;
+    </svg>`;
 
   const sunIcon = `
     <svg class="nav-icon" viewBox="0 0 24 24">
@@ -208,11 +206,9 @@ export default async function decorate(block) {
       <line x1="21" y1="12" x2="23" y2="12"/>
       <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
       <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-    </svg>
-  `;
+    </svg>`;
 
   const themeBtn = nav.querySelector('.theme-toggle-btn');
-
   const savedTheme = localStorage.getItem('theme') || 'light';
   document.documentElement.setAttribute('data-theme', savedTheme);
   themeBtn.innerHTML = savedTheme === 'dark' ? sunIcon : moonIcon;
@@ -226,8 +222,7 @@ export default async function decorate(block) {
   });
 }
 
-
-/* Profile Modal */
+/* PROFILE MODAL */
 function openProfileModal(nav) {
   if (document.querySelector('.profile-modal-overlay')) return;
 
@@ -244,26 +239,22 @@ function openProfileModal(nav) {
         <h3>${isEdit ? 'Edit Your Profile' : 'Complete Your Profile'}</h3>
         <button class="modal-close">✕</button>
       </div>
-
       <div class="profile-modal-body">
         <label>Birthday</label>
         <div class="date-field">
           <input type="date" value="${savedDate}" />
         </div>
-
         <div class="interests-header">
           <span>Interests</span>
           <span class="interest-count">${savedInterests.length} selected (min 3)</span>
         </div>
-
         <div class="interest-list">
           ${[
-            'UI/UX Design','Development','Marketing','Music',
-            'Leadership','Mentoring','Sports','Photography',
-            'Travelling','Psychology','Fitness', 'Gaming', 'Art', 'Dancing', 'Fashion'
-          ].map(i => `<button class="interest-chip${savedInterests.includes(i) ? ' selected' : ''}">${i}</button>`).join('')}
+            'UI/UX Design', 'Development', 'Marketing', 'Music',
+            'Leadership', 'Mentoring', 'Sports', 'Photography',
+            'Travelling', 'Psychology', 'Fitness', 'Gaming', 'Art', 'Dancing', 'Fashion',
+          ].map((i) => `<button class="interest-chip${savedInterests.includes(i) ? ' selected' : ''}">${i}</button>`).join('')}
         </div>
-
         <button class="update-btn" ${savedInterests.length >= 3 ? '' : 'disabled'}>Update Profile</button>
       </div>
     </div>
@@ -281,7 +272,7 @@ function openProfileModal(nav) {
     updateBtn.disabled = selected < 3;
   }
 
-  chips.forEach(chip => {
+  chips.forEach((chip) => {
     chip.addEventListener('click', () => {
       chip.classList.toggle('selected');
       updateState();
@@ -290,23 +281,20 @@ function openProfileModal(nav) {
 
   updateBtn.addEventListener('click', () => {
     const dateInput = overlay.querySelector('input[type="date"]');
-
     if (!dateInput.value) {
       dateInput.setAttribute('required', 'true');
       dateInput.reportValidity();
       return;
     }
 
-    const selectedInterests = [...overlay.querySelectorAll('.interest-chip.selected')].map(c => c.textContent.trim());
-
+    const selectedInterests = [...overlay.querySelectorAll('.interest-chip.selected')]
+      .map((c) => c.textContent.trim());
     localStorage.setItem('profileBirthday', dateInput.value);
     localStorage.setItem('profileInterests', JSON.stringify(selectedInterests));
     localStorage.setItem('profileComplete', 'true');
 
     const label = nav?.querySelector('.add-info-label');
     if (label) label.textContent = 'Edit Info';
-
-    console.log('Profile updated successfully');
     overlay.remove();
   });
 

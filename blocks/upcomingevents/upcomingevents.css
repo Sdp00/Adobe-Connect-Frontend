@@ -1,11 +1,6 @@
 /*!*************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js!./react-app/app/upcomingevents/styles/index.css ***!
   \*************************************************************************************************/
-*{
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 /*  UPCOMING EVENTS – RIGHT SIDEBAR */
 .upcoming-events-wrapper {
   position: fixed;
@@ -44,9 +39,7 @@
   padding-bottom: 16px;
 }
 
-/* ===============================
-   EVENT CARD
-================================ */
+/*  EVENT CARD */
 .event-card {
   background: var(--spectrum-gray-50);
   border: 1px solid var(--spectrum-gray-200);
@@ -168,9 +161,7 @@
   background: var(--spectrum-gray-200);
 }
 
-/* ===============================
-   SCROLLBAR
-================================ */
+/* SCROLLBAR*/
 .upcoming-events-list::-webkit-scrollbar {
   width: 4px;
 }
@@ -184,9 +175,7 @@
   background: var(--spectrum-gray-500);
 }
 
-/* ===============================
-   DARK MODE OVERRIDES
-================================ */
+/*  DARK MODE OVERRIDES */
 html[data-theme="dark"] .upcoming-events-wrapper {
   background: var(--spectrum-gray-75);
   border-left: 1px solid var(--spectrum-gray-200);
