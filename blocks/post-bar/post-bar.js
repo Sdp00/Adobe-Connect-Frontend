@@ -7,21 +7,37 @@ const ICONS = {
   attach: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>',
 };
 
-export default function decorate(block) {
-  // Only render on the home page
-const pathname = window.location.pathname;
-const isHomePage = pathname === '/'
-  || pathname === '/index'
-  || pathname === '/index.html'
-  || pathname === '/admin';
+/* ── Upload a single file to Supabase Storage ── */
+async function uploadFile(file) {
+  const client = window.SupabaseUtils.client;
+  const filePath = `posts/${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
 
-if (!isHomePage) {
-  const wrapperSection = block.closest('.section');
-  if (wrapperSection) wrapperSection.style.display = 'none';
-  return;
+  const { data, error } = await client.storage
+    .from('uploads')
+    .upload(filePath, file, {
+      cacheControl: '3600',
+      upsert: false,
+      contentType: file.type,
+    });
+
+  if (error) throw new Error(`Upload failed: ${error.message}`);
+
+  const { data: urlData } = client.storage
+    .from('uploads')
+    .getPublicUrl(data.path);
+
+  return urlData.publicUrl;
 }
 
-  // Make the containing section sticky
+export default function decorate(block) {
+  const { pathname } = window.location;
+  const isHomePage = pathname === '/' || pathname === '/index' || pathname === '/index.html';
+  if (!isHomePage) {
+    const wrapperSection = block.closest('.section');
+    if (wrapperSection) wrapperSection.style.display = 'none';
+    return;
+  }
+
   const section = block.closest('.section');
   if (section) section.classList.add('post-bar-section');
 
@@ -131,7 +147,6 @@ if (!isHomePage) {
   const carousel = document.createElement('div');
   carousel.className = 'post-bar-carousel';
 
-  /* prevent wheel scroll on the carousel from scrolling the modal body */
   carousel.addEventListener('wheel', (e) => { e.stopPropagation(); }, { passive: true });
 
   const chipList = document.createElement('div');
@@ -140,7 +155,6 @@ if (!isHomePage) {
   let attachedFiles = [];
   let carouselIndex = 0;
 
-  /* Animate to already-built slide — only swaps CSS classes, no DOM rebuild */
   function goToSlide(direction = 'next') {
     const slides = carousel.querySelectorAll('.post-bar-carousel-slide');
     const dots = carousel.querySelectorAll('.post-bar-carousel-dot');
@@ -156,7 +170,6 @@ if (!isHomePage) {
     dots.forEach((dot, i) => dot.classList.toggle('is-active', i === carouselIndex));
   }
 
-  /* Full DOM rebuild — called when the file list changes */
   function buildCarousel() {
     carousel.innerHTML = '';
 
@@ -171,7 +184,6 @@ if (!isHomePage) {
 
     carousel.style.display = 'block';
 
-    /* ── Track (all slides side-by-side) ── */
     const track = document.createElement('div');
     track.className = 'post-bar-carousel-track';
 
@@ -199,7 +211,6 @@ if (!isHomePage) {
 
     carousel.appendChild(track);
 
-    /* ── Remove button (top-right of slide) ── */
     const removeBtn = document.createElement('button');
     removeBtn.type = 'button';
     removeBtn.className = 'post-bar-carousel-remove';
@@ -214,7 +225,6 @@ if (!isHomePage) {
         carouselIndex = Math.max(0, attachedFiles.length - 1);
       }
       buildCarousel();
-      /* restore scroll — immediate catches sync adjustments, rAF catches async ones */
       if (modalBody) {
         modalBody.scrollTop = savedScroll;
         requestAnimationFrame(() => { modalBody.scrollTop = savedScroll; });
@@ -222,7 +232,6 @@ if (!isHomePage) {
     });
     carousel.appendChild(removeBtn);
 
-    /* ── Navigation arrows (only when multiple files) ── */
     if (attachedFiles.length > 1) {
       const prevBtn = document.createElement('button');
       prevBtn.type = 'button';
@@ -247,7 +256,6 @@ if (!isHomePage) {
       carousel.appendChild(prevBtn);
       carousel.appendChild(nextBtn);
 
-      /* ── Dots ── */
       const dots = document.createElement('div');
       dots.className = 'post-bar-carousel-dots';
       attachedFiles.forEach((_, i) => {
@@ -344,7 +352,8 @@ if (!isHomePage) {
   postBtn.addEventListener('click', open);
   discardBtn.addEventListener('click', close);
 
-  submitBtn.addEventListener('click', () => {
+  /* ── CHANGED: submit now uploads media and saves to Supabase ── */
+  submitBtn.addEventListener('click', async () => {
     const title = titleInput.value.trim();
     const body = bodyTextarea.value.trim();
 
@@ -353,7 +362,65 @@ if (!isHomePage) {
       return;
     }
 
-    showToast('Post published!', 'success');
-    close();
+    if (!window.SupabaseUtils) {
+      showToast('Supabase not ready. Please try again.', 'error');
+      return;
+    }
+
+    // Disable button and show loading state
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Posting...';
+
+    try {
+      // Upload all image/video files
+      const mediaFiles = attachedFiles.filter((f) => f.type.startsWith('image/') || f.type.startsWith('video/'));
+      let mediaUrls = [];
+      if (mediaFiles.length > 0) {
+        submitBtn.textContent = 'Uploading media...';
+        mediaUrls = await Promise.all(mediaFiles.map((f) => uploadFile(f)));
+      }
+
+      // Extract hashtags from title + body
+      const tags = `${title} ${body}`.match(/#\w+/g) || [];
+
+      // Save to Supabase posts table
+      submitBtn.textContent = 'Saving...';
+      const { error: dbError } = await window.SupabaseUtils.client
+        .from('posts')
+        .insert({
+          user_name: 'You',
+          user_role: 'Member',
+          post_description: body,
+          tags: tags.join(', '),
+          media: mediaUrls.length > 0 ? JSON.stringify(mediaUrls) : null,
+        });
+
+      if (dbError) {
+        showToast(`Failed to post: ${dbError.message}`, 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Post';
+        return;
+      }
+
+      // Dispatch event so Feed.js picks it up immediately without page refresh
+      document.dispatchEvent(new CustomEvent('post-bar:submit', {
+        detail: {
+          title,
+          text: body,
+          images: mediaUrls.map((url) => ({ url })),
+          attachments: [],
+          links: [],
+        },
+      }));
+
+      showToast('Post published!', 'success');
+      close();
+    } catch (err) {
+      console.error(err);
+      showToast(err.message || 'Something went wrong.', 'error');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Post';
+    }
   });
 }
