@@ -508,3 +508,478 @@ main .section.highlight {
     opacity:   1;
   }
 }
+
+/* ============================================================
+   CREATE ITEM MODAL — GLOBAL OVERRIDES
+   ============================================================ */
+
+.hc-modal-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgb(0 0 0 / 45%) !important;
+  padding: 16px !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.22s ease !important;
+  backdrop-filter: blur(3px) !important;
+  box-sizing: border-box !important;
+}
+
+.hc-modal-overlay.is-open {
+  opacity: 1 !important;
+  pointer-events: all !important;
+}
+
+.hc-modal-dialog {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 520px !important;
+  max-height: calc(100dvh - 40px) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: #fff !important;
+  border-radius: 14px !important;
+  box-shadow: 0 20px 60px rgb(0 0 0 / 20%) !important;
+  overflow: hidden !important;
+  transform: translateY(18px) scale(0.97) !important;
+  opacity: 0 !important;
+  transition: transform 0.26s cubic-bezier(0.34, 1.46, 0.64, 1),
+              opacity 0.22s ease !important;
+}
+
+.hc-modal-overlay.is-open .hc-modal-dialog {
+  transform: translateY(0) scale(1) !important;
+  opacity: 1 !important;
+}
+
+.hc-modal-close-btn {
+  position: absolute !important;
+  top: 14px !important;
+  right: 14px !important;
+  z-index: 10 !important;
+  width: 32px !important;
+  height: 32px !important;
+  padding: 0 !important;
+  border: none !important;
+  background: #f3f4f6 !important;
+  border-radius: 50% !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+}
+
+.hc-modal-close-btn:hover {
+  background: #e2e6ea !important;
+}
+
+.hc-modal-close-btn svg {
+  width: 16px !important;
+  height: 16px !important;
+  stroke: #333 !important;
+  fill: none !important;
+}
+
+.hc-modal-body {
+  flex: 1 1 auto !important;
+  overflow-y: auto !important;
+  padding: 24px 24px 8px !important;
+}
+
+.hc-modal-body::-webkit-scrollbar {
+  width: 4px !important;
+}
+
+.hc-modal-body::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.hc-modal-body::-webkit-scrollbar-thumb {
+  background: #ccc !important;
+  border-radius: 4px !important;
+}
+
+.hc-modal-footer {
+  flex-shrink: 0 !important;
+  padding: 14px 24px !important;
+  border-top: 1px solid #e5e7eb !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 10px !important;
+  background: #fff !important;
+  margin: 0 !important;
+}
+
+/* ============================================================
+   CREATE EVENT FORM
+   ============================================================ */
+
+.create-event-form {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.create-event-form h2 {
+  margin: 0 0 2px !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: #1a1a1a !important;
+  padding-right: 32px !important;
+}
+
+.create-event-form > p {
+  margin: 0 !important;
+  font-size: 13px !important;
+  color: #666 !important;
+}
+
+.create-event-form > select {
+  display: block !important;
+  width: 100% !important;
+  height: 40px !important;
+  padding: 0 12px !important;
+  border: 1px solid #d0d0d0 !important;
+  border-radius: 8px !important;
+  background: #fafafa !important;
+  font-size: 14px !important;
+  color: #1a1a1a !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+  outline: none !important;
+  margin: 0 !important;
+}
+
+.dynamic-fields {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 14px !important;
+  width: 100% !important;
+}
+
+.create-event-form label {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  width: 100% !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #1a1a1a !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+}
+
+.create-event-form input,
+.create-event-form select,
+.create-event-form textarea {
+  display: block !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  height: 40px !important;
+  padding: 0 12px !important;
+  border: 1px solid #d0d0d0 !important;
+  border-radius: 8px !important;
+  background: #fafafa !important;
+  font-size: 14px !important;
+  color: #1a1a1a !important;
+  outline: none !important;
+  margin: 0 !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+.create-event-form textarea {
+  height: auto !important;
+  min-height: 88px !important;
+  padding: 10px 12px !important;
+  resize: vertical !important;
+  line-height: 1.5 !important;
+}
+
+.create-event-form input[type="file"] {
+  height: auto !important;
+  padding: 8px 12px !important;
+  cursor: pointer !important;
+}
+
+.create-event-form input[type="date"],
+.create-event-form input[type="time"] {
+  color: #1a1a1a !important;
+  color-scheme: light !important;
+}
+
+.create-event-form input:focus,
+.create-event-form select:focus,
+.create-event-form textarea:focus {
+  border-color: #e11d48 !important;
+  box-shadow: 0 0 0 2px rgb(225 29 72 / 15%) !important;
+  background: #fff !important;
+}
+
+.create-event-form input::placeholder,
+.create-event-form textarea::placeholder {
+  color: #999 !important;
+}
+
+.form-row {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 12px !important;
+  width: 100% !important;
+}
+
+.req {
+  color: #e60023 !important;
+  margin-left: 3px !important;
+  font-weight: 700 !important;
+}
+
+.file-hint {
+  font-size: 11px !important;
+  font-weight: 400 !important;
+  color: #888 !important;
+  margin-top: 2px !important;
+  display: block !important;
+}
+
+/* ============================================================
+   MODAL FOOTER BUTTONS
+   ============================================================ */
+
+.modal-actions {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 10px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.modal-actions .btn-secondary,
+.modal-actions .btn-primary {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 40px !important;
+  min-width: 90px !important;
+  padding: 0 24px !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+  line-height: 1 !important;
+}
+
+.modal-actions .btn-secondary {
+  background: #f0f0f0 !important;
+  border: 1px solid #d0d0d0 !important;
+  color: #1a1a1a !important;
+}
+
+.modal-actions .btn-secondary:hover {
+  background: #e0e0e0 !important;
+}
+
+.modal-actions .btn-primary {
+  background: #e11d48 !important;
+  border: none !important;
+  color: #fff !important;
+}
+
+.modal-actions .btn-primary:hover {
+  background: #be123c !important;
+}
+
+.modal-actions .btn-primary:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+
+.toast-notification {
+  position: fixed !important;
+  top: 20px !important;
+  left: 50% !important;
+  transform: translateX(-50%) translateY(-8px) !important;
+  z-index: 99999 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 12px 18px 12px 14px !important;
+  min-width: 260px !important;
+  max-width: 420px !important;
+  background: #e6f4ea !important;
+  color: #137333 !important;
+  border: 1px solid #34a853 !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  opacity: 0 !important;
+  animation: toast-in 0.25s ease forwards !important;
+  box-shadow: 0 4px 16px rgb(0 0 0 / 14%) !important;
+}
+
+.toast-notification::before {
+  content: "✓" !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 18px !important;
+  height: 18px !important;
+  border-radius: 50% !important;
+  background: #34a853 !important;
+  color: #fff !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  flex-shrink: 0 !important;
+}
+
+.toast-notification.toast-error {
+  background: #fde8e8 !important;
+  color: #b91c1c !important;
+  border-color: #ef4444 !important;
+}
+
+.toast-notification.toast-error::before {
+  content: "✕" !important;
+  background: #ef4444 !important;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(-12px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ============================================================
+   DARK MODE
+   ============================================================ */
+
+html[data-theme="dark"] .hc-modal-dialog {
+  background: #181818 !important;
+}
+
+html[data-theme="dark"] .hc-modal-footer {
+  background: #181818 !important;
+  border-top-color: #333 !important;
+}
+
+html[data-theme="dark"] .hc-modal-close-btn {
+  background: #2a2a2a !important;
+}
+
+html[data-theme="dark"] .hc-modal-close-btn svg {
+  stroke: #eee !important;
+}
+
+html[data-theme="dark"] .hc-modal-close-btn:hover {
+  background: #333 !important;
+}
+
+html[data-theme="dark"] .hc-modal-body::-webkit-scrollbar-thumb {
+  background: #555 !important;
+}
+
+html[data-theme="dark"] .create-event-form {
+  color: #fff !important;
+}
+
+html[data-theme="dark"] .create-event-form h2 {
+  color: #fff !important;
+}
+
+html[data-theme="dark"] .create-event-form > p {
+  color: #b3b3b3 !important;
+}
+
+html[data-theme="dark"] .create-event-form label {
+  color: #e0e0e0 !important;
+}
+
+html[data-theme="dark"] .create-event-form input,
+html[data-theme="dark"] .create-event-form select,
+html[data-theme="dark"] .create-event-form textarea,
+html[data-theme="dark"] .create-event-form > select {
+  background: #242424 !important;
+  border-color: #3a3a3a !important;
+  color: #fff !important;
+}
+
+html[data-theme="dark"] .create-event-form input[type="date"],
+html[data-theme="dark"] .create-event-form input[type="time"] {
+  color-scheme: dark !important;
+}
+
+html[data-theme="dark"] .create-event-form input::placeholder,
+html[data-theme="dark"] .create-event-form textarea::placeholder {
+  color: #666 !important;
+}
+
+html[data-theme="dark"] .create-event-form input:focus,
+html[data-theme="dark"] .create-event-form select:focus,
+html[data-theme="dark"] .create-event-form textarea:focus {
+  border-color: #e11d48 !important;
+  box-shadow: 0 0 0 2px rgb(225 29 72 / 25%) !important;
+  background: #2c2c2c !important;
+}
+
+html[data-theme="dark"] .modal-actions .btn-secondary {
+  background: #242424 !important;
+  border-color: #3a3a3a !important;
+  color: #fff !important;
+}
+
+html[data-theme="dark"] .modal-actions .btn-secondary:hover {
+  background: #2e2e2e !important;
+}
+
+html[data-theme="dark"] .modal-actions .btn-primary {
+  background: #e11d48 !important;
+}
+
+html[data-theme="dark"] .modal-actions .btn-primary:hover {
+  background: #be123c !important;
+}
+
+html[data-theme="dark"] .file-hint {
+  color: #999 !important;
+}
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (width <= 480px) {
+  .hc-modal-overlay {
+    align-items: flex-end !important;
+    padding: 0 !important;
+  }
+
+  .hc-modal-dialog {
+    max-width: 100% !important;
+    max-height: 92dvh !important;
+    border-radius: 14px 14px 0 0 !important;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr !important;
+  }
+}

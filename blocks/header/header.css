@@ -25,7 +25,7 @@ body {
 }
 
 html {
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* HEADER / NAV */
@@ -721,6 +721,139 @@ html[data-theme="dark"] .search-result-badge.person {
   color: #86efac;
 }
 
+/* =====================
+   SEARCH DROPDOWN
+   ===================== */
+.nav-search {
+  position: relative;
+}
+ 
+.mobile-search-bar {
+  position: relative;
+}
+ 
+.search-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: var(--spectrum-gray-50);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgb(0 0 0 / 14%);
+  z-index: 99998;
+  max-height: 320px;
+  overflow-y: auto;
+  border: 1px solid var(--spectrum-border-divider);
+}
+ 
+.search-dropdown.open {
+  display: block;
+}
+ 
+.search-result-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--spectrum-border-divider);
+}
+ 
+.search-result-item:last-child {
+  border-bottom: none;
+}
+ 
+.search-result-item:hover {
+  background: var(--spectrum-gray-100);
+}
+ 
+.search-result-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+ 
+.search-result-badge.event {
+  background: #fef2f2;
+  color: #dc2626;
+}
+ 
+.search-result-badge.post {
+  background: #eff6ff;
+  color: #2563eb;
+}
+ 
+.search-result-badge.person {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+ 
+.search-result-badge.person {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+ 
+.search-result-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+ 
+.search-result-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--spectrum-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+ 
+.search-result-sub {
+  font-size: 12px;
+  color: var(--spectrum-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+ 
+.search-no-result {
+  padding: 16px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--spectrum-text-secondary);
+}
+ 
+html[data-theme="dark"] .search-dropdown {
+  background: var(--spectrum-gray-50);
+  border-color: var(--spectrum-border-divider);
+}
+ 
+html[data-theme="dark"] .search-result-badge.event {
+  background: #3f1212;
+  color: #fca5a5;
+}
+ 
+html[data-theme="dark"] .search-result-badge.post {
+  background: #1e3a5f;
+  color: #93c5fd;
+}
+ 
+html[data-theme="dark"] .search-result-badge.person {
+  background: #14532d;
+  color: #86efac;
+}
+ 
+html[data-theme="dark"] .search-result-badge.person {
+  background: #14532d;
+  color: #86efac;
+}
+ 
 /* =====================
    MOBILE RESPONSIVE
    ===================== */

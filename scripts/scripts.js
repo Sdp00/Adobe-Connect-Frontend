@@ -119,9 +119,12 @@ async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
   const main = doc.querySelector('main');
-  loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', { nonce: 'aem' });
-  loadScript('server/config.js', { nonce: 'aem' });
-  loadScript('server/supabase-utils.js', { nonce: 'aem' });
+
+  // Load Supabase CDN first, then config, then utils — in strict order
+  await loadScript('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2', { nonce: 'aem' });
+  await loadScript('server/config.js', { nonce: 'aem' });
+  await loadScript('server/supabase-utils.js', { nonce: 'aem' });
+
   if (main) {
     decorateMain(main);
     document.body.classList.add('appear');
