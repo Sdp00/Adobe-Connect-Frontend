@@ -5,29 +5,33 @@ export default async function decorate(block) {
   const navMeta = getMetadata('nav');
   const navPath = navMeta ? new URL(navMeta, window.location).pathname : '/nav';
   const fragment = await loadFragment(navPath);
-
+ 
   const content = fragment.querySelector(':scope > div > div');
   if (!content) return;
-
+ 
+ 
   const items = [...content.querySelectorAll('p')];
   const title = items[0]?.textContent?.trim() || '';
   const searchText = items[1]?.textContent?.trim() || '';
-
+ 
+ 
   block.textContent = '';
-
+ 
   const profileSaved = localStorage.getItem('profileComplete') === 'true';
   const addInfoLabel = profileSaved ? 'Edit Info' : 'Add Info';
   const isAdminPage = window.location.pathname.startsWith('/admin');
 
   const nav = document.createElement('nav');
   nav.className = 'nav-inner';
-
+ 
+ 
   nav.innerHTML = `
     <div class="nav-left">
       <a href="/"><img class="nav-logo-img" src="/blocks/header/Adobe-logo.jpeg" alt="Adobe" /></a>
       <span class="nav-title">${title}</span>
     </div>
-
+ 
+ 
     <div class="nav-center">
       <div class="nav-search">
         <svg class="nav-icon" viewBox="0 0 24 24">
@@ -37,7 +41,8 @@ export default async function decorate(block) {
         <input type="search" placeholder="${searchText}" />
       </div>
     </div>
-
+ 
+ 
     <div class="nav-right">
 
       <!-- Mobile Search Button -->
@@ -70,8 +75,7 @@ export default async function decorate(block) {
           <span class="notify-dot"></span>
         </button>
       </div>
-
-      <!-- Profile -->
+ 
       <div class="profile">
         <div class="profile-trigger" aria-label="Profile menu">
           <div class="avatar">J</div>
@@ -79,13 +83,15 @@ export default async function decorate(block) {
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </div>
-
+ 
+ 
         <div class="profile-menu">
           <div class="profile-info">
             <div class="profile-name">Jaishree D G</div>
             <div class="profile-role">Apprentice Tech</div>
           </div>
-
+ 
+ 
           <ul>
             <li class="menu-add-info">
               <svg class="menu-icon" viewBox="0 0 24 24">
@@ -94,7 +100,8 @@ export default async function decorate(block) {
               </svg>
               <span class="add-info-label">${addInfoLabel}</span>
             </li>
-
+ 
+ 
             <li class="menu-posts">
               <svg class="menu-icon" viewBox="0 0 24 24">
                 <rect x="4" y="4" width="16" height="16" rx="2"></rect>
@@ -103,7 +110,8 @@ export default async function decorate(block) {
               </svg>
               My Posts
             </li>
-
+ 
+ 
             <li class="menu-hierarchy">
               <svg class="menu-icon" viewBox="0 0 24 24">
                 <rect x="10" y="3" width="4" height="4" rx="1"></rect>
@@ -114,7 +122,8 @@ export default async function decorate(block) {
               </svg>
               Hierarchy
             </li>
-
+ 
+ 
             <li class="danger menu-logout">
               <svg class="menu-icon" viewBox="0 0 24 24">
                 <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
@@ -126,7 +135,8 @@ export default async function decorate(block) {
           </ul>
         </div>
       </div>
-
+ 
+ 
     </div>
   `;
 
@@ -171,11 +181,13 @@ export default async function decorate(block) {
   nav.querySelector('.menu-hierarchy')?.addEventListener('click', () => {
     window.location.href = '/hierarchy';
   });
-
+ 
+ 
   nav.querySelector('.menu-posts')?.addEventListener('click', () => {
     window.location.href = '/myposts';
   });
-
+ 
+ 
   nav.querySelector('.menu-add-info')?.addEventListener('click', () => {
     openProfileModal(nav);
   });
@@ -188,8 +200,7 @@ export default async function decorate(block) {
   }
 
   block.append(nav);
-
-  /* Dark/Light Mode */
+  /* DARK / LIGHT MODE TOGGLE     */
   const moonIcon = `
     <svg class="nav-icon" viewBox="0 0 24 24">
       <path d="M21 12.79A9 9 0 0111.21 3a7 7 0 109.79 9.79z"/>
@@ -212,7 +223,7 @@ export default async function decorate(block) {
   const savedTheme = localStorage.getItem('theme') || 'light';
   document.documentElement.setAttribute('data-theme', savedTheme);
   themeBtn.innerHTML = savedTheme === 'dark' ? sunIcon : moonIcon;
-
+ 
   themeBtn.addEventListener('click', () => {
     const current = document.documentElement.getAttribute('data-theme');
     const next = current === 'dark' ? 'light' : 'dark';
@@ -225,14 +236,16 @@ export default async function decorate(block) {
 /* PROFILE MODAL */
 function openProfileModal(nav) {
   if (document.querySelector('.profile-modal-overlay')) return;
-
+ 
   const savedDate = localStorage.getItem('profileBirthday') || '';
   const savedInterests = JSON.parse(localStorage.getItem('profileInterests') || '[]');
   const isEdit = localStorage.getItem('profileComplete') === 'true';
-
+ 
+ 
   const overlay = document.createElement('div');
   overlay.className = 'profile-modal-overlay';
-
+ 
+ 
   overlay.innerHTML = `
     <div class="profile-modal">
       <div class="profile-modal-header">
@@ -259,13 +272,16 @@ function openProfileModal(nav) {
       </div>
     </div>
   `;
-
+ 
+ 
   document.body.appendChild(overlay);
-
+ 
+ 
   const chips = overlay.querySelectorAll('.interest-chip');
   const countText = overlay.querySelector('.interest-count');
   const updateBtn = overlay.querySelector('.update-btn');
-
+ 
+ 
   function updateState() {
     const selected = overlay.querySelectorAll('.interest-chip.selected').length;
     countText.textContent = `${selected} selected (min 3)`;
@@ -278,7 +294,7 @@ function openProfileModal(nav) {
       updateState();
     });
   });
-
+ 
   updateBtn.addEventListener('click', () => {
     const dateInput = overlay.querySelector('input[type="date"]');
     if (!dateInput.value) {
@@ -292,12 +308,13 @@ function openProfileModal(nav) {
     localStorage.setItem('profileBirthday', dateInput.value);
     localStorage.setItem('profileInterests', JSON.stringify(selectedInterests));
     localStorage.setItem('profileComplete', 'true');
-
+ 
     const label = nav?.querySelector('.add-info-label');
     if (label) label.textContent = 'Edit Info';
     overlay.remove();
   });
-
+ 
+ 
   overlay.querySelector('.modal-close').onclick = () => overlay.remove();
   overlay.addEventListener('click', (e) => {
     if (e.target === overlay) overlay.remove();
