@@ -1,0 +1,292 @@
+/*!*************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./react-app/app/upcomingevents/styles/index.css ***!
+  \*************************************************************************************************/
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+/*  UPCOMING EVENTS – RIGHT SIDEBAR */
+.upcoming-events-wrapper {
+  position: fixed;
+  top: 64px;
+  right: 0;
+  width: 320px;
+  height: calc(100vh - 60px);
+  display: flex;
+  flex-direction: column;
+  background: var(--spectrum-gray-75);
+  border-left: 1px solid var(--spectrum-gray-200);
+  box-shadow: -2px 0 8px rgb(0 0 0 / 6%);
+  padding: 20px 16px;
+  box-sizing: border-box;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+/* TITLE */
+.upcoming-events-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--spectrum-text-primary);
+  margin: 0 0 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--spectrum-gray-200);
+  flex-shrink: 0;
+}
+
+/* SCROLL CONTAINER */
+.upcoming-events-list {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden auto;
+  padding-right: 4px;
+  padding-bottom: 16px;
+}
+
+/* ===============================
+   EVENT CARD
+================================ */
+.event-card {
+  background: var(--spectrum-gray-50);
+  border: 1px solid var(--spectrum-gray-200);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  transition: box-shadow 0.25s ease, background 0.25s ease, border 0.25s ease;
+}
+
+.event-card:last-child {
+  margin-bottom: 0;
+}
+
+.event-card:hover {
+  box-shadow: 0 4px 16px rgb(0 0 0 / 10%);
+}
+
+/* IMAGE */
+.event-card-image {
+  width: 100%;
+  overflow: hidden;
+}
+
+.event-card-image img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  display: block;
+}
+
+/* CONTENT */
+.event-card-content {
+  padding: 14px 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* TITLE */
+.event-card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--spectrum-text-primary);
+  line-height: 1.3;
+  margin: 0 0 4px;
+}
+
+/* META */
+.event-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--spectrum-text-secondary);
+  line-height: 1.4;
+}
+
+.event-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+/* DEADLINE */
+.event-card-deadline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--spectrum-text-secondary);
+  padding-top: 8px;
+  margin-top: 4px;
+  border-top: 1px solid var(--spectrum-gray-200);
+}
+
+.event-card-deadline.urgent {
+  color: var(--spectrum-red-600);
+  border-color: rgb(239 68 68 / 25%);
+}
+
+/* ACTIONS */
+.event-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.event-card-button {
+  flex: 1;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid var(--spectrum-gray-200);
+}
+
+/* ACCEPT BUTTON */
+.event-card-button.accept {
+  background: var(--spectrum-red-600);
+  color: #fff;
+  border: none;
+}
+
+.event-card-button.accept:hover {
+  background: #dc2626;
+  box-shadow: 0 2px 8px rgb(239 68 68 / 35%);
+}
+
+/* DECLINE BUTTON */
+.event-card-button.decline {
+  background: var(--spectrum-gray-100);
+  color: var(--spectrum-text-secondary);
+}
+
+.event-card-button.decline:hover {
+  background: var(--spectrum-gray-200);
+}
+
+/* ===============================
+   SCROLLBAR
+================================ */
+.upcoming-events-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.upcoming-events-list::-webkit-scrollbar-thumb {
+  background: var(--spectrum-gray-300);
+  border-radius: 4px;
+}
+
+.upcoming-events-list::-webkit-scrollbar-thumb:hover {
+  background: var(--spectrum-gray-500);
+}
+
+/* ===============================
+   DARK MODE OVERRIDES
+================================ */
+html[data-theme="dark"] .upcoming-events-wrapper {
+  background: var(--spectrum-gray-75);
+  border-left: 1px solid var(--spectrum-gray-200);
+}
+
+html[data-theme="dark"] .upcoming-events-title {
+  color: var(--spectrum-text-primary);
+  border-bottom: 1px solid var(--spectrum-gray-200);
+}
+
+html[data-theme="dark"] .event-card {
+  background: var(--spectrum-gray-50);
+  border: 1px solid var(--spectrum-gray-200);
+}
+
+html[data-theme="dark"] .event-card-title {
+  color: var(--spectrum-text-primary);
+}
+
+html[data-theme="dark"] .event-card-meta,
+html[data-theme="dark"] .event-card-deadline {
+  color: var(--spectrum-text-secondary);
+}
+
+html[data-theme="dark"] .event-card-deadline.urgent {
+  color: var(--spectrum-red-600);
+}
+
+html[data-theme="dark"] .event-card-button.accept {
+  background: var(--spectrum-red-600);
+}
+
+html[data-theme="dark"] .event-card-button.decline {
+  background: var(--spectrum-gray-100);
+  color: var(--spectrum-text-secondary);
+}
+
+/* Scrollbar dark */
+html[data-theme="dark"] .upcoming-events-list::-webkit-scrollbar-track {
+  background: var(--spectrum-gray-200);
+}
+
+html[data-theme="dark"] .upcoming-events-list::-webkit-scrollbar-thumb {
+  background: var(--spectrum-gray-700);
+}
+
+html[data-theme="dark"] .upcoming-events-list::-webkit-scrollbar-thumb:hover {
+  background: var(--spectrum-gray-500);
+}
+/* responsive */
+
+/* Tablet & Mobile */
+@media (max-width: 1024px) {
+  .upcoming-events-wrapper {
+    position: static !important;
+    inset: auto !important;
+    width: 100%;
+    height: auto;
+    max-height: none;
+    box-shadow: none;
+    border-left: none;
+    border-top: 1px solid var(--spectrum-gray-200);
+    margin: 24px 0 0;
+    padding: 16px;
+    z-index: auto;
+  }
+
+  .upcoming-events-list {
+    overflow: visible;
+    flex: unset;
+    min-height: unset;
+    padding-right: 0;
+    max-height: none;
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .event-card-image img {
+    height: 120px;
+  }
+
+  .event-card-content {
+    padding: 12px;
+  }
+
+  .event-card-title {
+    font-size: 14px;
+  }
+
+  .event-card-meta,
+  .event-card-deadline {
+    font-size: 12px;
+  }
+
+  .event-card-actions {
+    flex-direction: column;
+  }
+
+  .event-card-button {
+    width: 100%;
+  }
+}

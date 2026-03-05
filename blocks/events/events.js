@@ -1,2 +1,725 @@
-/* eslint-disable */
-var e,t={783:(e,t,n)=>{n.d(t,{f:()=>u,A:()=>m});var a=n(338),s=n(540),i=n(556),r=n.n(i),l=n(848);function c({events:e,onDateSelect:t}){const[n,a]=(0,s.useState)(new Date),i=(e=>{const t=e.getFullYear(),n=e.getMonth(),a=new Date(t,n,1),s=new Date(t,n+1,0).getDate(),i=a.getDay(),r=[];for(let e=0;e<i;e+=1)r.push(null);for(let e=1;e<=s;e+=1)r.push(e);return r})(n),r=n.toLocaleDateString("en-US",{month:"long"}),c=n.getFullYear();return(0,l.jsxs)("div",{className:"calendar-compact",children:[(0,l.jsxs)("div",{className:"calendar-header-compact",children:[(0,l.jsx)("button",{type:"button",onClick:()=>a(new Date(n.getFullYear(),n.getMonth()-1)),className:"calendar-nav-btn",children:"<"}),(0,l.jsx)("div",{className:"calendar-title-compact",children:(0,l.jsxs)("span",{className:"month-name",children:[r," ",c]})}),(0,l.jsx)("button",{type:"button",onClick:()=>a(new Date(n.getFullYear(),n.getMonth()+1)),className:"calendar-nav-btn",children:">"})]}),(0,l.jsxs)("div",{className:"calendar-grid-compact",children:[["S","M","T","W","T","F","S"].map((e,t)=>(0,l.jsx)("div",{className:"calendar-weekday-compact",children:e},`day-${t}`)),i.map((a,s)=>{const i=(t=>{if(!t)return null;const a=`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(t).padStart(2,"0")}`;return e.find(e=>e.date===a)})(a);return(0,l.jsx)("div",{className:`calendar-day-compact${a?"":" calendar-day--empty"}${i?" calendar-day--event":""}`,children:a&&(0,l.jsxs)("button",{type:"button",className:"calendar-day-btn-compact",onClick:()=>a&&t&&t(a),children:[(0,l.jsx)("span",{className:"calendar-day-number",children:a}),i&&(0,l.jsx)("span",{className:"calendar-event-name",children:i.title})]})},`date-${s}`)})]})]})}function d({event:e,onRSVP:t}){const[n,a]=(0,s.useState)(!1),[i,r]=(0,s.useState)(""),c="past"===e.status;return(0,l.jsxs)(l.Fragment,{children:[(0,l.jsxs)("div",{className:"event-card",children:[(0,l.jsx)("img",{src:e.Media||e.image||"https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800",alt:e.title,className:"event-card-img"}),(0,l.jsxs)("div",{className:"event-card-content",children:[(0,l.jsx)("h3",{className:"event-card-title",children:e.title}),(0,l.jsxs)("div",{className:"event-card-meta",children:[(0,l.jsx)("div",{className:"event-meta-item",children:(0,l.jsxs)("span",{children:[new Date(e.date).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})," ","• ",e.time]})}),(0,l.jsx)("div",{className:"event-meta-item",children:(0,l.jsx)("span",{children:e.location})})]}),!c&&!e.rsvp&&(0,l.jsxs)("div",{className:"event-card-actions",children:[(0,l.jsx)("button",{type:"button",className:"btn",onClick:()=>t(e.id,"accepted"),children:"Accept"}),(0,l.jsx)("button",{type:"button",className:"btn",onClick:()=>a(!0),children:"Decline"})]})]})]}),n&&!c&&(0,l.jsx)("div",{className:"decline-modal-overlay",onClick:()=>a(!1),children:(0,l.jsxs)("div",{className:"decline-modal",onClick:e=>e.stopPropagation(),children:[(0,l.jsx)("h3",{children:"Reason for Declining"}),(0,l.jsx)("textarea",{className:"decline-textarea",value:i,onChange:e=>r(e.target.value),rows:"4"}),(0,l.jsxs)("div",{className:"decline-modal-actions",children:[(0,l.jsx)("button",{type:"button",className:"btn",onClick:()=>a(!1),children:"Cancel"}),(0,l.jsx)("button",{type:"button",className:"btn",onClick:()=>{i.trim()&&(t(e.id,"declined",i),a(!1),r(""))},disabled:!i.trim(),children:"Submit"})]})]})})]})}function o(){const[e,t]=(0,s.useState)([]),[n,a]=(0,s.useState)(!0),[i,r]=(0,s.useState)(null),[o,u]=(0,s.useState)(null),m=new Date;m.setHours(0,0,0,0);const p=new Date(m);p.setDate(m.getDate()+30);const v=new Date(m);v.setDate(m.getDate()-30),(0,s.useEffect)(()=>{async function e(){a(!0);try{await new Promise((e,t)=>{if(window.SupabaseUtils)return void e();let n=0;const a=setInterval(()=>{n+=1,window.SupabaseUtils?(clearInterval(a),e()):n>=30&&(clearInterval(a),t(new Error("SupabaseUtils did not load in time")))},100)});const{data:e,error:n}=await window.SupabaseUtils.getRecords("events",{select:"id,title,date,time,location,Media",orderBy:"date",ascending:!0});if(n)throw n;const a=(e||[]).map(e=>({...e,image:e.Media||e.image}));t(a)}catch(e){console.error("Events fetch error:",e),r("Failed to fetch events")}finally{a(!1)}}return e(),window.addEventListener("events-updated",e),()=>window.removeEventListener("events-updated",e)},[]);const h=(e,n,a=null)=>{t(t=>t.map(t=>t.id===e?{...t,rsvp:n,declineReason:a}:t))},x=e.filter(e=>{const t=new Date(e.date);return t.setHours(0,0,0,0),t>=m&&t<=p}),g=e.filter(e=>{const t=new Date(e.date);return t.setHours(0,0,0,0),t>=v&&t<m}).map(e=>({...e,status:"past"}));return n?(0,l.jsx)("p",{style:{padding:"20px",marginLeft:"240px"},children:"Loading events…"}):i?(0,l.jsx)("p",{style:{padding:"20px",marginLeft:"240px",color:"red"},children:i}):(0,l.jsxs)("div",{className:"events-page",children:[(0,l.jsx)("div",{className:"events-header",children:(0,l.jsx)("h1",{children:"Events"})}),(0,l.jsx)("div",{className:"events-top-section",children:(0,l.jsx)(c,{events:e,selectedDate:o,onDateSelect:u})}),(0,l.jsxs)("section",{className:"events-section",children:[(0,l.jsx)("h2",{className:"section-title",children:"Upcoming Events (Next 30 Days)"}),(0,l.jsx)("div",{className:"events-grid",children:x.length>0?x.map(e=>(0,l.jsx)(d,{event:e,onRSVP:h},e.id)):(0,l.jsx)("p",{children:"No upcoming events in the next 30 days"})})]}),(0,l.jsxs)("section",{className:"events-section",children:[(0,l.jsx)("h2",{className:"section-title",children:"Past Events (Last 30 Days)"}),(0,l.jsx)("div",{className:"events-grid",children:g.length>0?g.map(e=>(0,l.jsx)(d,{event:e,onRSVP:h},e.id)):(0,l.jsx)("p",{children:"No past events in the last 30 days"})})]})]})}async function u(e){(0,a.H)(e).render((0,l.jsx)(o,{block:e}))}async function m(e){u(e)}c.propTypes={events:r().arrayOf(r().shape({id:r().oneOfType([r().string,r().number]).isRequired,title:r().string.isRequired,date:r().string.isRequired})).isRequired,onDateSelect:r().func},c.defaultProps={onDateSelect:null},d.propTypes={event:r().shape({id:r().oneOfType([r().string,r().number]).isRequired,title:r().string.isRequired,date:r().string.isRequired,time:r().string.isRequired,location:r().string.isRequired,Media:r().string,image:r().string,status:r().string,rsvp:r().string}).isRequired,onRSVP:r().func.isRequired}}},n={};function a(e){var s=n[e];if(void 0!==s)return s.exports;var i=n[e]={exports:{}};return t[e](i,i.exports,a),i.exports}a.m=t,e=[],a.O=(t,n,s,i)=>{if(!n){var r=1/0;for(o=0;o<e.length;o++){for(var[n,s,i]=e[o],l=!0,c=0;c<n.length;c++)(!1&i||r>=i)&&Object.keys(a.O).every(e=>a.O[e](n[c]))?n.splice(c--,1):(l=!1,i<r&&(r=i));if(l){e.splice(o--,1);var d=s();void 0!==d&&(t=d)}}return t}i=i||0;for(var o=e.length;o>0&&e[o-1][2]>i;o--)e[o]=e[o-1];e[o]=[n,s,i]},a.n=e=>{var t=e&&e.__esModule?()=>e.default:()=>e;return a.d(t,{a:t}),t},a.d=(e,t)=>{for(var n in t)a.o(t,n)&&!a.o(e,n)&&Object.defineProperty(e,n,{enumerable:!0,get:t[n]})},a.o=(e,t)=>Object.prototype.hasOwnProperty.call(e,t),(()=>{var e={events:0};a.O.j=t=>0===e[t];var t=(t,n)=>{var s,i,[r,l,c]=n,d=0;if(r.some(t=>0!==e[t])){for(s in l)a.o(l,s)&&(a.m[s]=l[s]);if(c)var o=c(a)}for(t&&t(n);d<r.length;d++)i=r[d],a.o(e,i)&&e[i]&&e[i][0](),e[i]=0;return a.O(o)},n=self.webpackChunk_adobe_aem_boilerplate=self.webpackChunk_adobe_aem_boilerplate||[];n.forEach(t.bind(null,0)),n.push=t.bind(null,n.push.bind(n))})();var s=a.O(void 0,["vendor"],()=>a(783)),i=(s=a.O(s)).f,r=s.A;export{i as decorateBlock,r as default};
+/******/ var __webpack_modules__ = ({
+
+/***/ "./react-app/app/events/components/events.jsx":
+/*!****************************************************!*\
+  !*** ./react-app/app/events/components/events.jsx ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
+
+// ─── Parse EDS Block ────────────────────────────────────────────────────────
+// Reads your da.live "Events" document block (a table rendered as divs by EDS)
+// Expected column order in your da.live table:
+// | Title | Date (YYYY-MM-DD) | Time | Location | Image | Status | Days To Respond |
+
+function parseEDSBlock(block) {
+  if (!block) return [];
+
+  // EDS renders table rows as: .events > div (row) > div (cell)
+  const rows = Array.from(block.querySelectorAll(':scope > div'));
+  return rows.map((row, idx) => {
+    const cells = Array.from(row.querySelectorAll(':scope > div'));
+    const getText = i => cells[i]?.textContent?.trim() || '';
+    const getImg = i => cells[i]?.querySelector('picture img, img')?.src || '';
+    const title = getText(0);
+    if (!title) return null; // skip empty rows / header rows
+
+    return {
+      id: idx + 1,
+      title,
+      date: getText(1),
+      time: getText(2),
+      location: getText(3),
+      image: getImg(4) || getText(4),
+      status: getText(5) || 'pending',
+      daysToRespond: getText(6) ? parseInt(getText(6), 10) : null,
+      rsvp: null
+    };
+  }).filter(Boolean);
+}
+
+// ─── Calendar ───────────────────────────────────────────────────────────────
+function Calendar({
+  events,
+  onDateSelect
+}) {
+  const [currentMonth, setCurrentMonth] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(new Date());
+  const getDaysInMonth = date => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const days = [];
+    for (let i = 0; i < firstDay.getDay(); i += 1) days.push(null);
+    for (let i = 1; i <= lastDay.getDate(); i += 1) days.push(i);
+    return days;
+  };
+  const hasEvent = day => {
+    if (!day) return false;
+    const dateStr = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    return events.some(e => e.date === dateStr);
+  };
+  const days = getDaysInMonth(currentMonth);
+  const monthName = currentMonth.toLocaleDateString('en-US', {
+    month: 'long'
+  });
+  const year = currentMonth.getFullYear();
+  const prevMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
+  const nextMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+    className: "calendar",
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+      className: "calendar-header",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+        className: "calendar-title",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("svg", {
+          width: "24",
+          height: "24",
+          viewBox: "0 0 24 24",
+          fill: "none",
+          stroke: "#eb5146",
+          strokeWidth: "2",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("rect", {
+            x: "3",
+            y: "4",
+            width: "18",
+            height: "18",
+            rx: "2",
+            ry: "2"
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("line", {
+            x1: "16",
+            y1: "2",
+            x2: "16",
+            y2: "6"
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("line", {
+            x1: "8",
+            y1: "2",
+            x2: "8",
+            y2: "6"
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("line", {
+            x1: "3",
+            y1: "10",
+            x2: "21",
+            y2: "10"
+          })]
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("h2", {
+          children: "Calendar"
+        })]
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+        className: "calendar-nav",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
+          type: "button",
+          onClick: prevMonth,
+          className: "calendar-nav-btn",
+          "aria-label": "Previous month",
+          children: "<"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+          className: "calendar-month",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+            className: "month-name",
+            children: monthName
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+            className: "year-controls",
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+              children: year
+            })
+          })]
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
+          type: "button",
+          onClick: nextMonth,
+          className: "calendar-nav-btn",
+          "aria-label": "Next month",
+          children: ">"
+        })]
+      })]
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+      className: "calendar-grid",
+      children: [['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'].map(d => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+        className: "calendar-weekday",
+        children: d
+      }, d)), days.map((day, idx) =>
+      /*#__PURE__*/
+      // eslint-disable-next-line react/no-array-index-key
+      (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+        className: `calendar-day${!day ? ' calendar-day--empty' : ''}${hasEvent(day) ? ' calendar-day--event' : ''}`,
+        children: day && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
+          type: "button",
+          className: "calendar-day-btn",
+          onClick: () => onDateSelect && onDateSelect(day),
+          children: day
+        })
+      }, `day-${idx}`))]
+    })]
+  });
+}
+
+// ─── Quarter Filter ──────────────────────────────────────────────────────────
+function QuarterFilter({
+  selectedQuarters,
+  onQuarterChange
+}) {
+  const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
+  const toggle = q => {
+    if (selectedQuarters.includes(q)) {
+      onQuarterChange(selectedQuarters.filter(x => x !== q));
+    } else {
+      onQuarterChange([...selectedQuarters, q]);
+    }
+  };
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+    className: "quarter-filter",
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+      className: "quarter-filter-header",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("h3", {
+        children: "Quarter Filter"
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+        className: "quarter-year",
+        children: new Date().getFullYear()
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+        className: "quarter-range",
+        children: "Q1 \u2014 Q4"
+      })]
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+      className: "quarter-slider",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+        className: "quarter-line"
+      }), quarters.map(q => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
+        type: "button",
+        className: `quarter-btn${selectedQuarters.includes(q) ? ' quarter-btn--active' : ''}`,
+        onClick: () => toggle(q),
+        children: q
+      }, q))]
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
+      className: "quarter-hint",
+      children: "Tap quarters to adjust the range"
+    })]
+  });
+}
+
+// ─── Event Card ──────────────────────────────────────────────────────────────
+function EventCard({
+  event,
+  onRSVP
+}) {
+  const getStatusText = () => {
+    if (event.status === 'overdue') return 'Response overdue';
+    if (event.daysToRespond) return `Respond within ${event.daysToRespond} days`;
+    return '';
+  };
+  const formattedDate = (() => {
+    try {
+      return new Date(event.date).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+    } catch {
+      return event.date;
+    }
+  })();
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+    className: "event-card",
+    children: [event.image && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("img", {
+      src: event.image,
+      alt: event.title,
+      className: "event-card-img"
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+      className: "event-card-content",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("h3", {
+        className: "event-card-title",
+        children: event.title
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+        className: "event-card-meta",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+          className: "event-meta-item",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("svg", {
+            width: "16",
+            height: "16",
+            viewBox: "0 0 24 24",
+            fill: "none",
+            stroke: "#eb5146",
+            strokeWidth: "2",
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("rect", {
+              x: "3",
+              y: "4",
+              width: "18",
+              height: "18",
+              rx: "2",
+              ry: "2"
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("line", {
+              x1: "16",
+              y1: "2",
+              x2: "16",
+              y2: "6"
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("line", {
+              x1: "8",
+              y1: "2",
+              x2: "8",
+              y2: "6"
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("line", {
+              x1: "3",
+              y1: "10",
+              x2: "21",
+              y2: "10"
+            })]
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("span", {
+            children: [formattedDate, event.time ? ` • ${event.time}` : '']
+          })]
+        }), event.location && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+          className: "event-meta-item",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("svg", {
+            width: "16",
+            height: "16",
+            viewBox: "0 0 24 24",
+            fill: "none",
+            stroke: "#6b7280",
+            strokeWidth: "2",
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("path", {
+              d: "M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("circle", {
+              cx: "12",
+              cy: "10",
+              r: "3"
+            })]
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+            children: event.location
+          })]
+        }), event.status !== 'past' && getStatusText() && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+          className: `event-meta-item event-meta-item--${event.status}`,
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("svg", {
+            width: "16",
+            height: "16",
+            viewBox: "0 0 24 24",
+            fill: "none",
+            stroke: "currentColor",
+            strokeWidth: "2",
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("circle", {
+              cx: "12",
+              cy: "12",
+              r: "10"
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("polyline", {
+              points: "12 6 12 12 16 14"
+            })]
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+            children: getStatusText()
+          })]
+        })]
+      }), event.rsvp && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+        className: `event-rsvp-badge event-rsvp-badge--${event.rsvp}`,
+        children: event.rsvp === 'accepted' ? '✓ Accepted' : '✗ Declined'
+      }), event.status !== 'past' && !event.rsvp && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+        className: "event-card-actions",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("button", {
+          type: "button",
+          className: "event-btn event-btn--accept",
+          onClick: () => onRSVP(event.id, 'accepted'),
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("svg", {
+            width: "18",
+            height: "18",
+            viewBox: "0 0 24 24",
+            fill: "none",
+            stroke: "currentColor",
+            strokeWidth: "2",
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("polyline", {
+              points: "20 6 9 17 4 12"
+            })
+          }), "Accept"]
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("button", {
+          type: "button",
+          className: "event-btn event-btn--decline",
+          onClick: () => onRSVP(event.id, 'declined'),
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("svg", {
+            width: "18",
+            height: "18",
+            viewBox: "0 0 24 24",
+            fill: "none",
+            stroke: "currentColor",
+            strokeWidth: "2",
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("line", {
+              x1: "18",
+              y1: "6",
+              x2: "6",
+              y2: "18"
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("line", {
+              x1: "6",
+              y1: "6",
+              x2: "18",
+              y2: "18"
+            })]
+          }), "Decline"]
+        })]
+      })]
+    })]
+  });
+}
+
+// ─── Main Events Component ───────────────────────────────────────────────────
+const Events = ({
+  block
+}) => {
+  const [events, setEvents] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
+  const [selectedQuarters, setSelectedQuarters] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(['Q1', 'Q2', 'Q3', 'Q4']);
+  const [selectedDate, setSelectedDate] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(true);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    if (block) {
+      // EDS mode: parse the block DOM that da.live rendered
+      const parsed = parseEDSBlock(block);
+      setEvents(parsed);
+      setLoading(false);
+    } else {
+      // Dev/fallback mode: fetch from JSON
+      fetch('/data/events.json').then(res => res.json()).then(data => {
+        setEvents(data.events || []);
+        setLoading(false);
+      }).catch(err => {
+        console.error('Failed to load events:', err);
+        setLoading(false);
+      });
+    }
+  }, [block]);
+  const handleRSVP = (eventId, response) => {
+    setEvents(prev => prev.map(e => e.id === eventId ? {
+      ...e,
+      rsvp: response
+    } : e));
+  };
+  const upcomingEvents = events.filter(e => e.status !== 'past' && !e.rsvp);
+  const pastEvents = events.filter(e => e.status === 'past');
+  if (loading) {
+    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+      className: "events-page",
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+        className: "events-loading",
+        children: "Loading events..."
+      })
+    });
+  }
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+    className: "events-page",
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+      className: "events-header",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("svg", {
+        width: "32",
+        height: "32",
+        viewBox: "0 0 24 24",
+        fill: "none",
+        stroke: "#eb5146",
+        strokeWidth: "2",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("rect", {
+          x: "3",
+          y: "4",
+          width: "18",
+          height: "18",
+          rx: "2",
+          ry: "2"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("line", {
+          x1: "16",
+          y1: "2",
+          x2: "16",
+          y2: "6"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("line", {
+          x1: "8",
+          y1: "2",
+          x2: "8",
+          y2: "6"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("line", {
+          x1: "3",
+          y1: "10",
+          x2: "21",
+          y2: "10"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("line", {
+          x1: "8",
+          y1: "14",
+          x2: "16",
+          y2: "14"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("line", {
+          x1: "8",
+          y1: "18",
+          x2: "12",
+          y2: "18"
+        })]
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("h1", {
+        children: "Events"
+      })]
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(Calendar, {
+      events: events,
+      selectedDate: selectedDate,
+      onDateSelect: setSelectedDate
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(QuarterFilter, {
+      selectedQuarters: selectedQuarters,
+      onQuarterChange: setSelectedQuarters
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("section", {
+      className: "events-section",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("h2", {
+        className: "section-title",
+        children: "Upcoming Events"
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+        className: "events-grid",
+        children: upcomingEvents.length === 0 ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
+          className: "events-empty",
+          children: "No upcoming events."
+        }) : upcomingEvents.map(event => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(EventCard, {
+          event: event,
+          onRSVP: handleRSVP
+        }, event.id))
+      })]
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("section", {
+      className: "events-section",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("h2", {
+        className: "section-title",
+        children: "Past Events"
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+        className: "events-grid",
+        children: pastEvents.length === 0 ? /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
+          className: "events-empty",
+          children: "No past events."
+        }) : pastEvents.map(event => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(EventCard, {
+          event: event,
+          onRSVP: handleRSVP
+        }, event.id))
+      })]
+    })]
+  });
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Events);
+
+/***/ }),
+
+/***/ "./react-app/app/events/index.jsx":
+/*!****************************************!*\
+  !*** ./react-app/app/events/index.jsx ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   decorateBlock: () => (/* binding */ decorateBlock),
+/* harmony export */   "default": () => (/* binding */ decorate)
+/* harmony export */ });
+/* harmony import */ var react_dom_client__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-dom/client */ "./node_modules/react-dom/client.js");
+/* harmony import */ var _components_events__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/events */ "./react-app/app/events/components/events.jsx");
+/* harmony import */ var _styles_events_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./styles/events.css */ "./react-app/app/events/styles/events.css");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+// eslint-disable-next-line import/extensions
+
+// eslint-disable-next-line no-unused-vars
+
+
+
+async function decorateBlock(block) {
+  const root = (0,react_dom_client__WEBPACK_IMPORTED_MODULE_0__.createRoot)(block);
+  root.render(/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_components_events__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    block: block
+  }));
+}
+async function decorate(block) {
+  decorateBlock(block);
+}
+
+/***/ }),
+
+/***/ "./react-app/app/events/styles/events.css":
+/*!************************************************!*\
+  !*** ./react-app/app/events/styles/events.css ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ })
+
+/******/ });
+/************************************************************************/
+/******/ // The module cache
+/******/ var __webpack_module_cache__ = {};
+/******/ 
+/******/ // The require function
+/******/ function __webpack_require__(moduleId) {
+/******/ 	// Check if module is in cache
+/******/ 	var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 	if (cachedModule !== undefined) {
+/******/ 		return cachedModule.exports;
+/******/ 	}
+/******/ 	// Create a new module (and put it into the cache)
+/******/ 	var module = __webpack_module_cache__[moduleId] = {
+/******/ 		id: moduleId,
+/******/ 		loaded: false,
+/******/ 		exports: {}
+/******/ 	};
+/******/ 
+/******/ 	// Execute the module function
+/******/ 	__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 
+/******/ 	// Flag the module as loaded
+/******/ 	module.loaded = true;
+/******/ 
+/******/ 	// Return the exports of the module
+/******/ 	return module.exports;
+/******/ }
+/******/ 
+/******/ // expose the modules object (__webpack_modules__)
+/******/ __webpack_require__.m = __webpack_modules__;
+/******/ 
+/************************************************************************/
+/******/ /* webpack/runtime/chunk loaded */
+/******/ (() => {
+/******/ 	var deferred = [];
+/******/ 	__webpack_require__.O = (result, chunkIds, fn, priority) => {
+/******/ 		if(chunkIds) {
+/******/ 			priority = priority || 0;
+/******/ 			for(var i = deferred.length; i > 0 && deferred[i - 1][2] > priority; i--) deferred[i] = deferred[i - 1];
+/******/ 			deferred[i] = [chunkIds, fn, priority];
+/******/ 			return;
+/******/ 		}
+/******/ 		var notFulfilled = Infinity;
+/******/ 		for (var i = 0; i < deferred.length; i++) {
+/******/ 			var [chunkIds, fn, priority] = deferred[i];
+/******/ 			var fulfilled = true;
+/******/ 			for (var j = 0; j < chunkIds.length; j++) {
+/******/ 				if ((priority & 1 === 0 || notFulfilled >= priority) && Object.keys(__webpack_require__.O).every((key) => (__webpack_require__.O[key](chunkIds[j])))) {
+/******/ 					chunkIds.splice(j--, 1);
+/******/ 				} else {
+/******/ 					fulfilled = false;
+/******/ 					if(priority < notFulfilled) notFulfilled = priority;
+/******/ 				}
+/******/ 			}
+/******/ 			if(fulfilled) {
+/******/ 				deferred.splice(i--, 1)
+/******/ 				var r = fn();
+/******/ 				if (r !== undefined) result = r;
+/******/ 			}
+/******/ 		}
+/******/ 		return result;
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/compat get default export */
+/******/ (() => {
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = (module) => {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			() => (module['default']) :
+/******/ 			() => (module);
+/******/ 		__webpack_require__.d(getter, { a: getter });
+/******/ 		return getter;
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/define property getters */
+/******/ (() => {
+/******/ 	// define getter functions for harmony exports
+/******/ 	__webpack_require__.d = (exports, definition) => {
+/******/ 		for(var key in definition) {
+/******/ 			if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 				Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 			}
+/******/ 		}
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/getFullHash */
+/******/ (() => {
+/******/ 	__webpack_require__.h = () => ("0e22ad17f6293c378538")
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/hasOwnProperty shorthand */
+/******/ (() => {
+/******/ 	__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/make namespace object */
+/******/ (() => {
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = (exports) => {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/node module decorator */
+/******/ (() => {
+/******/ 	__webpack_require__.nmd = (module) => {
+/******/ 		module.paths = [];
+/******/ 		if (!module.children) module.children = [];
+/******/ 		return module;
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/jsonp chunk loading */
+/******/ (() => {
+/******/ 	// no baseURI
+/******/ 	
+/******/ 	// object to store loaded and loading chunks
+/******/ 	// undefined = chunk not loaded, null = chunk preloaded/prefetched
+/******/ 	// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
+/******/ 	var installedChunks = {
+/******/ 		"events": 0
+/******/ 	};
+/******/ 	
+/******/ 	// no chunk on demand loading
+/******/ 	
+/******/ 	// no prefetching
+/******/ 	
+/******/ 	// no preloaded
+/******/ 	
+/******/ 	// no HMR
+/******/ 	
+/******/ 	// no HMR manifest
+/******/ 	
+/******/ 	__webpack_require__.O.j = (chunkId) => (installedChunks[chunkId] === 0);
+/******/ 	
+/******/ 	// install a JSONP callback for chunk loading
+/******/ 	var webpackJsonpCallback = (parentChunkLoadingFunction, data) => {
+/******/ 		var [chunkIds, moreModules, runtime] = data;
+/******/ 		// add "moreModules" to the modules object,
+/******/ 		// then flag all "chunkIds" as loaded and fire callback
+/******/ 		var moduleId, chunkId, i = 0;
+/******/ 		if(chunkIds.some((id) => (installedChunks[id] !== 0))) {
+/******/ 			for(moduleId in moreModules) {
+/******/ 				if(__webpack_require__.o(moreModules, moduleId)) {
+/******/ 					__webpack_require__.m[moduleId] = moreModules[moduleId];
+/******/ 				}
+/******/ 			}
+/******/ 			if(runtime) var result = runtime(__webpack_require__);
+/******/ 		}
+/******/ 		if(parentChunkLoadingFunction) parentChunkLoadingFunction(data);
+/******/ 		for(;i < chunkIds.length; i++) {
+/******/ 			chunkId = chunkIds[i];
+/******/ 			if(__webpack_require__.o(installedChunks, chunkId) && installedChunks[chunkId]) {
+/******/ 				installedChunks[chunkId][0]();
+/******/ 			}
+/******/ 			installedChunks[chunkId] = 0;
+/******/ 		}
+/******/ 		return __webpack_require__.O(result);
+/******/ 	}
+/******/ 	
+/******/ 	var chunkLoadingGlobal = self["webpackChunk_adobe_aem_boilerplate"] = self["webpackChunk_adobe_aem_boilerplate"] || [];
+/******/ 	chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
+/******/ 	chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
+/******/ })();
+/******/ 
+/************************************************************************/
+/******/ 
+/******/ // startup
+/******/ // Load entry module and return exports
+/******/ // This entry module depends on other loaded chunks and execution need to be delayed
+/******/ __webpack_require__.O(undefined, ["vendor"], () => (__webpack_require__("./node_modules/webpack-dev-server/client/index.js?protocol=ws%3A&hostname=localhost&port=4200&pathname=%2Fws&logging=info&overlay=true&reconnect=10&hot=false&live-reload=true")))
+/******/ var __webpack_exports__ = __webpack_require__.O(undefined, ["vendor"], () => (__webpack_require__("./react-app/app/events/index.jsx")))
+/******/ __webpack_exports__ = __webpack_require__.O(__webpack_exports__);
+/******/ var __webpack_exports__decorateBlock = __webpack_exports__.decorateBlock;
+/******/ var __webpack_exports__default = __webpack_exports__["default"];
+/******/ export { __webpack_exports__decorateBlock as decorateBlock, __webpack_exports__default as default };
+/******/ 

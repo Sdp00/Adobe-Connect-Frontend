@@ -1,89 +1,168 @@
 /******/ var __webpack_modules__ = ({
 
-/***/ "./react-app/app/Myposts/components/app.jsx":
-/*!**************************************************!*\
-  !*** ./react-app/app/Myposts/components/app.jsx ***!
-  \**************************************************/
+/***/ "./react-app/app/upcomingevents/components/app.jsx":
+/*!*********************************************************!*\
+  !*** ./react-app/app/upcomingevents/components/app.jsx ***!
+  \*********************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ MyPosts)
+/* harmony export */   "default": () => (/* binding */ App)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _styles_index_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../styles/index.css */ "./react-app/app/Myposts/styles/index.css");
-/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 
 
+const calendarIcon = '/icons/calendar.svg';
+const clockIcon = '/icons/clock.svg';
+const locationIcon = '/icons/location.svg';
+function App() {
+  const [events, setEvents] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
+  const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(true);
+  const [error, setError] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const [responses, setResponses] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({}); // accept/decline state
 
-function MyPosts() {
-  const [posts, setPosts] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
-  const USER_ID = 1;
+  // Fetch events from Supabase
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    async function loadPosts() {
+    async function fetchEvents() {
+      setLoading(true);
       try {
-        // Fetch local mock json (EDS-style)
-        const response = await fetch('db.json');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-
-        // Filter posts by user
-        const userPosts = data.posts.filter(post => post.userId === USER_ID);
-        setPosts(userPosts);
-      } catch (error) {
-        console.error('Failed to load posts:', error);
+        const {
+          data,
+          error: fetchError
+        } = await window.SupabaseUtils.getRecords('events', {
+          select: 'id,title,date,time,location,image,deadline',
+          orderBy: 'date',
+          ascending: true
+        });
+        if (fetchError) throw fetchError;
+        setEvents(data || []);
+      } catch (err) {
+        console.error(err);
+        setError('Failed to fetch events');
+      } finally {
+        setLoading(false);
       }
     }
-    loadPosts();
+    fetchEvents();
   }, []);
-  const handleRemove = id => {
-    // UI-only removal (mock behavior)
-    setPosts(prev => prev.filter(post => post.id !== id));
+  const getDaysRemaining = deadline => {
+    if (!deadline) return null;
+    const diff = new Date(deadline) - new Date();
+    return Math.ceil(diff / (1000 * 60 * 60 * 24));
   };
-  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("section", {
-    className: "myposts-page",
-    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("h1", {
-      className: "myposts-title",
-      children: "My Posts"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("p", {
-      className: "myposts-subtitle",
-      children: "Posts you have created recently"
-    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
-      className: "myposts-grid",
-      children: [posts.map(post => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
-        className: "post-card",
-        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("img", {
-          src: post.image,
-          alt: post.title
-        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsxs)("div", {
-          className: "post-content",
-          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("h3", {
-            children: post.title
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("p", {
-            children: post.description
-          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("button", {
-            className: "remove-btn",
-            onClick: () => handleRemove(post.id),
-            children: "\uD83D\uDDD1 Remove"
+
+  // Handle local accept/decline
+  const handleAccept = id => setResponses(prev => ({
+    ...prev,
+    [id]: 'accepted'
+  }));
+  const handleDecline = id => setResponses(prev => ({
+    ...prev,
+    [id]: 'declined'
+  }));
+  if (loading) return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
+    style: {
+      padding: 20
+    },
+    children: "Loading events\u2026"
+  });
+  if (error) return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
+    style: {
+      padding: 20,
+      color: 'red'
+    },
+    children: error
+  });
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("section", {
+    className: "upcoming-events-wrapper",
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("h2", {
+      className: "upcoming-events-title",
+      children: "Upcoming Events"
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+      className: "upcoming-events-list",
+      children: events.map(event => {
+        const daysRemaining = getDaysRemaining(event.deadline);
+        const response = responses[event.id];
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("article", {
+          className: "event-card",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+            className: "event-card-image",
+            children: event.image && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("img", {
+              src: event.image,
+              alt: event.title
+            })
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+            className: "event-card-content",
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("h3", {
+              className: "event-card-title",
+              children: event.title
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("p", {
+              className: "event-card-meta",
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("img", {
+                src: calendarIcon,
+                className: "event-icon",
+                alt: ""
+              }), event.date, " \u2022 ", event.time]
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("p", {
+              className: "event-card-meta",
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("img", {
+                src: locationIcon,
+                className: "event-icon",
+                alt: ""
+              }), event.location]
+            }), daysRemaining !== null && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("p", {
+              className: `event-card-deadline ${daysRemaining <= 3 ? 'urgent' : ''}`,
+              children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("img", {
+                src: clockIcon,
+                className: "event-icon",
+                alt: ""
+              }), daysRemaining > 0 ? `Respond within ${daysRemaining} day${daysRemaining !== 1 ? 's' : ''}` : 'Response overdue']
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+              className: "event-card-actions",
+              children: [!response && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.Fragment, {
+                children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
+                  className: "event-card-button accept",
+                  onClick: () => handleAccept(event.id),
+                  children: "Accept"
+                }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
+                  className: "event-card-button decline",
+                  onClick: () => handleDecline(event.id),
+                  children: "Decline"
+                })]
+              }), response === 'accepted' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
+                className: "event-card-button accept",
+                disabled: true,
+                style: {
+                  cursor: 'default',
+                  opacity: 0.85
+                },
+                children: "\u2713 Accepted"
+              }), response === 'declined' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
+                className: "event-card-button decline",
+                disabled: true,
+                style: {
+                  cursor: 'default',
+                  opacity: 0.85
+                },
+                children: "\u2715 Declined"
+              })]
+            })]
           })]
-        })]
-      }, post.id)), posts.length === 0 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_2__.jsx)("div", {
-        className: "empty-state",
-        children: "No posts available"
-      })]
+        }, event.id);
+      })
     })]
   });
 }
 
 /***/ }),
 
-/***/ "./react-app/app/Myposts/index.jsx":
-/*!*****************************************!*\
-  !*** ./react-app/app/Myposts/index.jsx ***!
-  \*****************************************/
+/***/ "./react-app/app/upcomingevents/index.jsx":
+/*!************************************************!*\
+  !*** ./react-app/app/upcomingevents/index.jsx ***!
+  \************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -92,27 +171,29 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* binding */ decorate)
 /* harmony export */ });
 /* harmony import */ var react_dom_client__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-dom/client */ "./node_modules/react-dom/client.js");
-/* harmony import */ var _styles_index_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./styles/index.css */ "./react-app/app/Myposts/styles/index.css");
-/* harmony import */ var _components_app_jsx__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/app.jsx */ "./react-app/app/Myposts/components/app.jsx");
+/* harmony import */ var _components_app_jsx__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/app.jsx */ "./react-app/app/upcomingevents/components/app.jsx");
+/* harmony import */ var _styles_index_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./styles/index.css */ "./react-app/app/upcomingevents/styles/index.css");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+// eslint-disable-next-line import/extensions
 
+// eslint-disable-next-line no-unused-vars
 
 
 
 async function decorateBlock(block) {
   const root = (0,react_dom_client__WEBPACK_IMPORTED_MODULE_0__.createRoot)(block);
-  root.render(/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_components_app_jsx__WEBPACK_IMPORTED_MODULE_2__["default"], {}));
+  root.render(/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_components_app_jsx__WEBPACK_IMPORTED_MODULE_1__["default"], {}));
 }
 async function decorate(block) {
-  await decorateBlock(block);
+  decorateBlock(block);
 }
 
 /***/ }),
 
-/***/ "./react-app/app/Myposts/styles/index.css":
-/*!************************************************!*\
-  !*** ./react-app/app/Myposts/styles/index.css ***!
-  \************************************************/
+/***/ "./react-app/app/upcomingevents/styles/index.css":
+/*!*******************************************************!*\
+  !*** ./react-app/app/upcomingevents/styles/index.css ***!
+  \*******************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -248,7 +329,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	// undefined = chunk not loaded, null = chunk preloaded/prefetched
 /******/ 	// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
 /******/ 	var installedChunks = {
-/******/ 		"Myposts": 0
+/******/ 		"upcomingevents": 0
 /******/ 	};
 /******/ 	
 /******/ 	// no chunk on demand loading
@@ -299,7 +380,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ // Load entry module and return exports
 /******/ // This entry module depends on other loaded chunks and execution need to be delayed
 /******/ __webpack_require__.O(undefined, ["vendor"], () => (__webpack_require__("./node_modules/webpack-dev-server/client/index.js?protocol=ws%3A&hostname=localhost&port=4200&pathname=%2Fws&logging=info&overlay=true&reconnect=10&hot=false&live-reload=true")))
-/******/ var __webpack_exports__ = __webpack_require__.O(undefined, ["vendor"], () => (__webpack_require__("./react-app/app/Myposts/index.jsx")))
+/******/ var __webpack_exports__ = __webpack_require__.O(undefined, ["vendor"], () => (__webpack_require__("./react-app/app/upcomingevents/index.jsx")))
 /******/ __webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ var __webpack_exports__decorateBlock = __webpack_exports__.decorateBlock;
 /******/ var __webpack_exports__default = __webpack_exports__["default"];
