@@ -1,11 +1,6 @@
 import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
-import createModal from '../../helper/helper.js';
 
-/**
- * loads and decorates the header, mainly the nav
- * @param {Element} block The header block element
- */
 export default async function decorate(block) {
   const navMeta = getMetadata('nav');
   const navPath = navMeta ? new URL(navMeta, window.location).pathname : '/nav';
@@ -14,11 +9,9 @@ export default async function decorate(block) {
   const content = fragment.querySelector(':scope > div > div');
   if (!content) return;
 
-
   const items = [...content.querySelectorAll('p')];
   const title = items[0]?.textContent?.trim() || '';
   const searchText = items[1]?.textContent?.trim() || '';
-
 
   block.textContent = '';
 
@@ -29,13 +22,11 @@ export default async function decorate(block) {
   const nav = document.createElement('nav');
   nav.className = 'nav-inner';
 
-
   nav.innerHTML = `
     <div class="nav-left">
       <a href="/"><img class="nav-logo-img" src="/blocks/header/Adobe-logo.jpeg" alt="Adobe" /></a>
       <span class="nav-title">${title}</span>
     </div>
-
 
     <div class="nav-center">
       <div class="nav-search">
@@ -47,19 +38,29 @@ export default async function decorate(block) {
       </div>
     </div>
 
-
     <div class="nav-right">
 
+      <!-- Mobile Search Button -->
+      <button class="icon-btn mobile-search-btn" aria-label="Search">
+        <svg class="nav-icon" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="7"></circle>
+          <line x1="16.65" y1="16.65" x2="21" y2="21"></line>
+        </svg>
+      </button>
+
+      <!-- Admin + Button (only on /admin) -->
       ${isAdminPage ? `
-      <button class="icon-btn admin-add-btn" title="Create Item">
-        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+      <button class="icon-btn admin-add-btn" title="Create Item" aria-label="Create Item">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
           <line x1="12" y1="5" x2="12" y2="19"/>
           <line x1="5" y1="12" x2="19" y2="12"/>
         </svg>
       </button>` : ''}
 
-      <button class="icon-btn theme-toggle-btn"></button>
+      <!-- Theme toggle -->
+      <button class="icon-btn theme-toggle-btn" aria-label="Toggle theme"></button>
 
+      <!-- Notifications -->
       <div class="notify">
         <button class="icon-btn notify-trigger" aria-label="Notifications">
           <svg class="nav-icon" viewBox="0 0 24 24">
@@ -70,6 +71,7 @@ export default async function decorate(block) {
         </button>
       </div>
 
+      <!-- Profile -->
       <div class="profile">
         <div class="profile-trigger" aria-label="Profile menu">
           <div class="avatar">J</div>
@@ -78,13 +80,11 @@ export default async function decorate(block) {
           </svg>
         </div>
 
-
         <div class="profile-menu">
           <div class="profile-info">
             <div class="profile-name">Jaishree D G</div>
             <div class="profile-role">Apprentice Tech</div>
           </div>
-
 
           <ul>
             <li class="menu-add-info">
@@ -95,7 +95,6 @@ export default async function decorate(block) {
               <span class="add-info-label">${addInfoLabel}</span>
             </li>
 
-
             <li class="menu-posts">
               <svg class="menu-icon" viewBox="0 0 24 24">
                 <rect x="4" y="4" width="16" height="16" rx="2"></rect>
@@ -104,7 +103,6 @@ export default async function decorate(block) {
               </svg>
               My Posts
             </li>
-
 
             <li class="menu-hierarchy">
               <svg class="menu-icon" viewBox="0 0 24 24">
@@ -116,7 +114,6 @@ export default async function decorate(block) {
               </svg>
               Hierarchy
             </li>
-
 
             <li class="danger menu-logout">
               <svg class="menu-icon" viewBox="0 0 24 24">
@@ -130,46 +127,73 @@ export default async function decorate(block) {
         </div>
       </div>
 
-
     </div>
   `;
 
+  nav.querySelector('.profile-menu').style.zIndex = '99999';
+
   const profile = nav.querySelector('.profile');
+  const profileMenu = nav.querySelector('.profile-menu');
 
-  nav.querySelector('.profile-trigger').onclick = (e) => {
-    e.stopPropagation();
-    profile.classList.toggle('open');
-  };
+  const mobileSearchBar = document.createElement('div');
+  mobileSearchBar.className = 'mobile-search-bar';
+  mobileSearchBar.innerHTML = `<input type="search" placeholder="${searchText}" />`;
+  nav.appendChild(mobileSearchBar);
 
-  document.addEventListener('click', () => {
+  function closeAll() {
     profile.classList.remove('open');
+    mobileSearchBar.classList.remove('open');
+  }
+
+  nav.querySelector('.profile-trigger').addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = profile.classList.contains('open');
+    closeAll();
+    if (!isOpen) profile.classList.add('open');
+  });
+
+  profileMenu.addEventListener('click', (e) => e.stopPropagation());
+
+  nav.querySelector('.mobile-search-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = mobileSearchBar.classList.contains('open');
+    closeAll();
+    if (!isOpen) {
+      mobileSearchBar.classList.add('open');
+      mobileSearchBar.querySelector('input').focus();
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!nav.contains(e.target)) closeAll();
   });
 
   nav.querySelector('.menu-hierarchy')?.addEventListener('click', () => {
     window.location.href = '/hierarchy';
   });
 
-
   nav.querySelector('.menu-posts')?.addEventListener('click', () => {
     window.location.href = '/myposts';
   });
-
 
   nav.querySelector('.menu-add-info')?.addEventListener('click', () => {
     openProfileModal(nav);
   });
 
-  nav.querySelector('.admin-add-btn')?.addEventListener('click', () => {
-    openCreateModal();
-  });
+  if (isAdminPage) {
+    nav.querySelector('.admin-add-btn')?.addEventListener('click', async () => {
+      const adminModule = await import('../admin/admin.js');
+      adminModule.openCreateModal();
+    });
+  }
 
   block.append(nav);
-  /* DARK / LIGHT MODE TOGGLE     */
+
+  /* Dark/Light Mode */
   const moonIcon = `
     <svg class="nav-icon" viewBox="0 0 24 24">
       <path d="M21 12.79A9 9 0 0111.21 3a7 7 0 109.79 9.79z"/>
-    </svg>
-  `;
+    </svg>`;
 
   const sunIcon = `
     <svg class="nav-icon" viewBox="0 0 24 24">
@@ -182,8 +206,7 @@ export default async function decorate(block) {
       <line x1="21" y1="12" x2="23" y2="12"/>
       <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
       <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-    </svg>
-  `;
+    </svg>`;
 
   const themeBtn = nav.querySelector('.theme-toggle-btn');
   const savedTheme = localStorage.getItem('theme') || 'light';
@@ -199,239 +222,7 @@ export default async function decorate(block) {
   });
 }
 
-
-/* UPLOAD MEDIA TO SUPABASE      */
-/* Uses the existing "uploads"   */
-/* public bucket                 */
-
-async function uploadMedia(file) {
-  const client = window.SupabaseUtils.client;
-  const filePath = `events/${Date.now()}_${file.name.replace(/\s+/g, '_')}`;
-
-  const { data, error } = await client.storage
-    .from('uploads') 
-    .upload(filePath, file, {
-      cacheControl: '3600',
-      upsert: false,
-      contentType: file.type,
-    });
-
-  if (error) throw new Error(`Upload failed: ${error.message}`);
-
-  const { data: urlData } = client.storage
-    .from('uploads')
-    .getPublicUrl(data.path);
-
-  return urlData.publicUrl;
-}
-/* CREATE ITEM MODAL (ADMIN)     */
-function openCreateModal() {
-  const form = document.createElement('form');
-  form.className = 'create-event-form';
-
-  form.innerHTML = `
-    <h2>Create New Item</h2>
-    <p>Fill in the details below to create a new item.</p>
-  `;
-
-  const categorySelect = document.createElement('select');
-  categorySelect.name = 'category';
-  categorySelect.required = true;
-  categorySelect.innerHTML = `
-    <option value="">Select Category *</option>
-    <option value="event">Event</option>
-    <option value="training">Training</option>
-    <option value="newsletter">Newsletter</option>
-    <option value="others">Others</option>
-  `;
-
-  const dynamicFields = document.createElement('div');
-  dynamicFields.className = 'dynamic-fields';
-
-  form.append(categorySelect, dynamicFields);
-
-  const footer = document.createElement('div');
-  footer.className = 'modal-actions';
-  footer.innerHTML = `
-    <button type="button" class="btn-secondary">Cancel</button>
-    <button type="submit" class="btn-primary">Submit</button>
-  `;
-
-  const modal = createModal({
-    id: 'create-item',
-    content: form,
-    footer,
-    onClose: () => {},
-  });
-
-  footer.querySelector('.btn-secondary').addEventListener('click', modal.close);
-  footer.querySelector('.btn-primary').addEventListener('click', () => form.requestSubmit());
-
-  /* Dynamic fields based on category */
-  categorySelect.addEventListener('change', () => {
-    const value = categorySelect.value;
-    dynamicFields.innerHTML = '';
-
-    if (value === 'event') {
-      dynamicFields.innerHTML = `
-        <label>Title <span class="req">*</span><input required name="title" placeholder="Enter title" /></label>
-        <label>
-          Media (Image/Video) <span class="req">*</span>
-          <input type="file" accept="image/*,video/*" name="media" required />
-          <span class="file-hint">Will be uploaded and stored as a URL</span>
-        </label>
-        <label>Location <span class="req">*</span><input required name="location" placeholder="Enter location" /></label>
-        <div class="form-row">
-          <label>Date <span class="req">*</span><input type="date" required name="date" /></label>
-          <label>Time <span class="req">*</span><input type="time" required name="time" /></label>
-        </div>
-        <label>Deadline <span class="req">*</span><input type="date" required name="deadline" /></label>
-        <label>Description<textarea name="description" placeholder="Optional description..."></textarea></label>
-      `;
-    } else if (value === 'training') {
-      dynamicFields.innerHTML = `
-        <label>Title <span class="req">*</span><input required name="title" placeholder="Enter title" /></label>
-        <label>Media Upload (Image/Video)<input type="file" accept="image/*,video/*" name="media" /></label>
-        <label>Location<input name="location" placeholder="Enter location" /></label>
-        <div class="form-row">
-          <label>Date <span class="req">*</span><input type="date" required name="date" /></label>
-          <label>Time <span class="req">*</span><input type="time" required name="time" /></label>
-        </div>
-        <label>Description<textarea name="description" placeholder="Optional description..."></textarea></label>
-      `;
-    } else if (value === 'newsletter') {
-      dynamicFields.innerHTML = `
-        <label>Title <span class="req">*</span><input required name="title" placeholder="Enter title" /></label>
-        <label>Image<input type="file" accept="image/*" name="image" /></label>
-        <label>Description <span class="req">*</span><textarea name="description" placeholder="Enter description..."></textarea></label>
-        <label>Date <span class="req">*</span><input type="date" required name="date" /></label>
-        <label>Redirection URL<input type="url" name="url" placeholder="https://example.com" /></label>
-      `;
-    } else if (value === 'others') {
-      dynamicFields.innerHTML = `
-        <label>Title <span class="req">*</span><input required name="title" placeholder="Enter title" /></label>
-        <label>Description <span class="req">*</span><textarea name="description" placeholder="Enter description..."></textarea></label>
-        <label>Image<input type="file" accept="image/*" name="image" /></label>
-      `;
-    }
-  });
-
-  /* Submit */
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData);
-    const submitBtn = footer.querySelector('.btn-primary');
-
-    // ── ONLY EVENT posts to the database ──
-    if (data.category === 'event') {
-      if (!window.SupabaseUtils) {
-        showToast('Supabase not ready. Please try again.', 'error');
-        return;
-      }
-
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Uploading media...';
-
-      try {
-        const mediaFile = form.querySelector('input[name="media"]').files[0];
-        let mediaUrl = null;
-
-        if (mediaFile) {
-          mediaUrl = await uploadMedia(mediaFile);
-        }
-
-        submitBtn.textContent = 'Saving event...';
-
-        const { error: dbError } = await window.SupabaseUtils.createRecord('events', {
-          title: data.title,
-          Media: mediaUrl,
-          location: data.location,
-          date: data.date,
-          time: data.time,
-          deadline: data.deadline,
-        });
-
-        if (dbError) {
-          showToast(`Failed to save event: ${dbError.message}`, 'error');
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Submit';
-          return;
-        }
-
-        window.dispatchEvent(new Event('events-updated'));
-        modal.close();
-        showToast('Event created successfully!');
-      } catch (err) {
-        console.error(err);
-        showToast(err.message || 'Something went wrong. Please try again.', 'error');
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Submit';
-      }
-
-  } else if (data.category === 'training' || data.category === 'newsletter') {
-  modal.close();
-  const label = data.category.charAt(0).toUpperCase() + data.category.slice(1);
-  showToast(`${label} submitted successfully!`);
-
-} else if (data.category === 'others') {
-  if (!window.SupabaseUtils) {
-    showToast('Supabase not ready. Please try again.', 'error');
-    return;
-  }
-
-  submitBtn.disabled = true;
-  submitBtn.textContent = 'Saving...';
-
-  try {
-    let imageUrl = null;
-    const imageFile = form.querySelector('input[name="image"]')?.files[0];
-
-    if (imageFile) {
-      submitBtn.textContent = 'Uploading image...';
-      imageUrl = await uploadMedia(imageFile);
-    }
-
-    const { error: dbError } = await window.SupabaseUtils.createRecord('others', {
-      title: data.title,
-      description: data.description,
-      image: imageUrl,
-    });
-
-    if (dbError) {
-      showToast(`Failed to save: ${dbError.message}`, 'error');
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Submit';
-      return;
-    }
-
-    modal.close();
-    showToast('Updated successfully!');
-
-  } catch (err) {
-    console.error(err);
-    showToast(err.message || 'Something went wrong.', 'error');
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Submit';
-  }
-}
-  });
-
-  modal.open();
-}
-/* TOAST NOTIFICATION            */
-
-function showToast(message, type = 'success') {
-  const existing = document.querySelector('.toast-notification');
-  if (existing) existing.remove();
-
-  const toast = document.createElement('div');
-  toast.className = `toast-notification${type === 'error' ? ' toast-error' : ''}`;
-  toast.textContent = message;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 3500);
-}
-/* PROFILE COMPLETE MODAL LOGIC */
+/* PROFILE MODAL */
 function openProfileModal(nav) {
   if (document.querySelector('.profile-modal-overlay')) return;
 
@@ -439,10 +230,8 @@ function openProfileModal(nav) {
   const savedInterests = JSON.parse(localStorage.getItem('profileInterests') || '[]');
   const isEdit = localStorage.getItem('profileComplete') === 'true';
 
-
   const overlay = document.createElement('div');
   overlay.className = 'profile-modal-overlay';
-
 
   overlay.innerHTML = `
     <div class="profile-modal">
@@ -450,21 +239,15 @@ function openProfileModal(nav) {
         <h3>${isEdit ? 'Edit Your Profile' : 'Complete Your Profile'}</h3>
         <button class="modal-close">✕</button>
       </div>
-
-
       <div class="profile-modal-body">
         <label>Birthday</label>
         <div class="date-field">
           <input type="date" value="${savedDate}" />
         </div>
-
-
         <div class="interests-header">
           <span>Interests</span>
           <span class="interest-count">${savedInterests.length} selected (min 3)</span>
         </div>
-
-
         <div class="interest-list">
           ${[
             'UI/UX Design', 'Development', 'Marketing', 'Music',
@@ -472,21 +255,16 @@ function openProfileModal(nav) {
             'Travelling', 'Psychology', 'Fitness', 'Gaming', 'Art', 'Dancing', 'Fashion',
           ].map((i) => `<button class="interest-chip${savedInterests.includes(i) ? ' selected' : ''}">${i}</button>`).join('')}
         </div>
-
-
         <button class="update-btn" ${savedInterests.length >= 3 ? '' : 'disabled'}>Update Profile</button>
       </div>
     </div>
   `;
 
-
   document.body.appendChild(overlay);
-
 
   const chips = overlay.querySelectorAll('.interest-chip');
   const countText = overlay.querySelector('.interest-count');
   const updateBtn = overlay.querySelector('.update-btn');
-
 
   function updateState() {
     const selected = overlay.querySelectorAll('.interest-chip.selected').length;
@@ -503,25 +281,22 @@ function openProfileModal(nav) {
 
   updateBtn.addEventListener('click', () => {
     const dateInput = overlay.querySelector('input[type="date"]');
-
     if (!dateInput.value) {
       dateInput.setAttribute('required', 'true');
       dateInput.reportValidity();
       return;
     }
 
-    const selectedInterests = [...overlay.querySelectorAll('.interest-chip.selected')].map((c) => c.textContent.trim());
-
+    const selectedInterests = [...overlay.querySelectorAll('.interest-chip.selected')]
+      .map((c) => c.textContent.trim());
     localStorage.setItem('profileBirthday', dateInput.value);
     localStorage.setItem('profileInterests', JSON.stringify(selectedInterests));
     localStorage.setItem('profileComplete', 'true');
 
     const label = nav?.querySelector('.add-info-label');
     if (label) label.textContent = 'Edit Info';
-
     overlay.remove();
   });
-
 
   overlay.querySelector('.modal-close').onclick = () => overlay.remove();
   overlay.addEventListener('click', (e) => {

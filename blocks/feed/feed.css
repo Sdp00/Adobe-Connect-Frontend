@@ -1,2 +1,372 @@
-/* stylelint-disable */
-.feed-status{color:#8a94a6;font-size:.9375rem;margin:40px auto;max-width:680px;padding:0 16px;text-align:center}.feed-status-error{color:#dc2626}.feed-wrapper{padding:0!important}.feed{gap:16px;margin:0 auto;max-width:680px;padding:16px;transform:translateX(-20px)}.feed,.feed-card{box-sizing:border-box;display:flex;flex-direction:column}.feed-card{background:#fff;border:1px solid #e2e6ea;border-radius:12px;box-shadow:0 2px 8px rgb(0 0 0/8%);gap:12px;padding:20px}.feed-card-header{justify-content:space-between}.feed-card-header,.feed-card-user{align-items:center;display:flex;gap:10px}.feed-card-user{min-width:0}.feed-card-avatar{align-items:center;border-radius:50%;color:#fff;display:flex;flex-shrink:0;font-size:.875rem;font-weight:700;height:42px;justify-content:center;letter-spacing:.03em;width:42px}.feed-card-user-info{display:flex;flex-direction:column;min-width:0}.feed-card-name{color:#1a2332;font-size:.9375rem;font-weight:700}.feed-card-meta,.feed-card-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.feed-card-meta{align-items:center;color:#8a94a6;display:flex;font-size:.75rem;gap:4px}.feed-card-dot{font-size:.875rem;line-height:1}.feed-card-follow{background:transparent;border:none;color:#0073e6;cursor:pointer;flex-shrink:0;font-family:inherit;font-size:.875rem;font-weight:600;margin:0;padding:0;transition:color .15s ease;white-space:nowrap}.feed-card-follow:hover{color:#005bbf}.feed-card-follow.following{color:#8a94a6}.feed-card-follow.following:hover{color:#5a6474}.feed-card-title{font-size:1rem;font-weight:700;line-height:1.4}.feed-card-text,.feed-card-title{color:#1a2332;margin:0;overflow-wrap:break-word}.feed-card-text{font-size:.9375rem;line-height:1.65}.feed-card-tags{display:flex;flex-wrap:wrap;gap:6px}.feed-card-tag{color:#0073e6;cursor:pointer;font-size:.8125rem;font-weight:500;transition:color .15s ease}.feed-card-tag:hover{color:#005bbf;text-decoration:underline}.feed-card-image{border-radius:10px;display:block;max-height:380px;object-fit:cover;width:100%}.feed-card-attachment{align-items:center;background:#f4f6f8;border:1px solid #e2e6ea;border-radius:10px;cursor:pointer;display:flex;gap:12px;padding:12px 14px;transition:border-color .15s ease,background .15s ease}.feed-card-attachment:hover{background:#e8f0fe;border-color:#0073e6}.feed-card-attachment-icon{align-items:center;background:#fff;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.1);display:flex;flex-shrink:0;height:36px;justify-content:center;width:36px}.feed-card-attachment-icon svg{fill:none;height:18px;stroke:#0073e6;stroke-linecap:round;width:18px}.feed-card-attachment-info{display:flex;flex-direction:column;min-width:0}.feed-card-attachment-name{color:#1a2332;font-size:.875rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.feed-card-attachment-type{color:#8a94a6;font-size:.75rem}.feed-card-footer{align-items:center;border-top:1px solid #f0f2f5;display:flex;justify-content:space-between;padding-top:4px}.feed-card-actions{align-items:center;display:flex;gap:4px}.feed-action-btn{align-items:center;background:transparent;border:none;border-radius:8px;color:#8a94a6;cursor:pointer;display:flex;font-family:inherit;font-size:.875rem;font-weight:500;gap:5px;margin:0;padding:6px 10px;transition:background .15s ease,color .15s ease}.feed-action-btn:hover{background:#f4f6f8;color:#5a6474}.feed-action-btn.liked{color:#e11d48}.feed-action-btn.liked:hover{background:#fff1f2;color:#be123c}.feed-action-btn.saved{color:#0073e6}.feed-action-btn.saved:hover{background:#e8f0fe;color:#005bbf}.feed-action-btn svg{fill:none;flex-shrink:0;height:18px;stroke:currentcolor;width:18px}.feed-action-btn.liked svg{stroke:#e11d48}.feed-save-btn{padding:6px 8px}.feed-save-btn svg{fill:none;height:18px;stroke:#8a94a6;width:18px}.feed-save-btn.saved svg{fill:#0073e6;stroke:#0073e6}.feed-sentinel{align-items:center;display:flex;flex-direction:column;min-height:52px;padding:20px 0 12px}.feed-spinner{animation:feed-spin .75s linear infinite;border:3px solid #f0d0d8;border-radius:50%;border-top-color:#e11d48;display:inline-block;height:32px;width:32px}@keyframes feed-spin{to{transform:rotate(1turn)}}.feed-end-message{color:#8a94a6;font-size:.8125rem;margin:0}@media (width <= 630px){.feed{gap:12px;padding:12px 8px}.feed-card{border-radius:10px;padding:16px}.feed-card-image{max-height:260px}}
+/*!***************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./react-app/app/feed/styles/index.css ***!
+  \***************************************************************************************/
+/* Feed Component — Adobe Connect EDS ////////////////////////////////// */
+ 
+/* ── Feed Status (loading / error) ──────────────────────────────────────── */
+.feed-status {
+  max-width: 680px;
+  margin: 40px auto;
+  padding: 0 16px;
+  text-align: center;
+  font-size: 0.9375rem;
+  color: #8a94a6;
+}
+ 
+.feed-status-error {
+  color: #dc2626;
+}
+.feed-wrapper {
+  padding: 0 !important;
+}
+ 
+/* ── Feed Container ──────────────────────────────────────────────────────── */
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 16px;
+  box-sizing: border-box;
+  transform: translateX(-20px);
+}
+ 
+/* ── Post Card ───────────────────────────────────────────────────────────── */
+.feed-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border: 1px solid #e2e6ea;
+  box-sizing: border-box;
+}
+ 
+/* ── Card Header ─────────────────────────────────────────────────────────── */
+.feed-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+ 
+.feed-card-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+ 
+.feed-card-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  letter-spacing: 0.03em;
+}
+ 
+.feed-card-user-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+ 
+.feed-card-name {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #1a2332;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+ 
+.feed-card-meta {
+  font-size: 0.75rem;
+  color: #8a94a6;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+ 
+.feed-card-dot {
+  font-size: 0.875rem;
+  line-height: 1;
+}
+ 
+/* ── Follow Button ───────────────────────────────────────────────────────── */
+.feed-card-follow {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #0073e6;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-family: inherit;
+  transition: color 0.15s ease;
+}
+ 
+.feed-card-follow:hover {
+  color: #005bbf;
+}
+ 
+.feed-card-follow.following {
+  color: #8a94a6;
+}
+ 
+.feed-card-follow.following:hover {
+  color: #5a6474;
+}
+ 
+/* ── Post Title (optional, for user-created posts) ───────────────────────── */
+.feed-card-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a2332;
+  margin: 0;
+  line-height: 1.4;
+  overflow-wrap: break-word;
+}
+ 
+/* ── Post Text ───────────────────────────────────────────────────────────── */
+.feed-card-text {
+  font-size: 0.9375rem;
+  color: #1a2332;
+  line-height: 1.65;
+  margin: 0;
+  overflow-wrap: break-word;
+}
+ 
+/* ── Tags ────────────────────────────────────────────────────────────────── */
+.feed-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+ 
+.feed-card-tag {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #0073e6;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+ 
+.feed-card-tag:hover {
+  color: #005bbf;
+  text-decoration: underline;
+}
+ 
+/* ── Image ───────────────────────────────────────────────────────────────── */
+.feed-card-image {
+  width: 100%;
+  border-radius: 10px;
+  display: block;
+  object-fit: cover;
+  max-height: 380px;
+}
+ 
+/* ── Attachment ──────────────────────────────────────────────────────────── */
+.feed-card-attachment {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid #e2e6ea;
+  border-radius: 10px;
+  background: #f4f6f8;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+ 
+.feed-card-attachment:hover {
+  border-color: #0073e6;
+  background: #e8f0fe;
+}
+ 
+.feed-card-attachment-icon {
+  width: 36px;
+  height: 36px;
+  background: #fff;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 1px 4px rgb(0 0 0 / 10%);
+}
+ 
+.feed-card-attachment-icon svg {
+  width: 18px;
+  height: 18px;
+  stroke: #0073e6;
+  fill: none;
+  stroke-linecap: round;
+}
+ 
+.feed-card-attachment-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+ 
+.feed-card-attachment-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1a2332;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+ 
+.feed-card-attachment-type {
+  font-size: 0.75rem;
+  color: #8a94a6;
+}
+ 
+/* ── Card Footer ─────────────────────────────────────────────────────────── */
+.feed-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 4px;
+  border-top: 1px solid #f0f2f5;
+}
+ 
+/* ── Action Buttons ──────────────────────────────────────────────────────── */
+.feed-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+ 
+.feed-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: none;
+  padding: 6px 10px;
+  margin: 0;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #8a94a6;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+ 
+.feed-action-btn:hover {
+  background: #f4f6f8;
+  color: #5a6474;
+}
+ 
+.feed-action-btn.liked {
+  color: #e11d48;
+}
+ 
+.feed-action-btn.liked:hover {
+  background: #fff1f2;
+  color: #be123c;
+}
+ 
+.feed-action-btn.saved {
+  color: #0073e6;
+}
+ 
+.feed-action-btn.saved:hover {
+  background: #e8f0fe;
+  color: #005bbf;
+}
+ 
+.feed-action-btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  stroke: currentcolor;
+  fill: none;
+}
+ 
+.feed-action-btn.liked svg {
+  stroke: #e11d48;
+}
+ 
+.feed-save-btn {
+  padding: 6px 8px;
+}
+ 
+/* stylelint-disable-next-line no-descending-specificity */
+.feed-save-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke: #8a94a6;
+  fill: none;
+}
+ 
+.feed-save-btn.saved svg {
+  stroke: #0073e6;
+  fill: #0073e6;
+}
+ 
+/* ── Lazy Load Sentinel ──────────────────────────────────────────────────── */
+.feed-sentinel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0 12px;
+  min-height: 52px;
+}
+ 
+.feed-spinner {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 3px solid #f0d0d8;
+  border-top-color: #e11d48;
+  animation: feed-spin 0.75s linear infinite;
+}
+ 
+@keyframes feed-spin {
+  to { transform: rotate(360deg); }
+}
+ 
+.feed-end-message {
+  font-size: 0.8125rem;
+  color: #8a94a6;
+  margin: 0;
+}
+ 
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (width <= 630px) {
+  .feed {
+    padding: 12px 8px;
+    gap: 12px;
+  }
+ 
+  .feed-card {
+    padding: 16px;
+    border-radius: 10px;
+  }
+ 
+  .feed-card-image {
+    max-height: 260px;
+  }
+}
+ 
