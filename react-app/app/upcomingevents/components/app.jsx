@@ -33,11 +33,14 @@ export default function App() {
       try {
         await waitForSupabase();
 
-        const { data, error: fetchError } = await window.SupabaseUtils.getRecords('events', {
-          select: 'id,title,date,time,location,Media,deadline',
-          orderBy: 'date',
-          ascending: true,
-        });
+        const today = new Date();
+        const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+        const { data, error: fetchError } = await window.SupabaseUtils.client
+          .from('events')
+          .select('id,title,date,time,location,Media,deadline')
+          .gte('date', todayStr)
+          .order('date', { ascending: true });
 
         if (fetchError) throw fetchError;
         setEvents(data || []);

@@ -36,7 +36,6 @@
   --spectrum-red-600: #e11d48;
   --spectrum-red-700: #be123c;
   --spectrum-blue-400: #60a5fa;
-  --spectrum-blue-600: #3b63fb;
   --spectrum-blue-700: #1d3ecf;
 
   /* Surface / Background */
@@ -508,7 +507,6 @@ main .section.highlight {
     opacity:   1;
   }
 }
-
 /* ============================================================
    CREATE ITEM MODAL — GLOBAL OVERRIDES
    ============================================================ */
@@ -668,16 +666,15 @@ main .section.highlight {
   width: 100% !important;
 }
 
+/* FIX: was flex + flex-direction:column which pushed * to new line */
 .create-event-form label {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 6px !important;
+  display: block !important;
   width: 100% !important;
   font-size: 13px !important;
   font-weight: 600 !important;
   color: #1a1a1a !important;
   box-sizing: border-box !important;
-  margin: 0 !important;
+  margin: 0 0 6px !important;
 }
 
 .create-event-form input,
@@ -739,10 +736,27 @@ main .section.highlight {
   width: 100% !important;
 }
 
+.form-field {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+
+.label-text {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #1a1a1a !important;
+  white-space: nowrap !important;
+}
+
 .req {
+  display: inline !important;
   color: #e60023 !important;
-  margin-left: 3px !important;
   font-weight: 700 !important;
+  margin-left: 1px !important;
 }
 
 .file-hint {
@@ -750,6 +764,13 @@ main .section.highlight {
   font-weight: 400 !important;
   color: #888 !important;
   margin-top: 2px !important;
+  display: block !important;
+}
+
+.field-error {
+  color: #e11d48 !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
   display: block !important;
 }
 
@@ -914,6 +935,10 @@ html[data-theme="dark"] .create-event-form label {
   color: #e0e0e0 !important;
 }
 
+html[data-theme="dark"] .label-text {
+  color: #e0e0e0 !important;
+}
+
 html[data-theme="dark"] .create-event-form input,
 html[data-theme="dark"] .create-event-form select,
 html[data-theme="dark"] .create-event-form textarea,
@@ -981,5 +1006,48 @@ html[data-theme="dark"] .file-hint {
 
   .form-row {
     grid-template-columns: 1fr !important;
+  }
+}
+/* ===== GLOBAL TOAST NOTIFICATION ===== */
+
+.toast-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #16a34a; /* green success */
+  color: #ffffff;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  animation: toast-slide 0.35s ease;
+}
+
+/* error toast */
+.toast-error {
+  background: #e11d48;
+}
+
+/* slide animation */
+@keyframes toast-slide {
+  from {
+    opacity: 0;
+    transform: translateX(120%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes toastSlide {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
