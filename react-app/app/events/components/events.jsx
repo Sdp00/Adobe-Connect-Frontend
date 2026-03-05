@@ -1,40 +1,24 @@
 import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
-// ─── Parse EDS Block ────────────────────────────────────────────────────────
-// Reads your da.live "Events" document block (a table rendered as divs by EDS)
-// Expected column order in your da.live table:
-// | Title | Date (YYYY-MM-DD) | Time | Location | Image | Status | Days To Respond |
-function parseEDSBlock(block) {
-  if (!block) return [];
-
-  // EDS renders table rows as: .events > div (row) > div (cell)
-  const rows = Array.from(block.querySelectorAll(':scope > div'));
-
-  return rows
-    .map((row, idx) => {
-      const cells = Array.from(row.querySelectorAll(':scope > div'));
-      const getText = (i) => cells[i]?.textContent?.trim() || '';
-      const getImg = (i) => cells[i]?.querySelector('picture img, img')?.src || '';
-
-      const title = getText(0);
-      if (!title) return null; // skip empty rows / header rows
-
-      return {
-        id: idx + 1,
-        title,
-        date: getText(1),
-        time: getText(2),
-        location: getText(3),
-        image: getImg(4) || getText(4),
-        status: getText(5) || 'pending',
-        daysToRespond: getText(6) ? parseInt(getText(6), 10) : null,
-        rsvp: null,
-      };
-    })
-    .filter(Boolean);
+function waitForSupabase() {
+  return new Promise((resolve, reject) => {
+    if (window.SupabaseUtils) { resolve(); return; }
+    let attempts = 0;
+    const interval = setInterval(() => {
+      attempts += 1;
+      if (window.SupabaseUtils) {
+        clearInterval(interval);
+        resolve();
+      } else if (attempts >= 30) {
+        clearInterval(interval);
+        reject(new Error('SupabaseUtils did not load in time'));
+      }
+    }, 100);
+  });
 }
 
-// ─── Calendar ───────────────────────────────────────────────────────────────
+// Compact Calendar Component with Event Names
 function Calendar({ events, onDateSelect }) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
@@ -43,268 +27,371 @@ function Calendar({ events, onDateSelect }) {
     const month = date.getMonth();
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
-    const days = [];
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
 
-    for (let i = 0; i < firstDay.getDay(); i += 1) days.push(null);
-    for (let i = 1; i <= lastDay.getDate(); i += 1) days.push(i);
+    const days = [];
+    for (let i = 0; i < startingDayOfWeek; i += 1) {
+      days.push(null);
+    }
+    for (let i = 1; i <= daysInMonth; i += 1) {
+      days.push(i);
+    }
     return days;
   };
 
-  const hasEvent = (day) => {
-    if (!day) return false;
-    const dateStr = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    return events.some((e) => e.date === dateStr);
+  const getEventForDay = (day) => {
+    if (!day) return null;
+    const dateStr = `${currentMonth.getFullYear()}-${String(
+      currentMonth.getMonth() + 1
+    ).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    return events.find((evt) => evt.date === dateStr);
   };
 
   const days = getDaysInMonth(currentMonth);
   const monthName = currentMonth.toLocaleDateString('en-US', { month: 'long' });
   const year = currentMonth.getFullYear();
 
-  const prevMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
-  const nextMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
+  const prevMonth = () =>
+    setCurrentMonth(
+      new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1)
+    );
+
+  const nextMonth = () =>
+    setCurrentMonth(
+      new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1)
+    );
 
   return (
-    <div className="calendar">
-      <div className="calendar-header">
-        <div className="calendar-title">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#eb5146" strokeWidth="2">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-            <line x1="16" y1="2" x2="16" y2="6" />
-            <line x1="8" y1="2" x2="8" y2="6" />
-            <line x1="3" y1="10" x2="21" y2="10" />
-          </svg>
-          <h2>Calendar</h2>
+    <div className="calendar-compact">
+      <div className="calendar-header-compact">
+        <button type="button" onClick={prevMonth} className="calendar-nav-btn">
+          &lt;
+        </button>
+        <div className="calendar-title-compact">
+          <span className="month-name">
+            {monthName} {year}
+          </span>
         </div>
-        <div className="calendar-nav">
-          <button type="button" onClick={prevMonth} className="calendar-nav-btn" aria-label="Previous month">&lt;</button>
-          <div className="calendar-month">
-            <span className="month-name">{monthName}</span>
-            <div className="year-controls">
-              <span>{year}</span>
+        <button type="button" onClick={nextMonth} className="calendar-nav-btn">
+          &gt;
+        </button>
+      </div>
+
+      <div className="calendar-grid-compact">
+        {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
+          <div key={`day-${idx}`} className="calendar-weekday-compact">
+            {day}
+          </div>
+        ))}
+        {days.map((day, idx) => {
+          const event = getEventForDay(day);
+          return (
+            <div
+              key={`date-${idx}`}
+              className={`calendar-day-compact${
+                !day ? ' calendar-day--empty' : ''
+              }${event ? ' calendar-day--event' : ''}`}
+            >
+              {day && (
+                <button
+                  type="button"
+                  className="calendar-day-btn-compact"
+                  onClick={() =>
+                    day && onDateSelect && onDateSelect(day)
+                  }
+                >
+                  <span className="calendar-day-number">{day}</span>
+                  {event && (
+                    <span className="calendar-event-name">
+                      {event.title}
+                    </span>
+                  )}
+                </button>
+              )}
             </div>
-          </div>
-          <button type="button" onClick={nextMonth} className="calendar-nav-btn" aria-label="Next month">&gt;</button>
-        </div>
-      </div>
-
-      <div className="calendar-grid">
-        {['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'].map((d) => (
-          <div key={d} className="calendar-weekday">{d}</div>
-        ))}
-        {days.map((day, idx) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <div key={`day-${idx}`} className={`calendar-day${!day ? ' calendar-day--empty' : ''}${hasEvent(day) ? ' calendar-day--event' : ''}`}>
-            {day && (
-              <button type="button" className="calendar-day-btn" onClick={() => onDateSelect && onDateSelect(day)}>
-                {day}
-              </button>
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
 }
 
-// ─── Quarter Filter ──────────────────────────────────────────────────────────
-function QuarterFilter({ selectedQuarters, onQuarterChange }) {
-  const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
+Calendar.propTypes = {
+  events: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      title: PropTypes.string.isRequired,
+      date: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  onDateSelect: PropTypes.func,
+};
 
-  const toggle = (q) => {
-    if (selectedQuarters.includes(q)) {
-      onQuarterChange(selectedQuarters.filter((x) => x !== q));
-    } else {
-      onQuarterChange([...selectedQuarters, q]);
-    }
-  };
+Calendar.defaultProps = {
+  onDateSelect: null,
+};
 
-  return (
-    <div className="quarter-filter">
-      <div className="quarter-filter-header">
-        <h3>Quarter Filter</h3>
-        <span className="quarter-year">{new Date().getFullYear()}</span>
-        <span className="quarter-range">Q1 — Q4</span>
-      </div>
-      <div className="quarter-slider">
-        <div className="quarter-line" />
-        {quarters.map((q) => (
-          <button
-            key={q}
-            type="button"
-            className={`quarter-btn${selectedQuarters.includes(q) ? ' quarter-btn--active' : ''}`}
-            onClick={() => toggle(q)}
-          >
-            {q}
-          </button>
-        ))}
-      </div>
-      <p className="quarter-hint">Tap quarters to adjust the range</p>
-    </div>
-  );
-}
-
-// ─── Event Card ──────────────────────────────────────────────────────────────
+// Event Card Component with Decline Modal
 function EventCard({ event, onRSVP }) {
-  const getStatusText = () => {
-    if (event.status === 'overdue') return 'Response overdue';
-    if (event.daysToRespond) return `Respond within ${event.daysToRespond} days`;
-    return '';
+  const [showDeclineModal, setShowDeclineModal] = useState(false);
+  const [declineReason, setDeclineReason] = useState('');
+
+  const handleDeclineSubmit = () => {
+    if (declineReason.trim()) {
+      onRSVP(event.id, 'declined', declineReason);
+      setShowDeclineModal(false);
+      setDeclineReason('');
+    }
   };
 
-  const formattedDate = (() => {
-    try {
-      return new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    } catch {
-      return event.date;
-    }
-  })();
+  const isPast = event.status === 'past';
 
   return (
-    <div className="event-card">
-      {event.image && <img src={event.image} alt={event.title} className="event-card-img" />}
-      <div className="event-card-content">
-        <h3 className="event-card-title">{event.title}</h3>
-        <div className="event-card-meta">
-          <div className="event-meta-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#eb5146" strokeWidth="2">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-              <line x1="16" y1="2" x2="16" y2="6" />
-              <line x1="8" y1="2" x2="8" y2="6" />
-              <line x1="3" y1="10" x2="21" y2="10" />
-            </svg>
-            <span>{formattedDate}{event.time ? ` • ${event.time}` : ''}</span>
-          </div>
-          {event.location && (
+    <>
+      <div className="event-card">
+        <img
+          src={event.Media || event.image || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800'}
+          alt={event.title}
+          className="event-card-img"
+        />
+        <div className="event-card-content">
+          <h3 className="event-card-title">{event.title}</h3>
+
+          <div className="event-card-meta">
             <div className="event-meta-item">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                <circle cx="12" cy="10" r="3" />
-              </svg>
+              <span>
+                {new Date(event.date).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                })}{' '}
+                • {event.time}
+              </span>
+            </div>
+
+            <div className="event-meta-item">
               <span>{event.location}</span>
             </div>
-          )}
-          {event.status !== 'past' && getStatusText() && (
-            <div className={`event-meta-item event-meta-item--${event.status}`}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg>
-              <span>{getStatusText()}</span>
+          </div>
+
+          {!isPast && !event.rsvp && (
+            <div className="event-card-actions">
+              <button
+                type="button"
+                className="btn"
+                onClick={() => onRSVP(event.id, 'accepted')}
+              >
+                Accept
+              </button>
+
+              <button
+                type="button"
+                className="btn"
+                onClick={() => setShowDeclineModal(true)}
+              >
+                Decline
+              </button>
             </div>
           )}
         </div>
-
-        {event.rsvp && (
-          <div className={`event-rsvp-badge event-rsvp-badge--${event.rsvp}`}>
-            {event.rsvp === 'accepted' ? '✓ Accepted' : '✗ Declined'}
-          </div>
-        )}
-
-        {event.status !== 'past' && !event.rsvp && (
-          <div className="event-card-actions">
-            <button type="button" className="event-btn event-btn--accept" onClick={() => onRSVP(event.id, 'accepted')}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-              Accept
-            </button>
-            <button type="button" className="event-btn event-btn--decline" onClick={() => onRSVP(event.id, 'declined')}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-              Decline
-            </button>
-          </div>
-        )}
       </div>
-    </div>
+
+      {showDeclineModal && !isPast && (
+        <div
+          className="decline-modal-overlay"
+          onClick={() => setShowDeclineModal(false)}
+        >
+          <div
+            className="decline-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3>Reason for Declining</h3>
+
+            <textarea
+              className="decline-textarea"
+              value={declineReason}
+              onChange={(e) =>
+                setDeclineReason(e.target.value)
+              }
+              rows="4"
+            />
+
+            <div className="decline-modal-actions">
+              <button
+                type="button"
+                className="btn"
+                onClick={() => setShowDeclineModal(false)}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                className="btn"
+                onClick={handleDeclineSubmit}
+                disabled={!declineReason.trim()}
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
-// ─── Main Events Component ───────────────────────────────────────────────────
-const Events = ({ block }) => {
+EventCard.propTypes = {
+  event: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    title: PropTypes.string.isRequired,
+    date: PropTypes.string.isRequired,
+    time: PropTypes.string.isRequired,
+    location: PropTypes.string.isRequired,
+    Media: PropTypes.string,
+    image: PropTypes.string,
+    status: PropTypes.string,
+    rsvp: PropTypes.string,
+  }).isRequired,
+  onRSVP: PropTypes.func.isRequired,
+};
+
+// Main Events Component
+export default function Events() {
   const [events, setEvents] = useState([]);
-  const [selectedQuarters, setSelectedQuarters] = useState(['Q1', 'Q2', 'Q3', 'Q4']);
-  const [selectedDate, setSelectedDate] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  // ✅ Dynamic real current date
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const thirtyDaysFromNow = new Date(today);
+  thirtyDaysFromNow.setDate(today.getDate() + 30);
+
+  const thirtyDaysAgo = new Date(today);
+  thirtyDaysAgo.setDate(today.getDate() - 30);
 
   useEffect(() => {
-    if (block) {
-      // EDS mode: parse the block DOM that da.live rendered
-      const parsed = parseEDSBlock(block);
-      setEvents(parsed);
-      setLoading(false);
-    } else {
-      // Dev/fallback mode: fetch from JSON
-      fetch('/data/events.json')
-        .then((res) => res.json())
-        .then((data) => {
-          setEvents(data.events || []);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error('Failed to load events:', err);
-          setLoading(false);
-        });
-    }
-  }, [block]);
+    async function fetchEvents() {
+      setLoading(true);
+      try {
+        await waitForSupabase();
 
-  const handleRSVP = (eventId, response) => {
-    setEvents((prev) => prev.map((e) => (e.id === eventId ? { ...e, rsvp: response } : e)));
+        const { data, error: fetchError } = await window.SupabaseUtils.getRecords('events', {
+          select: 'id,title,date,time,location,Media',
+          orderBy: 'date',
+          ascending: true,
+        });
+
+        if (fetchError) throw fetchError;
+
+        // Map Media to image for consistency
+        const eventsWithImages = (data || []).map(evt => ({
+          ...evt,
+          image: evt.Media || evt.image
+        }));
+
+        setEvents(eventsWithImages);
+      } catch (err) {
+        console.error('Events fetch error:', err);
+        setError('Failed to fetch events');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchEvents();
+
+    window.addEventListener('events-updated', fetchEvents);
+    return () => window.removeEventListener('events-updated', fetchEvents);
+  }, []);
+
+  const handleRSVP = (eventId, response, reason = null) => {
+    setEvents((prevEvents) =>
+      prevEvents.map((evt) =>
+        evt.id === eventId
+          ? { ...evt, rsvp: response, declineReason: reason }
+          : evt
+      )
+    );
   };
 
-  const upcomingEvents = events.filter((e) => e.status !== 'past' && !e.rsvp);
-  const pastEvents = events.filter((e) => e.status === 'past');
+  // ✅ Upcoming Events (Next 30 Days)
+  const upcomingEvents = events.filter((evt) => {
+    const eventDate = new Date(evt.date);
+    eventDate.setHours(0, 0, 0, 0);
+    return eventDate >= today && eventDate <= thirtyDaysFromNow;
+  });
 
-  if (loading) {
-    return (
-      <div className="events-page">
-        <div className="events-loading">Loading events...</div>
-      </div>
-    );
-  }
+  // ✅ Past Events (Last 30 Days)
+  const pastEvents = events
+    .filter((evt) => {
+      const eventDate = new Date(evt.date);
+      eventDate.setHours(0, 0, 0, 0);
+      return eventDate >= thirtyDaysAgo && eventDate < today;
+    })
+    .map((evt) => ({
+      ...evt,
+      status: 'past',
+    }));
+
+  if (loading) return <p style={{ padding: '20px', marginLeft: '240px' }}>Loading events…</p>;
+  if (error) return <p style={{ padding: '20px', marginLeft: '240px', color: 'red' }}>{error}</p>;
 
   return (
     <div className="events-page">
       <div className="events-header">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#eb5146" strokeWidth="2">
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-          <line x1="16" y1="2" x2="16" y2="6" />
-          <line x1="8" y1="2" x2="8" y2="6" />
-          <line x1="3" y1="10" x2="21" y2="10" />
-          <line x1="8" y1="14" x2="16" y2="14" />
-          <line x1="8" y1="18" x2="12" y2="18" />
-        </svg>
         <h1>Events</h1>
       </div>
 
-      <Calendar events={events} selectedDate={selectedDate} onDateSelect={setSelectedDate} />
-      <QuarterFilter selectedQuarters={selectedQuarters} onQuarterChange={setSelectedQuarters} />
+      <div className="events-top-section">
+        <Calendar
+          events={events}
+          selectedDate={selectedDate}
+          onDateSelect={setSelectedDate}
+        />
+      </div>
 
       <section className="events-section">
-        <h2 className="section-title">Upcoming Events</h2>
+        <h2 className="section-title">
+          Upcoming Events (Next 30 Days)
+        </h2>
         <div className="events-grid">
-          {upcomingEvents.length === 0
-            ? <p className="events-empty">No upcoming events.</p>
-            : upcomingEvents.map((event) => (
-              <EventCard key={event.id} event={event} onRSVP={handleRSVP} />
-            ))}
+          {upcomingEvents.length > 0 ? (
+            upcomingEvents.map((evt) => (
+              <EventCard
+                key={evt.id}
+                event={evt}
+                onRSVP={handleRSVP}
+              />
+            ))
+          ) : (
+            <p>No upcoming events in the next 30 days</p>
+          )}
         </div>
       </section>
 
       <section className="events-section">
-        <h2 className="section-title">Past Events</h2>
+        <h2 className="section-title">
+          Past Events (Last 30 Days)
+        </h2>
         <div className="events-grid">
-          {pastEvents.length === 0
-            ? <p className="events-empty">No past events.</p>
-            : pastEvents.map((event) => (
-              <EventCard key={event.id} event={event} onRSVP={handleRSVP} />
-            ))}
+          {pastEvents.length > 0 ? (
+            pastEvents.map((evt) => (
+              <EventCard
+                key={evt.id}
+                event={evt}
+                onRSVP={handleRSVP}
+              />
+            ))
+          ) : (
+            <p>No past events in the last 30 days</p>
+          )}
         </div>
       </section>
     </div>
   );
-};
-
-export default Events;
+}

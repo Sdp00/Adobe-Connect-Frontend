@@ -2,21 +2,16 @@
    SIDEBAR — FIXED (NO HOVER) WITH HAMBURGER
    ========================================================= */
 
-/* Token bridge — map sidebar vars to Spectrum tokens */
 :root {
   --sb-red: #eb5146;
   --sb-red-light: #f3f4f6;
-  --sb-text: #111827;
+  --sb-text: #040912 ; /* ← BLACK (not blue) */
   --sb-text-light: #6b7280;
   --sb-white: #fff;
   --sb-border: #f3f4f6;
   --sb-w-fixed: 240px;
   --sb-header-h: 64px;
 }
-
-/* =========================================================
-   HAMBURGER (MOBILE/TABLET ONLY) - REPLACES LOGO POSITION
-   ========================================================= */
 
 .sb-hamburger {
   display: none;
@@ -49,10 +44,6 @@
   transition: all 0.3s ease;
 }
 
-/* =========================================================
-   BASE SIDEBAR (FIXED, NO HOVER)
-   ========================================================= */
-
 .sb-sidebar {
   position: fixed;
   top: var(--sb-header-h);
@@ -69,10 +60,6 @@
   transition: none;
 }
 
-/* =========================================================
-   NAV LIST
-   ========================================================= */
-
 .sb-nav-list {
   list-style: none;
   padding: 0 16px;
@@ -84,10 +71,6 @@
   margin-bottom: 4px;
 }
 
-/* =========================================================
-   NAV LINKS
-   ========================================================= */
-
 .sb-nav-link {
   display: flex;
   align-items: center;
@@ -95,7 +78,7 @@
   padding: 12px 16px;
   border-radius: 12px;
   text-decoration: none;
-  color: var(--sb-text);
+  color: #09101e; /* ← BLACK in light mode */
   font-size: 15px;
   font-weight: 500;
   transition: background 0.2s ease, color 0.2s ease;
@@ -104,12 +87,12 @@
 
 .sb-nav-link:hover {
   background: var(--sb-red-light);
-  color: var(--sb-text);
+  color: #111827; /* ← BLACK on hover */
 }
 
 .sb-nav-link-active {
   background: var(--sb-red-light);
-  color: var(--sb-text);
+  color: #111827; /* ← BLACK when active */
   position: relative;
 }
 
@@ -124,10 +107,6 @@
   background: var(--sb-red);
   border-radius: 0 4px 4px 0;
 }
-
-/* =========================================================
-   ICONS
-   ========================================================= */
 
 .sb-nav-icon {
   display: flex;
@@ -145,29 +124,17 @@
   fill: none;
 }
 
-/* =========================================================
-   LABEL (ALWAYS VISIBLE)
-   ========================================================= */
-
 .sb-nav-label {
   opacity: 1;
   transform: translateX(0);
   pointer-events: auto;
 }
 
-/* =========================================================
-   DIVIDER
-   ========================================================= */
-
 .sb-divider {
   height: 1px;
   background: var(--sb-border);
   margin: 16px 24px;
 }
-
-/* =========================================================
-   SOCIAL LINKS
-   ========================================================= */
 
 .sb-social-list {
   list-style: none;
@@ -212,10 +179,6 @@
   stroke: none;
 }
 
-/* =========================================================
-   RESPONSIVE — HAMBURGER FOR MOBILE/TABLET
-   ========================================================= */
-
 @media (width <= 1024px) {
   .sb-hamburger {
     display: flex;
@@ -234,10 +197,6 @@
     overflow: hidden;
   }
 }
-
-/* =========================================================
-   DARK MODE
-   ========================================================= */
 
 html[data-theme="dark"] {
   --sb-red: #eb5146;
@@ -289,10 +248,6 @@ html[data-theme="dark"] .sb-social-link:hover {
 html[data-theme="dark"] .sb-divider {
   background: var(--sb-border);
 }
-
-/* =========================================================
-   HAMBURGER OPEN STATE (MOVED TO FIX STYLELINT)
-   ========================================================= */
 
 .sb-hamburger-open .sb-hamburger-line:nth-child(1) {
   transform: translateY(7px) rotate(45deg);

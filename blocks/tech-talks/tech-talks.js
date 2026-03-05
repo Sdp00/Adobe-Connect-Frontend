@@ -1,8 +1,3 @@
-/**
- * Tech Talks Block — Vanilla JS
- * Two buttons: Past Tech Talks / Upcoming Tech Talks
- */
-
 export default function decorate(block) {
   block.textContent = '';
   block.className = 'tech-talks-block';
@@ -21,12 +16,11 @@ export default function decorate(block) {
   const buttonGroup = document.createElement('div');
   buttonGroup.className = 'tech-talks-buttons';
 
-  // Upcoming button
   const upcomingBtn = document.createElement('a');
   upcomingBtn.href = 'https://www.adobe.com/events/tech-talks/upcoming';
   upcomingBtn.target = '_blank';
   upcomingBtn.rel = 'noopener noreferrer';
-  upcomingBtn.className = 'tech-talk-btn tech-talk-btn-primary';
+  upcomingBtn.className = 'btn'; /* ← RED BUTTON */
   upcomingBtn.innerHTML = `
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="10"/>
@@ -35,12 +29,11 @@ export default function decorate(block) {
     <span>Upcoming Tech Talks</span>
   `;
 
-  // Past button
   const pastBtn = document.createElement('a');
   pastBtn.href = 'https://www.adobe.com/events/tech-talks/past';
   pastBtn.target = '_blank';
   pastBtn.rel = 'noopener noreferrer';
-  pastBtn.className = 'tech-talk-btn tech-talk-btn-secondary';
+  pastBtn.className = 'btn'; /* ← RED BUTTON */
   pastBtn.innerHTML = `
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>

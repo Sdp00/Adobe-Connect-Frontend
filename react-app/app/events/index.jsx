@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/extensions
 import { createRoot } from 'react-dom/client';
 // eslint-disable-next-line no-unused-vars
-import EventsComponent from './components/events';
+import EventsComponent from './components/events.jsx';
 import './styles/events.css';
 
 export async function decorateBlock(block) {

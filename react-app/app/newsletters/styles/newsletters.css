@@ -1,12 +1,12 @@
-
 .newsletters-page {
   max-width: 1400px;
   margin: 0 auto;
   padding: 40px 32px;
-  padding-top: calc(64px + 40px);
-  margin-left: 80px;
-  transition: margin-left 0.3s ease;
+  padding-top: 40px;
+  margin-left: 240px;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 .newsletters-header {
   display: flex;
   align-items: flex-start;
@@ -18,7 +18,7 @@
   font-size: 32px;
   font-weight: 700;
   color: #111827;
-  margin: 0 0 4px 0;
+  margin: 0 0 4px ;
 }
 
 .newsletters-subtitle {
@@ -38,26 +38,23 @@
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid #f3f4f6;
-  position: relative;
   transition: all 0.2s;
 }
 
 .newsletter-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 8%);
   transform: translateY(-2px);
 }
 
 .newsletter-badge {
-  position: absolute;
-  top: 16px;
-  left: 16px;
   background: #eb5146;
   color: white;
   padding: 6px 16px;
   border-radius: 20px;
   font-size: 13px;
   font-weight: 600;
-  z-index: 2;
+  display: inline-block;
+  margin-bottom: 16px;
 }
 
 .newsletter-img {
@@ -74,14 +71,14 @@
   font-size: 20px;
   font-weight: 700;
   color: #111827;
-  margin: 0 0 12px 0;
+  margin: 0 0 12px ;
 }
 
 .newsletter-desc {
   font-size: 15px;
   color: #6b7280;
   line-height: 1.6;
-  margin: 0 0 20px 0;
+  margin: 0 0 12px ;
 }
 
 .newsletter-actions {
@@ -89,38 +86,48 @@
   gap: 12px;
 }
 
-.newsletter-btn {
-  padding: 12px 28px;
-  border-radius: 10px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+/* ✅ FIX: Make button/link text white */
+.newsletter-actions a {
+  color: #fff;
   text-decoration: none;
-  transition: all 0.2s;
 }
 
-.newsletter-btn--read {
-  background: #eb5146;
-  color: white;
-  border: none;
+.newsletter-actions a:visited {
+  color: #fff;
 }
 
-.newsletter-btn--read:hover {
-  background: #dc2626;
+.newsletter-actions a:hover {
+  color: #fff;
 }
 
-@media (max-width: 1024px) {
+@media (width <= 1024px) {
   .newsletters-page {
     margin-left: 0;
     padding: 24px 16px;
-    padding-top: calc(64px + 24px);
+    padding-top: 24px;
   }
 
   .newsletters-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* DARK MODE */
+html[data-theme="dark"] .newsletters-page {
+  background: #181818;
+}
+
+html[data-theme="dark"] .newsletters-header h1,
+html[data-theme="dark"] .newsletter-title {
+  color: #fff;
+}
+
+html[data-theme="dark"] .newsletters-subtitle,
+html[data-theme="dark"] .newsletter-desc {
+  color: #b3b3b3;
+}
+
+html[data-theme="dark"] .newsletter-card {
+  background: #1e1e1e;
+  border-color: #333;
 }

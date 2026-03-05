@@ -1,8 +1,26 @@
 import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 
-// Calendar Component
-function Calendar({ trainings, selectedDate, onDateSelect }) {
-  const [currentMonth, setCurrentMonth] = useState(new Date(2026, 1)); // February 2026
+function waitForSupabase() {
+  return new Promise((resolve, reject) => {
+    if (window.SupabaseUtils) { resolve(); return; }
+    let attempts = 0;
+    const interval = setInterval(() => {
+      attempts += 1;
+      if (window.SupabaseUtils) {
+        clearInterval(interval);
+        resolve();
+      } else if (attempts >= 30) {
+        clearInterval(interval);
+        reject(new Error('SupabaseUtils did not load in time'));
+      }
+    }, 100);
+  });
+}
+
+// Compact Calendar Component with Training Names
+function Calendar({ trainings, onDateSelect }) {
+  const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const getDaysInMonth = (date) => {
     const year = date.getFullYear();
@@ -22,218 +40,377 @@ function Calendar({ trainings, selectedDate, onDateSelect }) {
     return days;
   };
 
-  const hasTraining = (day) => {
-    if (!day) return false;
-    const dateStr = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    return trainings.some((training) => training.date === dateStr);
+  const getTrainingForDay = (day) => {
+    if (!day) return null;
+    const dateStr = `${currentMonth.getFullYear()}-${String(
+      currentMonth.getMonth() + 1
+    ).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    return trainings.find((training) => training.date === dateStr);
   };
 
   const days = getDaysInMonth(currentMonth);
   const monthName = currentMonth.toLocaleDateString('en-US', { month: 'long' });
   const year = currentMonth.getFullYear();
 
-  const prevMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
-  const nextMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
+  const prevMonth = () =>
+    setCurrentMonth(
+      new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1)
+    );
+
+  const nextMonth = () =>
+    setCurrentMonth(
+      new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1)
+    );
 
   return (
-    <div className="calendar">
-      <div className="calendar-header">
-        <div className="calendar-title">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#eb5146" strokeWidth="2">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-            <line x1="16" y1="2" x2="16" y2="6" />
-            <line x1="8" y1="2" x2="8" y2="6" />
-            <line x1="3" y1="10" x2="21" y2="10" />
-          </svg>
-          <h2>Calendar</h2>
+    <div className="calendar-compact">
+      <div className="calendar-header-compact">
+        <button type="button" onClick={prevMonth} className="calendar-nav-btn">
+          &lt;
+        </button>
+        <div className="calendar-title-compact">
+          <span className="month-name">
+            {monthName} {year}
+          </span>
         </div>
-        <div className="calendar-nav">
-          <button type="button" onClick={prevMonth} className="calendar-nav-btn" aria-label="Previous month">&lt;</button>
-          <div className="calendar-month">
-            <span className="month-name">{monthName}</span>
-            <div className="year-controls">
-              <button type="button" className="year-btn" aria-label="Previous year">&lt;</button>
-              <span>{year}</span>
-              <button type="button" className="year-btn" aria-label="Next year">&gt;</button>
+        <button type="button" onClick={nextMonth} className="calendar-nav-btn">
+          &gt;
+        </button>
+      </div>
+
+      <div className="calendar-grid-compact">
+        {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
+          <div key={`day-${idx}`} className="calendar-weekday-compact">
+            {day}
+          </div>
+        ))}
+        {days.map((day, idx) => {
+          const training = getTrainingForDay(day);
+          return (
+            <div
+              key={`date-${idx}`}
+              className={`calendar-day-compact${
+                !day ? ' calendar-day--empty' : ''
+              }${training ? ' calendar-day--event' : ''}`}
+            >
+              {day && (
+                <button
+                  type="button"
+                  className="calendar-day-btn-compact"
+                  onClick={() =>
+                    day && onDateSelect && onDateSelect(day)
+                  }
+                >
+                  <span className="calendar-day-number">{day}</span>
+                  {training && (
+                    <span className="calendar-event-name">
+                      {training.title}
+                    </span>
+                  )}
+                </button>
+              )}
             </div>
-          </div>
-          <button type="button" onClick={nextMonth} className="calendar-nav-btn" aria-label="Next month">&gt;</button>
-        </div>
-      </div>
-
-      <div className="calendar-grid">
-        {['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'].map((day) => (
-          <div key={day} className="calendar-weekday">{day}</div>
-        ))}
-        {days.map((day, idx) => (
-          <div
-            key={`day-${idx}`}
-            className={`calendar-day${!day ? ' calendar-day--empty' : ''}${hasTraining(day) ? ' calendar-day--event' : ''}`}
-          >
-            {day && (
-              <button
-                type="button"
-                className="calendar-day-btn"
-                onClick={() => day && onDateSelect && onDateSelect(day)}
-              >
-                {day}
-              </button>
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
 }
 
-// Quarter Filter Component
-function QuarterFilter({ selectedQuarters, onQuarterChange }) {
-  const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
+Calendar.propTypes = {
+  trainings: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      title: PropTypes.string.isRequired,
+      date: PropTypes.string.isRequired,
+    })
+  ).isRequired,
+  onDateSelect: PropTypes.func,
+};
 
-  const toggleQuarter = (q) => {
-    if (selectedQuarters.includes(q)) {
-      onQuarterChange(selectedQuarters.filter((quarter) => quarter !== q));
-    } else {
-      onQuarterChange([...selectedQuarters, q]);
-    }
-  };
+Calendar.defaultProps = {
+  onDateSelect: null,
+};
 
-  return (
-    <div className="quarter-filter">
-      <div className="quarter-filter-header">
-        <h3>Quarter Filter</h3>
-        <span className="quarter-year">2026</span>
-        <span className="quarter-range">Q1 — Q4</span>
-      </div>
-      <div className="quarter-slider">
-        <div className="quarter-line" />
-        {quarters.map((q) => (
-          <button
-            key={q}
-            type="button"
-            className={`quarter-btn${selectedQuarters.includes(q) ? ' quarter-btn--active' : ''}`}
-            onClick={() => toggleQuarter(q)}
-          >
-            {q}
-          </button>
-        ))}
-      </div>
-      <p className="quarter-hint">Tap quarters to adjust the range</p>
-    </div>
-  );
-}
-
-// Training Card Component
+// Training Card Component with Decline Modal
 function TrainingCard({ training, onRSVP }) {
+  const [showDeclineModal, setShowDeclineModal] = useState(false);
+  const [declineReason, setDeclineReason] = useState('');
+
   const getStatusText = () => {
     if (training.status === 'overdue') return 'Response overdue';
-    if (training.daysToRespond) return `Respond within ${training.daysToRespond} days`;
+    if (training.daysToRespond)
+      return `Respond within ${training.daysToRespond} days`;
     return '';
   };
 
+  const handleDeclineSubmit = () => {
+    if (declineReason.trim()) {
+      onRSVP(training.id, 'declined', declineReason);
+      setShowDeclineModal(false);
+      setDeclineReason('');
+    }
+  };
+
+  const isPast = training.status === 'past';
+
   return (
-    <div className="training-card">
-      <img src={training.image} alt={training.title} className="training-card-img" />
-      <div className="training-card-content">
-        <h3 className="training-card-title">{training.title}</h3>
-        <div className="training-card-meta">
-          <div className="training-meta-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#eb5146" strokeWidth="2">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-              <line x1="16" y1="2" x2="16" y2="6" />
-              <line x1="8" y1="2" x2="8" y2="6" />
-              <line x1="3" y1="10" x2="21" y2="10" />
-            </svg>
-            <span>{new Date(training.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} • {training.time}</span>
+    <>
+      <div className="training-card">
+        <img
+          src={training.image}
+          alt={training.title}
+          className="training-card-img"
+        />
+        <div className="training-card-content">
+          <h3 className="training-card-title">{training.title}</h3>
+
+          <div className="training-card-meta">
+            <div className="training-meta-item">
+              <span>
+                {new Date(training.date).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                })}{' '}
+                • {training.time}
+              </span>
+            </div>
+
+            <div className="training-meta-item">
+              <span>{training.location}</span>
+            </div>
+
+            {!isPast && (
+              <div
+                className={`training-meta-item training-meta-item--${training.status}`}
+              >
+                <span>{getStatusText()}</span>
+              </div>
+            )}
           </div>
-          <div className="training-meta-item">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2">
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-              <circle cx="12" cy="10" r="3" />
-            </svg>
-            <span>{training.location}</span>
-          </div>
-          {training.status !== 'past' && (
-            <div className={`training-meta-item training-meta-item--${training.status}`}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg>
-              <span>{getStatusText()}</span>
+
+          {!isPast && !training.rsvp && (
+            <div className="training-card-actions">
+              <button
+                type="button"
+                className="btn"
+                onClick={() => onRSVP(training.id, 'accepted')}
+              >
+                Accept
+              </button>
+
+              <button
+                type="button"
+                className="btn"
+                onClick={() => setShowDeclineModal(true)}
+              >
+                Decline
+              </button>
             </div>
           )}
         </div>
-        {training.status !== 'past' && !training.rsvp && (
-          <div className="training-card-actions">
-            <button type="button" className="training-btn training-btn--accept" onClick={() => onRSVP(training.id, 'accepted')}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="20 6 9 17 4 12" />
-              </svg>
-              Accept
-            </button>
-            <button type="button" className="training-btn training-btn--decline" onClick={() => onRSVP(training.id, 'declined')}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-              Decline
-            </button>
-          </div>
-        )}
       </div>
-    </div>
+
+      {showDeclineModal && !isPast && (
+        <div
+          className="decline-modal-overlay"
+          onClick={() => setShowDeclineModal(false)}
+        >
+          <div
+            className="decline-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3>Reason for Declining</h3>
+
+            <textarea
+              className="decline-textarea"
+              value={declineReason}
+              onChange={(e) =>
+                setDeclineReason(e.target.value)
+              }
+              rows="4"
+            />
+
+            <div className="decline-modal-actions">
+              <button
+                type="button"
+                className="btn"
+                onClick={() => setShowDeclineModal(false)}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                className="btn"
+                onClick={handleDeclineSubmit}
+                disabled={!declineReason.trim()}
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
-// Main Training Component
+TrainingCard.propTypes = {
+  training: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    title: PropTypes.string.isRequired,
+    date: PropTypes.string.isRequired,
+    time: PropTypes.string.isRequired,
+    location: PropTypes.string.isRequired,
+    image: PropTypes.string.isRequired,
+    status: PropTypes.string,
+    daysToRespond: PropTypes.number,
+    rsvp: PropTypes.string,
+  }).isRequired,
+  onRSVP: PropTypes.func.isRequired,
+};
+
+// Main Training Component with Supabase
 export default function Training() {
   const [trainings, setTrainings] = useState([]);
-  const [selectedQuarters, setSelectedQuarters] = useState(['Q1', 'Q2', 'Q3', 'Q4']);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
 
+  // ✅ Dynamic real current date
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const thirtyDaysFromNow = new Date(today);
+  thirtyDaysFromNow.setDate(today.getDate() + 30);
+
+  const thirtyDaysAgo = new Date(today);
+  thirtyDaysAgo.setDate(today.getDate() - 30);
+
   useEffect(() => {
-    fetch('/data/training.json')
-      .then((res) => res.json())
-      .then((data) => setTrainings(data.trainings))
-      .catch((err) => console.error('Failed to load trainings:', err));
+    async function fetchTrainings() {
+      setLoading(true);
+      try {
+        await waitForSupabase();
+
+        const { data, error: fetchError } = await window.SupabaseUtils.getRecords('trainings', {
+          select: 'id,title,date,time,location,image,status,daysToRespond,rsvp',
+          orderBy: 'date',
+          ascending: true,
+        });
+
+        if (fetchError) throw fetchError;
+        setTrainings(data || []);
+      } catch (err) {
+        console.error('Training fetch error:', err);
+        setError('Failed to fetch trainings');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchTrainings();
+
+    window.addEventListener('trainings-updated', fetchTrainings);
+    return () => window.removeEventListener('trainings-updated', fetchTrainings);
   }, []);
 
-  const handleRSVP = (trainingId, response) => {
-    setTrainings((prevTrainings) =>
-      prevTrainings.map((training) => (training.id === trainingId ? { ...training, rsvp: response } : training)));
+  const handleRSVP = async (trainingId, response, reason = null) => {
+    try {
+      await waitForSupabase();
+
+      const updateData = { rsvp: response };
+      if (reason) {
+        updateData.declineReason = reason;
+      }
+
+      await window.SupabaseUtils.updateRecord('trainings', trainingId, updateData);
+
+      setTrainings((prevTrainings) =>
+        prevTrainings.map((training) =>
+          training.id === trainingId
+            ? { ...training, ...updateData }
+            : training
+        )
+      );
+    } catch (err) {
+      console.error('Failed to update RSVP:', err);
+    }
   };
 
-  const upcomingTrainings = trainings.filter((training) => training.status !== 'past' && !training.rsvp);
-  const pastTrainings = trainings.filter((training) => training.status === 'past');
+  // ✅ Upcoming Trainings (Next 30 Days)
+  const upcomingTrainings = trainings.filter((training) => {
+    const trainingDate = new Date(training.date);
+    trainingDate.setHours(0, 0, 0, 0);
+    return trainingDate >= today && trainingDate <= thirtyDaysFromNow;
+  });
+
+  // ✅ Past Trainings (Last 30 Days)
+  const pastTrainings = trainings
+    .filter((training) => {
+      const trainingDate = new Date(training.date);
+      trainingDate.setHours(0, 0, 0, 0);
+      return trainingDate >= thirtyDaysAgo && trainingDate < today;
+    })
+    .map((training) => ({
+      ...training,
+      status: 'past',
+    }));
+
+  if (loading) return <p style={{ padding: '20px', marginLeft: '240px' }}>Loading trainings…</p>;
+  if (error) return <p style={{ padding: '20px', marginLeft: '240px', color: 'red' }}>{error}</p>;
 
   return (
     <div className="training-page">
       <div className="training-header">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#eb5146" strokeWidth="2">
-          <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-          <path d="M6 12v5c3 3 9 3 12 0v-5" />
-        </svg>
         <h1>Training</h1>
       </div>
 
-      <Calendar trainings={trainings} selectedDate={selectedDate} onDateSelect={setSelectedDate} />
-      <QuarterFilter selectedQuarters={selectedQuarters} onQuarterChange={setSelectedQuarters} />
+      <div className="training-top-section">
+        <Calendar
+          trainings={trainings}
+          selectedDate={selectedDate}
+          onDateSelect={setSelectedDate}
+        />
+      </div>
 
       <section className="training-section">
-        <h2 className="section-title">Upcoming Training</h2>
+        <h2 className="section-title">
+          Upcoming Training (Next 30 Days)
+        </h2>
         <div className="training-grid">
-          {upcomingTrainings.map((training) => (
-            <TrainingCard key={training.id} training={training} onRSVP={handleRSVP} />
-          ))}
+          {upcomingTrainings.length > 0 ? (
+            upcomingTrainings.map((training) => (
+              <TrainingCard
+                key={training.id}
+                training={training}
+                onRSVP={handleRSVP}
+              />
+            ))
+          ) : (
+            <p className="no-trainings-message">No upcoming trainings in the next 30 days</p>
+          )}
         </div>
       </section>
 
       <section className="training-section">
-        <h2 className="section-title">Past Training</h2>
+        <h2 className="section-title">
+          Past Training (Last 30 Days)
+        </h2>
         <div className="training-grid">
-          {pastTrainings.map((training) => (
-            <TrainingCard key={training.id} training={training} onRSVP={handleRSVP} />
-          ))}
+          {pastTrainings.length > 0 ? (
+            pastTrainings.map((training) => (
+              <TrainingCard
+                key={training.id}
+                training={training}
+                onRSVP={handleRSVP}
+              />
+            ))
+          ) : (
+            <p className="no-trainings-message">No past trainings in the last 30 days</p>
+          )}
         </div>
       </section>
     </div>

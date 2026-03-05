@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+@import url('buttons.css');
 
 :root {
   /* =====================================================
@@ -38,7 +39,6 @@
   --spectrum-red-600: #e11d48;
   --spectrum-red-700: #be123c;
   --spectrum-blue-400: #60a5fa;
-  --spectrum-blue-600: #3b63fb;
   --spectrum-blue-700: #1d3ecf;
 
   /* Surface / Background */
@@ -342,3 +342,4 @@ main .section.highlight {
   margin: 0;
   padding: 40px 0;
 }
+

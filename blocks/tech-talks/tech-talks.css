@@ -1,21 +1,37 @@
 .tech-talks-block {
-  min-height: calc(100vh - 128px);
+  min-height: calc(100vh - 64px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px;
+  padding: 80px 20px 40px;
+  margin-left: 240px;
+  transition: margin-left 0.3s ease;
+  box-sizing: border-box;
+
+  /* ✅ FINAL POSITION TUNING */
+  transform: translate(8%, -5%);
 }
 
 .tech-talks-container {
   max-width: 600px;
+  width: 100%;
   text-align: center;
 }
 
+/* 🔹 Constrain text to align with buttons visually */
+.tech-talks-title,
+.tech-talks-subtitle {
+  max-width: 560px; /* aligns with two 280px buttons */
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .tech-talks-title {
-  font-size: 36px;
+  font-size: 48px;
   font-weight: 700;
-  color: #2c2c2c;
+  color: #111827;
   margin-bottom: 12px;
+  white-space: nowrap;
 }
 
 .tech-talks-subtitle {
@@ -31,53 +47,42 @@
   align-items: center;
 }
 
-.tech-talk-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px 32px;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.2s ease;
+.tech-talks-buttons .btn {
   min-width: 280px;
-  justify-content: center;
-}
 
-.tech-talk-btn-primary {
-  background: #e0322a;
+  /* ✅ Button text color */
   color: #fff;
-  box-shadow: 0 4px 12px rgb(224 50 42 / 30%);
 }
 
-.tech-talk-btn-primary:hover {
-  background: #c82a23;
-  box-shadow: 0 6px 20px rgb(224 50 42 / 40%);
-  transform: translateY(-2px);
-}
+@media (width <= 1024px) {
+  .tech-talks-block {
+    margin-left: 0;
+    padding: 40px 16px 24px;
 
-.tech-talk-btn-secondary {
-  background: #fff;
-  color: #e0322a;
-  border: 2px solid #e0322a;
-}
+    /* softer adjustment on small screens */
+    transform: translate(0, -4%);
+  }
 
-.tech-talk-btn-secondary:hover {
-  background: #fef2f2;
-  transform: translateY(-2px);
-}
-
-.tech-talk-btn svg {
-  flex-shrink: 0;
+  .tech-talks-title {
+    font-size: 36px;
+    white-space: normal;
+  }
 }
 
 @media (width >= 768px) {
   .tech-talks-buttons {
     flex-direction: row;
   }
+}
 
-  .tech-talks-title {
-    font-size: 48px;
-  }
+html[data-theme="dark"] .tech-talks-block {
+  background: #181818;
+}
+
+html[data-theme="dark"] .tech-talks-title {
+  color: #fff;
+}
+
+html[data-theme="dark"] .tech-talks-subtitle {
+  color: #b3b3b3;
 }

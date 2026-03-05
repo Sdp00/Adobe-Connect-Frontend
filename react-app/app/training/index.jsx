@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/extensions
 import { createRoot } from 'react-dom/client';
 // eslint-disable-next-line no-unused-vars
-import Training from './components/training';
+import Training from './components/training.jsx';
 import './styles/training.css';
 
 export async function decorateBlock(block) {

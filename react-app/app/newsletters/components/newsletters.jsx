@@ -1,15 +1,33 @@
 import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+
+function waitForSupabase() {
+  return new Promise((resolve, reject) => {
+    if (window.SupabaseUtils) { resolve(); return; }
+    let attempts = 0;
+    const interval = setInterval(() => {
+      attempts += 1;
+      if (window.SupabaseUtils) {
+        clearInterval(interval);
+        resolve();
+      } else if (attempts >= 30) {
+        clearInterval(interval);
+        reject(new Error('SupabaseUtils did not load in time'));
+      }
+    }, 100);
+  });
+}
 
 function NewsletterCard({ newsletter }) {
   return (
     <div className="newsletter-card">
-      <div className="newsletter-badge">{newsletter.badge}</div>
       <img src={newsletter.image} alt={newsletter.title} className="newsletter-img" />
       <div className="newsletter-content">
         <h3 className="newsletter-title">{newsletter.title}</h3>
         <p className="newsletter-desc">{newsletter.description}</p>
+        <div className="newsletter-badge">{newsletter.badge}</div>
         <div className="newsletter-actions">
-          <a href={newsletter.url} className="newsletter-btn newsletter-btn--read">
+          <a href={newsletter.url} className="btn">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
               <circle cx="12" cy="12" r="3" />
@@ -22,15 +40,55 @@ function NewsletterCard({ newsletter }) {
   );
 }
 
+NewsletterCard.propTypes = {
+  newsletter: PropTypes.shape({
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    title: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    badge: PropTypes.string.isRequired,
+    image: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
+  }).isRequired,
+};
+
 export default function Newsletters() {
   const [newsletters, setNewsletters] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('/data/newsletters.json')
-      .then((res) => res.json())
-      .then((data) => setNewsletters(data.newsletters))
-      .catch((err) => console.error('Failed to load newsletters:', err));
+    async function fetchNewsletters() {
+      setLoading(true);
+      try {
+        await waitForSupabase();
+
+        const { data, error: fetchError } = await window.SupabaseUtils.getRecords('newsletters', {
+          select: 'id,title,description,date,badge,image,url',
+          orderBy: 'id',
+          ascending: true,
+        });
+
+        if (fetchError) throw fetchError;
+        setNewsletters(data || []);
+      } catch (err) {
+        console.error('Newsletter fetch error:', err);
+        setError('Failed to fetch newsletters');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchNewsletters();
+
+    window.addEventListener('newsletters-updated', fetchNewsletters);
+    return () => window.removeEventListener('newsletters-updated', fetchNewsletters);
   }, []);
+
+  if (loading) return <p style={{ padding: '20px', marginLeft: '240px' }}>Loading newsletters…</p>;
+  if (error) return <p style={{ padding: '20px', marginLeft: '240px', color: 'red' }}>{error}</p>;
+  if (!newsletters || newsletters.length === 0) {
+    return <p style={{ padding: '20px', marginLeft: '240px' }}>No newsletters found</p>;
+  }
 
   return (
     <div className="newsletters-page">
