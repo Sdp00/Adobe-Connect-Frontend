@@ -161,7 +161,7 @@
   background: var(--spectrum-gray-200);
 }
 
-/* SCROLLBAR*/
+/* SCROLLBAR */
 .upcoming-events-list::-webkit-scrollbar {
   width: 4px;
 }
@@ -225,10 +225,11 @@ html[data-theme="dark"] .upcoming-events-list::-webkit-scrollbar-thumb {
 html[data-theme="dark"] .upcoming-events-list::-webkit-scrollbar-thumb:hover {
   background: var(--spectrum-gray-500);
 }
+
 /* responsive */
 
 /* Tablet & Mobile */
-@media (max-width: 1024px) {
+@media (width <= 1024px) {
   .upcoming-events-wrapper {
     position: static !important;
     inset: auto !important;
@@ -253,7 +254,7 @@ html[data-theme="dark"] .upcoming-events-list::-webkit-scrollbar-thumb:hover {
 }
 
 /* Mobile */
-@media (max-width: 640px) {
+@media (width <= 640px) {
   .event-card-image img {
     height: 120px;
   }
