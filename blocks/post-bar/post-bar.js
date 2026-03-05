@@ -8,6 +8,15 @@ const ICONS = {
 };
 
 export default function decorate(block) {
+  // Only render on the home page
+  const { pathname } = window.location;
+  const isHomePage = pathname === '/' || pathname === '/index' || pathname === '/index.html';
+  if (!isHomePage) {
+    const wrapperSection = block.closest('.section');
+    if (wrapperSection) wrapperSection.style.display = 'none';
+    return;
+  }
+
   // Make the containing section sticky
   const section = block.closest('.section');
   if (section) section.classList.add('post-bar-section');
@@ -343,6 +352,4 @@ export default function decorate(block) {
     showToast('Post published!', 'success');
     close();
   });
-
-  renderAttachments();
 }

@@ -105,22 +105,25 @@
  
 /* ── Follow Button ───────────────────────────────────────────────────────── */
 .feed-card-follow {
-  background: transparent;
+  background: transparent !important;
   border: none;
   padding: 0;
   margin: 0;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #0073e6;
+  color: #e11d48;
   cursor: pointer;
   white-space: nowrap;
   flex-shrink: 0;
   font-family: inherit;
   transition: color 0.15s ease;
 }
- 
-.feed-card-follow:hover {
-  color: #005bbf;
+
+.feed-card-follow:hover,
+.feed-card-follow:focus,
+.feed-card-follow:active {
+  background: transparent !important;
+  color: #be123c;
 }
  
 .feed-card-follow.following {
@@ -160,13 +163,13 @@
 .feed-card-tag {
   font-size: 0.8125rem;
   font-weight: 500;
-  color: #0073e6;
+  color: #e11d48;
   cursor: pointer;
   transition: color 0.15s ease;
 }
- 
+
 .feed-card-tag:hover {
-  color: #005bbf;
+  color: #be123c;
   text-decoration: underline;
 }
  
@@ -193,8 +196,8 @@
 }
  
 .feed-card-attachment:hover {
-  border-color: #0073e6;
-  background: #e8f0fe;
+  border-color: #e11d48;
+  background: #fff1f2;
 }
  
 .feed-card-attachment-icon {
@@ -212,7 +215,7 @@
 .feed-card-attachment-icon svg {
   width: 18px;
   height: 18px;
-  stroke: #0073e6;
+  stroke: #e11d48;
   fill: none;
   stroke-linecap: round;
 }
@@ -257,7 +260,7 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  background: transparent;
+  background: transparent !important;
   border: none;
   padding: 6px 10px;
   margin: 0;
@@ -267,30 +270,36 @@
   color: #8a94a6;
   cursor: pointer;
   font-family: inherit;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition: color 0.15s ease;
 }
  
-.feed-action-btn:hover {
-  background: #f4f6f8;
+.feed-action-btn:hover,
+.feed-action-btn:focus,
+.feed-action-btn:active {
+  background: transparent !important;
   color: #5a6474;
 }
- 
+
 .feed-action-btn.liked {
   color: #e11d48;
 }
- 
-.feed-action-btn.liked:hover {
-  background: #fff1f2;
+
+.feed-action-btn.liked:hover,
+.feed-action-btn.liked:focus,
+.feed-action-btn.liked:active {
+  background: transparent !important;
   color: #be123c;
 }
- 
+
 .feed-action-btn.saved {
-  color: #0073e6;
+  color: #e11d48;
 }
- 
-.feed-action-btn.saved:hover {
-  background: #e8f0fe;
-  color: #005bbf;
+
+.feed-action-btn.saved:hover,
+.feed-action-btn.saved:focus,
+.feed-action-btn.saved:active {
+  background: transparent !important;
+  color: #be123c;
 }
  
 .feed-action-btn svg {
@@ -303,6 +312,7 @@
  
 .feed-action-btn.liked svg {
   stroke: #e11d48;
+  fill: #e11d48;
 }
  
 .feed-save-btn {
@@ -318,8 +328,8 @@
 }
  
 .feed-save-btn.saved svg {
-  stroke: #0073e6;
-  fill: #0073e6;
+  stroke: #e11d48;
+  fill: #e11d48;
 }
  
 /* ── Lazy Load Sentinel ──────────────────────────────────────────────────── */
@@ -357,14 +367,83 @@
     padding: 12px 8px;
     gap: 12px;
   }
- 
+
   .feed-card {
     padding: 16px;
     border-radius: 10px;
   }
- 
+
   .feed-card-image {
     max-height: 260px;
   }
 }
- 
+
+/* ── Dark Mode ───────────────────────────────────────────────────────────── */
+html[data-theme="dark"] .feed-status {
+  color: #b3b3b3;
+}
+
+html[data-theme="dark"] .feed-card {
+  background: #1e1e1e;
+  border-color: #333;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 30%);
+}
+
+html[data-theme="dark"] .feed-card-name {
+  color: #fff;
+}
+
+html[data-theme="dark"] .feed-card-meta {
+  color: #b3b3b3;
+}
+
+html[data-theme="dark"] .feed-card-title {
+  color: #fff;
+}
+
+html[data-theme="dark"] .feed-card-text {
+  color: #e0e0e0;
+}
+
+html[data-theme="dark"] .feed-card-attachment {
+  background: #2a2a2a;
+  border-color: #333;
+}
+
+html[data-theme="dark"] .feed-card-attachment:hover {
+  background: #3d1520;
+  border-color: #e11d48;
+}
+
+html[data-theme="dark"] .feed-card-attachment-icon {
+  background: #1e1e1e;
+}
+
+html[data-theme="dark"] .feed-card-footer {
+  border-top-color: #333;
+}
+
+html[data-theme="dark"] .feed-action-btn {
+  color: #b3b3b3;
+}
+
+html[data-theme="dark"] .feed-action-btn:hover,
+html[data-theme="dark"] .feed-action-btn:focus,
+html[data-theme="dark"] .feed-action-btn:active {
+  background: transparent !important;
+  color: #e0e0e0;
+}
+
+html[data-theme="dark"] .feed-action-btn.liked:hover,
+html[data-theme="dark"] .feed-action-btn.liked:active {
+  background: transparent !important;
+}
+
+html[data-theme="dark"] .feed-action-btn.saved:hover,
+html[data-theme="dark"] .feed-action-btn.saved:active {
+  background: transparent !important;
+}
+
+html[data-theme="dark"] .feed-end-message {
+  color: #b3b3b3;
+}
