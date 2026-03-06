@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 
 const calendarIcon = '/icons/calendar.svg';
 const clockIcon = '/icons/clock.svg';
@@ -21,11 +22,51 @@ function waitForSupabase() {
   });
 }
 
+function DeclineModal({ onClose, onSubmit }) {
+  const [reason, setReason] = useState('');
+
+  return (
+    <div className="decline-modal-overlay" onClick={onClose}>
+      <div className="decline-modal" onClick={(e) => e.stopPropagation()}>
+        <h3>Reason for Declining</h3>
+        <textarea
+          className="decline-textarea"
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          placeholder="Enter your reason..."
+          rows="4"
+        />
+        <div className="decline-modal-actions">
+          <button type="button" className="btn" onClick={onClose}>
+            Cancel
+          </button>
+          <button
+            type="button"
+            className="btn"
+            onClick={() => onSubmit(reason)}
+            disabled={!reason.trim()}
+          >
+            Submit
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+DeclineModal.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+};
+
 export default function App() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [responses, setResponses] = useState({});
+  const [declineTarget, setDeclineTarget] = useState(null);
+
+  const isAdmin = window.location.pathname === '/admin';
 
   useEffect(() => {
     async function fetchEvents() {
@@ -65,7 +106,13 @@ export default function App() {
   };
 
   const handleAccept = (id) => setResponses((prev) => ({ ...prev, [id]: 'accepted' }));
-  const handleDecline = (id) => setResponses((prev) => ({ ...prev, [id]: 'declined' }));
+
+  const handleDeclineSubmit = () => {
+    if (declineTarget) {
+      setResponses((prev) => ({ ...prev, [declineTarget]: 'declined' }));
+      setDeclineTarget(null);
+    }
+  };
 
   if (loading) return <p style={{ padding: 20 }}>Loading events…</p>;
   if (error) return <p style={{ padding: 20, color: 'red' }}>{error}</p>;
@@ -113,50 +160,59 @@ export default function App() {
                   </p>
                 )}
 
-                <div className="event-card-actions">
-                  {!response && (
-                    <>
+                {!isAdmin && (
+                  <div className="event-card-actions">
+                    {!response && (
+                      <>
+                        <button
+                          className="event-card-button accept"
+                          onClick={() => handleAccept(event.id)}
+                        >
+                          Accept
+                        </button>
+
+                        <button
+                          className="event-card-button decline"
+                          onClick={() => setDeclineTarget(event.id)}
+                        >
+                          Decline
+                        </button>
+                      </>
+                    )}
+
+                    {response === 'accepted' && (
                       <button
                         className="event-card-button accept"
-                        onClick={() => handleAccept(event.id)}
+                        disabled
+                        style={{ cursor: 'default', opacity: 0.85 }}
                       >
-                        Accept
+                        ✓ Accepted
                       </button>
+                    )}
 
+                    {response === 'declined' && (
                       <button
                         className="event-card-button decline"
-                        onClick={() => handleDecline(event.id)}
+                        disabled
+                        style={{ cursor: 'default', opacity: 0.85 }}
                       >
-                        Decline
+                        ✕ Declined
                       </button>
-                    </>
-                  )}
-
-                  {response === 'accepted' && (
-                    <button
-                      className="event-card-button accept"
-                      disabled
-                      style={{ cursor: 'default', opacity: 0.85 }}
-                    >
-                      ✓ Accepted
-                    </button>
-                  )}
-
-                  {response === 'declined' && (
-                    <button
-                      className="event-card-button decline"
-                      disabled
-                      style={{ cursor: 'default', opacity: 0.85 }}
-                    >
-                      ✕ Declined
-                    </button>
-                  )}
-                </div>
+                    )}
+                  </div>
+                )}
               </div>
             </article>
           );
         })}
       </div>
+
+      {declineTarget && (
+        <DeclineModal
+          onClose={() => setDeclineTarget(null)}
+          onSubmit={handleDeclineSubmit}
+        />
+      )}
     </section>
   );
 }
