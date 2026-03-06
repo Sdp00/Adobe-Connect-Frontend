@@ -99,7 +99,7 @@
   width: 100%;
 }
 
-/* ── Level rows (full org view) ── */
+/* ── Level rows ── */
 .level {
   display: flex;
   flex-wrap: wrap;
@@ -132,23 +132,17 @@
   box-shadow: 0 10px 28px rgb(0 0 0 / 12%), 0 0 0 1px rgb(220 38 38 / 20%);
 }
 
-/* Top level — red border */
 .card.ceo {
   border: 2px solid #ef4444;
   box-shadow: 0 4px 16px rgb(239 68 68 / 15%);
 }
 
-/* Selected card in chain view — blue */
 .card.selected {
   border: 2px solid #2563eb;
   box-shadow: 0 0 0 4px rgb(37 99 235 / 10%), 0 4px 16px rgb(37 99 235 / 15%);
 }
 
-.card.selected .card-top.light {
-  background: linear-gradient(135deg, #eff6ff, #dbeafe);
-}
-
-/* ── Card top section ── */
+/* ── Card top ── */
 .card-top {
   padding: 16px;
   display: flex;
@@ -161,15 +155,7 @@
   color: #fff;
 }
 
-.card-top.red .role {
-  color: rgb(255 255 255 / 75%);
-}
-
-.card-top.light {
-  background: #fef2f2;
-}
-
-/* ── Avatar ── */
+/* ── Avatar — base BEFORE compound red override ── */
 .avatar {
   width: 42px;
   height: 42px;
@@ -183,6 +169,11 @@
   flex-shrink: 0;
   box-shadow: 0 2px 6px rgb(0 0 0 / 12%);
   letter-spacing: 0.5px;
+}
+
+/* dark .avatar BEFORE compound .card-top.red .avatar */
+html[data-theme="dark"] .avatar {
+  box-shadow: 0 2px 6px rgb(0 0 0 / 30%);
 }
 
 .card-top.red .avatar {
@@ -202,6 +193,7 @@
   min-width: 0;
 }
 
+/* base .name BEFORE compound red override */
 .name {
   font-size: 14px;
   font-weight: 700;
@@ -212,6 +204,11 @@
   text-overflow: ellipsis;
 }
 
+/* dark .name BEFORE compound .card-top.red .name */
+html[data-theme="dark"] .name {
+  color: #f3f4f6;
+}
+
 .card-top.red .name {
   color: #fff;
 }
@@ -220,6 +217,11 @@
   color: #1d4ed8;
 }
 
+html[data-theme="dark"] .card.selected .card-top.light .name {
+  color: #93c5fd;
+}
+
+/* ── Role — base BEFORE compound red override ── */
 .role {
   font-size: 12px;
   color: #6b7280;
@@ -230,7 +232,16 @@
   text-overflow: ellipsis;
 }
 
-/* ── Chevron icon on clickable cards ── */
+/* dark .role BEFORE compound .card-top.red .role */
+html[data-theme="dark"] .role {
+  color: #9ca3af;
+}
+
+.card-top.red .role {
+  color: rgb(255 255 255 / 75%);
+}
+
+/* ── Chevron — base BEFORE compound hover override ── */
 .card-chevron {
   font-size: 22px;
   color: #dc2626;
@@ -241,9 +252,32 @@
   transition: opacity 0.15s, transform 0.15s;
 }
 
+/* dark .card-chevron BEFORE compound .card.clickable:hover .card-chevron */
+html[data-theme="dark"] .card-chevron {
+  color: #fca5a5;
+}
+
 .card.clickable:hover .card-chevron {
   opacity: 1;
   transform: translateX(2px);
+}
+
+/* ── card-top.light — base BEFORE compound selected override ── */
+.card-top.light {
+  background: #fef2f2;
+}
+
+/* dark .card-top.light BEFORE compound .card.selected .card-top.light */
+html[data-theme="dark"] .card-top.light {
+  background: #262626;
+}
+
+.card.selected .card-top.light {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+}
+
+html[data-theme="dark"] .card.selected .card-top.light {
+  background: #1a2540;
 }
 
 /* ── "You" badge ── */
@@ -279,7 +313,7 @@
 
 /* ── Dark mode ── */
 html[data-theme="dark"] .org-page {
-  background: #111111;
+  background: #111;
 }
 
 html[data-theme="dark"] .org-header h1 {
@@ -325,34 +359,6 @@ html[data-theme="dark"] .card.ceo {
 
 html[data-theme="dark"] .card.clickable:hover {
   box-shadow: 0 10px 28px rgb(0 0 0 / 40%), 0 0 0 1px rgb(220 38 38 / 30%);
-}
-
-html[data-theme="dark"] .card-top.light {
-  background: #262626;
-}
-
-html[data-theme="dark"] .card.selected .card-top.light {
-  background: #1a2540;
-}
-
-html[data-theme="dark"] .name {
-  color: #f3f4f6;
-}
-
-html[data-theme="dark"] .card.selected .card-top.light .name {
-  color: #93c5fd;
-}
-
-html[data-theme="dark"] .role {
-  color: #9ca3af;
-}
-
-html[data-theme="dark"] .avatar {
-  box-shadow: 0 2px 6px rgb(0 0 0 / 30%);
-}
-
-html[data-theme="dark"] .card-chevron {
-  color: #fca5a5;
 }
 
 html[data-theme="dark"] .v-line {

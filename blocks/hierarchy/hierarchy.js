@@ -10,34 +10,56 @@ export default async function decorate(block) {
 
   /* ── Fetch full org tree ── */
   async function fetchFullTree() {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_employee_tree`, {
-      method: 'POST',
-      headers,
-      body: '{}',
-    });
-    return res.ok ? res.json() : [];
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_employee_tree`, {
+        method: 'POST',
+        headers,
+        body: '{}',
+      });
+      if (!res.ok) {
+        // eslint-disable-next-line no-console
+        console.error('get_employee_tree failed:', res.status, await res.text());
+        return [];
+      }
+      return res.json();
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('fetchFullTree error:', err);
+      return [];
+    }
   }
 
   /* ── Fetch upward manager chain for a person ── */
   async function fetchManagerChain(empId) {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_manager_chain`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({ emp_id: empId }),
-    });
-    return res.ok ? res.json() : [];
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_manager_chain`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ emp_id: empId }),
+      });
+      if (!res.ok) {
+        // eslint-disable-next-line no-console
+        console.error('get_manager_chain failed:', res.status, await res.text());
+        return [];
+      }
+      return res.json();
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('fetchManagerChain error:', err);
+      return [];
+    }
   }
 
-  /* ── Build parent→children map ── */
+  /* ── Build parent→children map using e_id ── */
   function buildTree(rows) {
     const map = {};
-    rows.forEach((r) => { map[r.id] = { ...r, children: [] }; });
+    rows.forEach((r) => { map[r.e_id] = { ...r, children: [] }; });
     const roots = [];
     rows.forEach((r) => {
       if (r.manager_id && map[r.manager_id]) {
-        map[r.manager_id].children.push(map[r.id]);
+        map[r.manager_id].children.push(map[r.e_id]);
       } else {
-        roots.push(map[r.id]);
+        roots.push(map[r.e_id]);
       }
     });
     return { roots, map };
@@ -64,6 +86,7 @@ export default async function decorate(block) {
           <div class="role">${person.role || ''}</div>
         </div>
         ${clickable && !isSelected ? '<span class="card-chevron">›</span>' : ''}
+        ${isSelected ? '<span class="card-you">You</span>' : ''}
       </div>
     `;
 
@@ -84,7 +107,7 @@ export default async function decorate(block) {
 
     nodes.forEach((node) => {
       const card = makeCard(node, depth === 0, false, true);
-      card.addEventListener('click', () => showManagerChain(node.id, node.name));
+      card.addEventListener('click', () => showManagerChain(node.e_id, node.name));
       levelDiv.appendChild(card);
     });
 
@@ -106,9 +129,6 @@ export default async function decorate(block) {
     chartEl.innerHTML = '<div class="org-loading">Loading…</div>';
 
     const chain = await fetchManagerChain(empId);
-
-    /* chain comes ordered by level ascending */
-
     chain.sort((a, b) => a.level - b.level);
 
     chartEl.innerHTML = '';
@@ -134,24 +154,27 @@ export default async function decorate(block) {
     const tree = document.createElement('div');
     tree.className = 'org-tree';
 
-    chain.forEach((person, idx) => {
-      const isTop = idx === 0;
-      const isSelected = person.id === empId;
+    if (chain.length === 0) {
+      tree.innerHTML = '<p class="org-hint">Could not load reporting chain.</p>';
+    } else {
+      chain.forEach((person, idx) => {
+        const isTop = idx === 0;
+        const isSelected = person.e_id === empId;
 
-      const card = makeCard(person, isTop, isSelected, !isSelected);
-      if (!isSelected) {
-        card.addEventListener('click', () => showManagerChain(person.id, person.name));
-      }
+        const card = makeCard(person, isTop, isSelected, !isSelected);
+        if (!isSelected) {
+          card.addEventListener('click', () => showManagerChain(person.e_id, person.name));
+        }
 
-      tree.appendChild(card);
+        tree.appendChild(card);
 
-      /* connector between cards */
-      if (idx < chain.length - 1) {
-        const vLine = document.createElement('div');
-        vLine.className = 'v-line';
-        tree.appendChild(vLine);
-      }
-    });
+        if (idx < chain.length - 1) {
+          const vLine = document.createElement('div');
+          vLine.className = 'v-line';
+          tree.appendChild(vLine);
+        }
+      });
+    }
 
     chartEl.appendChild(tree);
   }
@@ -160,6 +183,12 @@ export default async function decorate(block) {
   async function renderFullOrg() {
     chartEl.innerHTML = '<div class="org-loading">Loading…</div>';
     const rows = await fetchFullTree();
+
+    if (rows.length === 0) {
+      chartEl.innerHTML = '<p class="org-hint">Could not load org data. Check console for errors.</p>';
+      return;
+    }
+
     const { roots } = buildTree(rows);
     chartEl.innerHTML = '';
 
@@ -190,7 +219,5 @@ export default async function decorate(block) {
   section.appendChild(chartEl);
   block.appendChild(section);
 
-  /* initial load */
   renderFullOrg();
 }
-
