@@ -1,2 +1,807 @@
-/* eslint-disable */
-var e,a={965:(e,a,t)=>{t.d(a,{f:()=>f,A:()=>g});var s=t(338),n=t(540),r=t(556),i=t.n(r),c=t(848);const o=({name:e})=>{const[a,t]=(0,n.useState)("");return(0,n.useEffect)(()=>{fetch(`/icons/${e}.svg`).then(e=>e.text()).then(e=>t(e)).catch(()=>t(""))},[e]),(0,c.jsx)("span",{"aria-hidden":"true",dangerouslySetInnerHTML:{__html:a}})};o.propTypes={name:i().string.isRequired};const l=({images:e,userName:a})=>{const[t,s]=(0,n.useState)(0);return e&&0!==e.length?1===e.length?(0,c.jsx)("img",{className:"feed-card-image",src:e[0],alt:`Post by ${a}`,loading:"lazy"}):(0,c.jsxs)("div",{className:"feed-card-carousel",children:[(0,c.jsx)("img",{className:"feed-card-image",src:e[t],alt:`Image ${t+1} of ${e.length} by ${a}`,loading:"lazy"}),(0,c.jsx)("button",{type:"button",className:"feed-card-carousel-btn feed-card-carousel-prev",onClick:()=>s(a=>(a-1+e.length)%e.length),"aria-label":"Previous image",children:"‹"}),(0,c.jsx)("button",{type:"button",className:"feed-card-carousel-btn feed-card-carousel-next",onClick:()=>s(a=>(a+1)%e.length),"aria-label":"Next image",children:"›"}),(0,c.jsx)("div",{className:"feed-card-carousel-dots",children:e.map((e,a)=>(0,c.jsx)("button",{type:"button",className:"feed-card-carousel-dot"+(a===t?" is-active":""),onClick:()=>s(a),"aria-label":`Image ${a+1}`},a))})]}):null};l.propTypes={images:i().arrayOf(i().string).isRequired,userName:i().string.isRequired};const d=({postId:e,onCountChange:a})=>{const[t,s]=(0,n.useState)([]),[r,i]=(0,n.useState)(!0),[o,l]=(0,n.useState)(""),[d,m]=(0,n.useState)(!1);(0,n.useEffect)(()=>{window.SupabaseUtils?window.SupabaseUtils.client.from("comments").select("*").eq("post_id",e).order("created_at",{ascending:!0}).then(({data:e,error:t})=>{t||(s(e||[]),a((e||[]).length)),i(!1)}):i(!1)},[e,a]);const h=async()=>{const t=o.trim();if(!t||d||!window.SupabaseUtils)return;m(!0);const{data:n,error:r}=await window.SupabaseUtils.client.from("comments").insert({post_id:e,user_name:"You",comment_text:t}).select().single();!r&&n&&(s(e=>{const t=[...e,n];return a(t.length),t}),l("")),m(!1)};return(0,c.jsxs)("div",{className:"feed-comments",children:[r&&(0,c.jsx)("p",{className:"feed-comments-status",children:"Loading comments…"}),!r&&0===t.length&&(0,c.jsx)("p",{className:"feed-comments-status",children:"No comments yet. Be the first!"}),t.map(e=>(0,c.jsxs)("div",{className:"feed-comment-item",children:[(0,c.jsx)("div",{className:"feed-comment-avatar","aria-hidden":"true",children:(e.user_name||"U").slice(0,1).toUpperCase()}),(0,c.jsxs)("div",{className:"feed-comment-body",children:[(0,c.jsx)("span",{className:"feed-comment-name",children:e.user_name||"Unknown"}),(0,c.jsx)("p",{className:"feed-comment-text",children:e.comment_text}),(0,c.jsx)("span",{className:"feed-comment-meta",children:u(e.created_at)})]})]},e.comment_id)),(0,c.jsxs)("div",{className:"feed-comment-input-row",children:[(0,c.jsx)("div",{className:"feed-comment-avatar","aria-hidden":"true",children:"U"}),(0,c.jsx)("textarea",{className:"feed-comment-input",placeholder:"Write a comment…",value:o,onChange:e=>l(e.target.value),onKeyDown:e=>{"Enter"!==e.key||e.shiftKey||(e.preventDefault(),h())},rows:1}),(0,c.jsx)("button",{type:"button",className:"feed-comment-submit",onClick:h,disabled:!o.trim()||d,"aria-label":"Post comment",children:d?"…":"Post"})]})]})};d.propTypes={postId:i().oneOfType([i().string,i().number]).isRequired,onCountChange:i().func.isRequired};const m=({post:e})=>{const[a,t]=(0,n.useState)(e.liked),[s,r]=(0,n.useState)(e.likes),[i,m]=(0,n.useState)(e.saved),[u,h]=(0,n.useState)(!1),[p,f]=(0,n.useState)(e.comments);return(0,c.jsxs)("article",{className:"feed-card",children:[(0,c.jsx)("div",{className:"feed-card-header",children:(0,c.jsxs)("div",{className:"feed-card-user",children:[(0,c.jsx)("div",{className:"feed-card-avatar",style:{background:e.user.color},"aria-hidden":"true",children:e.user.avatar}),(0,c.jsxs)("div",{className:"feed-card-user-info",children:[(0,c.jsx)("span",{className:"feed-card-name",children:e.user.name}),(0,c.jsxs)("span",{className:"feed-card-meta",children:[e.user.role,(0,c.jsx)("span",{className:"feed-card-dot","aria-hidden":"true",children:"·"}),e.timeAgo]})]})]})}),e.title&&(0,c.jsx)("p",{className:"feed-card-title",children:e.title}),(0,c.jsx)("p",{className:"feed-card-text",children:e.text}),e.tags&&e.tags.length>0&&(0,c.jsx)("div",{className:"feed-card-tags",children:e.tags.map(e=>(0,c.jsx)("span",{className:"feed-card-tag",children:e},e))}),(0,c.jsx)(l,{images:e.images||[],userName:e.user.name}),e.attachment&&(0,c.jsxs)("div",{className:"feed-card-attachment",children:[(0,c.jsx)("span",{className:"feed-card-attachment-icon",children:(0,c.jsx)(o,{name:"paperclip"})}),(0,c.jsxs)("div",{className:"feed-card-attachment-info",children:[(0,c.jsx)("span",{className:"feed-card-attachment-name",children:e.attachment.name}),(0,c.jsx)("span",{className:"feed-card-attachment-type",children:e.attachment.type})]})]}),(0,c.jsxs)("div",{className:"feed-card-footer",children:[(0,c.jsxs)("div",{className:"feed-card-actions",children:[(0,c.jsxs)("button",{type:"button",className:"feed-action-btn"+(a?" liked":""),onClick:()=>{r(a?s-1:s+1),t(!a)},"aria-label":a?"Unlike":"Like",children:[(0,c.jsx)(o,{name:"heart"}),(0,c.jsx)("span",{children:s})]}),(0,c.jsxs)("button",{type:"button",className:"feed-action-btn"+(u?" active":""),"aria-label":u?"Hide comments":"Show comments",onClick:()=>h(e=>!e),children:[(0,c.jsx)(o,{name:"comment"}),(0,c.jsx)("span",{children:p})]})]}),(0,c.jsx)("button",{type:"button",className:"feed-action-btn feed-save-btn"+(i?" saved":""),onClick:()=>m(!i),"aria-label":i?"Unsave":"Save",children:(0,c.jsx)(o,{name:"bookmark"})})]}),u&&(0,c.jsx)(d,{postId:e.id,onCountChange:f})]})};function u(e){if(!e)return"Just now";const a=Math.floor((Date.now()-new Date(e).getTime())/1e3);return a<60?"Just now":a<3600?`${Math.floor(a/60)}m ago`:a<86400?`${Math.floor(a/3600)}h ago`:`${Math.floor(a/86400)}d ago`}function h(e){return{id:e.post_id,user:{name:e.user_name||"Unknown",role:e.user_role||"Member",avatar:e.user_name?.slice(0,2).toUpperCase()||"?",color:"#0073e6"},timeAgo:u(e.created_at),title:null,text:e.post_description||"",tags:e.tags?e.tags.split(",").map(e=>e.trim()).filter(Boolean):[],images:(()=>{if(!e.media)return[];try{return JSON.parse(e.media)}catch{return[e.media]}})(),attachment:null,likes:0,comments:0,liked:!1,saved:!1}}m.propTypes={post:i().shape({id:i().oneOfType([i().string,i().number]),liked:i().bool,likes:i().number,saved:i().bool,user:i().shape({color:i().string,avatar:i().string,name:i().string,role:i().string}),timeAgo:i().string,title:i().string,text:i().string,tags:i().arrayOf(i().string),images:i().arrayOf(i().string),attachment:i().shape({name:i().string,type:i().string}),comments:i().number}).isRequired};const p=()=>{const[e,a]=(0,n.useState)([]),[t,s]=(0,n.useState)([]),[r,i]=(0,n.useState)(1),[o,l]=(0,n.useState)(!0),[d,u]=(0,n.useState)(!1),[p,f]=(0,n.useState)(!1),[g,b]=(0,n.useState)(null),x=(0,n.useRef)(null),v=(0,n.useRef)({all:[],page:1,busy:!1,hasMore:!1});return(0,n.useEffect)(()=>{if(!window.SupabaseUtils)return b("Supabase not ready. Please try again."),void l(!1);window.SupabaseUtils.client.from("posts").select("*").order("post_id",{ascending:!1}).then(({data:e,error:t})=>{if(t)return b(t.message),void l(!1);const n=(e||[]).map(h),r=n.slice(0,2),i=n.length>2;v.current={all:n,page:1,busy:!1,hasMore:i},a(n),s(r),f(i),l(!1)})},[]),(0,n.useEffect)(()=>{const e=({detail:e})=>{const{title:t="",text:n="",images:r=[],attachments:i=[],links:c=[]}=e;let o=null;var l;i.length>0?o={name:i[0].name,type:(l=i[0].mimeType,"video/mp4"===l?"MP4 · video":"PDF · document")}:c.length>0&&(o={name:c[0].replace(/^https?:\/\//,""),type:"Google Drive · link"});const d=`${n} ${t}`.match(/#\w+/g)||[],m={id:Date.now(),user:{name:"You",role:"Member",avatar:"U",color:"#0073e6"},timeAgo:"Just now",title:t||null,text:n,tags:d,images:r.map(e=>e.url),attachment:o,likes:0,comments:0,liked:!1,saved:!1};a(e=>[m,...e]),s(e=>[m,...e]),window.SupabaseUtils&&window.SupabaseUtils.client.from("posts").insert({user_name:"You",user_role:"Member",post_description:n,tags:d.join(", "),media:r.length>0?JSON.stringify(r.map(e=>e.url)):null}).then(({error:e})=>{e&&console.error("Failed to save post to Supabase:",e.message)})};return document.addEventListener("post-bar:submit",e),()=>document.removeEventListener("post-bar:submit",e)},[]),(0,n.useEffect)(()=>{v.current={all:e,page:r,busy:d,hasMore:p}},[e,r,d,p]),(0,n.useEffect)(()=>{if(o)return;const e=x.current;if(!e)return;const a=new IntersectionObserver(([e])=>{e.isIntersecting&&(()=>{const{all:e,page:a,busy:t,hasMore:n}=v.current;!t&&n&&(v.current={...v.current,busy:!0},u(!0),setTimeout(()=>{const t=a+1,n=e.slice(0,2*t),r=n.length<e.length;s(n),i(t),f(r),u(!1),v.current={all:e,page:t,busy:!1,hasMore:r}},700))})()},{threshold:.1});return a.observe(e),()=>a.disconnect()},[o]),o?(0,c.jsx)("div",{className:"feed-status",children:"Loading feed…"}):g?(0,c.jsx)("div",{className:"feed-status feed-status-error",children:g}):(0,c.jsxs)("div",{className:"feed",children:[t.map(e=>(0,c.jsx)(m,{post:e},e.id)),(0,c.jsxs)("div",{ref:x,className:"feed-sentinel","aria-hidden":"true",children:[d&&(0,c.jsx)("span",{className:"feed-spinner"}),!p&&!d&&t.length>0&&(0,c.jsx)("p",{className:"feed-end-message",children:"You're all caught up!"})]})]})};async function f(e){(0,s.H)(e).render((0,c.jsx)(p,{}))}async function g(e){await f(e)}}},t={};function s(e){var n=t[e];if(void 0!==n)return n.exports;var r=t[e]={exports:{}};return a[e](r,r.exports,s),r.exports}s.m=a,e=[],s.O=(a,t,n,r)=>{if(!t){var i=1/0;for(d=0;d<e.length;d++){for(var[t,n,r]=e[d],c=!0,o=0;o<t.length;o++)(!1&r||i>=r)&&Object.keys(s.O).every(e=>s.O[e](t[o]))?t.splice(o--,1):(c=!1,r<i&&(i=r));if(c){e.splice(d--,1);var l=n();void 0!==l&&(a=l)}}return a}r=r||0;for(var d=e.length;d>0&&e[d-1][2]>r;d--)e[d]=e[d-1];e[d]=[t,n,r]},s.n=e=>{var a=e&&e.__esModule?()=>e.default:()=>e;return s.d(a,{a}),a},s.d=(e,a)=>{for(var t in a)s.o(a,t)&&!s.o(e,t)&&Object.defineProperty(e,t,{enumerable:!0,get:a[t]})},s.o=(e,a)=>Object.prototype.hasOwnProperty.call(e,a),(()=>{var e={feed:0};s.O.j=a=>0===e[a];var a=(a,t)=>{var n,r,[i,c,o]=t,l=0;if(i.some(a=>0!==e[a])){for(n in c)s.o(c,n)&&(s.m[n]=c[n]);if(o)var d=o(s)}for(a&&a(t);l<i.length;l++)r=i[l],s.o(e,r)&&e[r]&&e[r][0](),e[r]=0;return s.O(d)},t=self.webpackChunk_adobe_aem_boilerplate=self.webpackChunk_adobe_aem_boilerplate||[];t.forEach(a.bind(null,0)),t.push=a.bind(null,t.push.bind(t))})();var n=s.O(void 0,["vendor"],()=>s(965)),r=(n=s.O(n)).f,i=n.A;export{r as decorateBlock,i as default};
+/******/ var __webpack_modules__ = ({
+
+/***/ "./react-app/app/feed/components/app.jsx":
+/*!***********************************************!*\
+  !*** ./react-app/app/feed/components/app.jsx ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
+
+
+const POSTS_PER_PAGE = 2;
+
+/* ── SVG Icon — fetches from /icons/{name}.svg and renders inline ──────────── */
+const SvgIcon = ({
+  name
+}) => {
+  const [svgContent, setSvgContent] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('');
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    fetch(`/icons/${name}.svg`).then(res => res.text()).then(text => setSvgContent(text)).catch(() => setSvgContent(''));
+  }, [name]);
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+    "aria-hidden": "true",
+    dangerouslySetInnerHTML: {
+      __html: svgContent
+    }
+  });
+};
+SvgIcon.propTypes = {
+  name: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string).isRequired
+};
+
+/* ── Image Carousel ────────────────────────────────────────────────────────── */
+const ImageCarousel = ({
+  images,
+  userName
+}) => {
+  const [idx, setIdx] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(0);
+  if (!images || images.length === 0) return null;
+  if (images.length === 1) {
+    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("img", {
+      className: "feed-card-image",
+      src: images[0],
+      alt: `Post by ${userName}`,
+      loading: "lazy"
+    });
+  }
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+    className: "feed-card-carousel",
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("img", {
+      className: "feed-card-image",
+      src: images[idx],
+      alt: `Image ${idx + 1} of ${images.length} by ${userName}`,
+      loading: "lazy"
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
+      type: "button",
+      className: "feed-card-carousel-btn feed-card-carousel-prev",
+      onClick: () => setIdx(i => (i - 1 + images.length) % images.length),
+      "aria-label": "Previous image",
+      children: "\u2039"
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
+      type: "button",
+      className: "feed-card-carousel-btn feed-card-carousel-next",
+      onClick: () => setIdx(i => (i + 1) % images.length),
+      "aria-label": "Next image",
+      children: "\u203A"
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+      className: "feed-card-carousel-dots",
+      children: images.map((_, i) =>
+      /*#__PURE__*/
+      // eslint-disable-next-line react/no-array-index-key
+      (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
+        type: "button",
+        className: `feed-card-carousel-dot${i === idx ? ' is-active' : ''}`,
+        onClick: () => setIdx(i),
+        "aria-label": `Image ${i + 1}`
+      }, i))
+    })]
+  });
+};
+ImageCarousel.propTypes = {
+  images: prop_types__WEBPACK_IMPORTED_MODULE_2___default().arrayOf((prop_types__WEBPACK_IMPORTED_MODULE_2___default().string)).isRequired,
+  userName: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string).isRequired
+};
+
+/* ── Comments Section ───────────────────────────────────────────────────────── */
+const CommentsSection = ({
+  postId,
+  onCountChange
+}) => {
+  const [comments, setComments] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
+  const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(true);
+  const [text, setText] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('');
+  const [submitting, setSubmitting] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    if (!window.SupabaseUtils) {
+      setLoading(false);
+      return;
+    }
+    window.SupabaseUtils.client.from('comments').select('*').eq('post_id', postId).order('created_at', {
+      ascending: true
+    }).then(({
+      data,
+      error: dbError
+    }) => {
+      if (!dbError) {
+        setComments(data || []);
+        onCountChange((data || []).length);
+      }
+      setLoading(false);
+    });
+  }, [postId, onCountChange]);
+  const handleSubmit = async () => {
+    const trimmed = text.trim();
+    if (!trimmed || submitting || !window.SupabaseUtils) return;
+    setSubmitting(true);
+    const {
+      data,
+      error: dbError
+    } = await window.SupabaseUtils.client.from('comments').insert({
+      post_id: postId,
+      user_name: 'You',
+      comment_text: trimmed
+    }).select().single();
+    if (!dbError && data) {
+      setComments(prev => {
+        const updated = [...prev, data];
+        onCountChange(updated.length);
+        return updated;
+      });
+      setText('');
+    }
+    setSubmitting(false);
+  };
+  const handleKeyDown = e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+    className: "feed-comments",
+    children: [loading && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
+      className: "feed-comments-status",
+      children: "Loading comments\u2026"
+    }), !loading && comments.length === 0 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
+      className: "feed-comments-status",
+      children: "No comments yet. Be the first!"
+    }), comments.map(c => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+      className: "feed-comment-item",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+        className: "feed-comment-avatar",
+        "aria-hidden": "true",
+        children: (c.user_name || 'U').slice(0, 1).toUpperCase()
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+        className: "feed-comment-body",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+          className: "feed-comment-name",
+          children: c.user_name || 'Unknown'
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
+          className: "feed-comment-text",
+          children: c.comment_text
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+          className: "feed-comment-meta",
+          children: formatTimeAgo(c.created_at)
+        })]
+      })]
+    }, c.comment_id)), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+      className: "feed-comment-input-row",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+        className: "feed-comment-avatar",
+        "aria-hidden": "true",
+        children: "U"
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("textarea", {
+        className: "feed-comment-input",
+        placeholder: "Write a comment\u2026",
+        value: text,
+        onChange: e => setText(e.target.value),
+        onKeyDown: handleKeyDown,
+        rows: 1
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
+        type: "button",
+        className: "feed-comment-submit",
+        onClick: handleSubmit,
+        disabled: !text.trim() || submitting,
+        "aria-label": "Post comment",
+        children: submitting ? '…' : 'Post'
+      })]
+    })]
+  });
+};
+CommentsSection.propTypes = {
+  postId: prop_types__WEBPACK_IMPORTED_MODULE_2___default().oneOfType([(prop_types__WEBPACK_IMPORTED_MODULE_2___default().string), (prop_types__WEBPACK_IMPORTED_MODULE_2___default().number)]).isRequired,
+  onCountChange: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().func).isRequired
+};
+
+/* ── Single Post Card ──────────────────────────────────────────────────────── */
+const FeedCard = ({
+  post
+}) => {
+  const [liked, setLiked] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(post.liked);
+  const [likeCount, setLikeCount] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(post.likes);
+  const [saved, setSaved] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(post.saved);
+  const [showComments, setShowComments] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const [commentCount, setCommentCount] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(post.comments);
+  const handleLike = () => {
+    setLikeCount(liked ? likeCount - 1 : likeCount + 1);
+    setLiked(!liked);
+  };
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("article", {
+    className: "feed-card",
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+      className: "feed-card-header",
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+        className: "feed-card-user",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+          className: "feed-card-avatar",
+          style: {
+            background: post.user.color
+          },
+          "aria-hidden": "true",
+          children: post.user.avatar
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+          className: "feed-card-user-info",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+            className: "feed-card-name",
+            children: post.user.name
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("span", {
+            className: "feed-card-meta",
+            children: [post.user.role, /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+              className: "feed-card-dot",
+              "aria-hidden": "true",
+              children: "\xB7"
+            }), post.timeAgo]
+          })]
+        })]
+      })
+    }), post.title && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
+      className: "feed-card-title",
+      children: post.title
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
+      className: "feed-card-text",
+      children: post.text
+    }), post.tags && post.tags.length > 0 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+      className: "feed-card-tags",
+      children: post.tags.map(tag => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+        className: "feed-card-tag",
+        children: tag
+      }, tag))
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(ImageCarousel, {
+      images: post.images || [],
+      userName: post.user.name
+    }), post.attachment && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+      className: "feed-card-attachment",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+        className: "feed-card-attachment-icon",
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(SvgIcon, {
+          name: "paperclip"
+        })
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+        className: "feed-card-attachment-info",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+          className: "feed-card-attachment-name",
+          children: post.attachment.name
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+          className: "feed-card-attachment-type",
+          children: post.attachment.type
+        })]
+      })]
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+      className: "feed-card-footer",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+        className: "feed-card-actions",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("button", {
+          type: "button",
+          className: `feed-action-btn${liked ? ' liked' : ''}`,
+          onClick: handleLike,
+          "aria-label": liked ? 'Unlike' : 'Like',
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(SvgIcon, {
+            name: "heart"
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+            children: likeCount
+          })]
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("button", {
+          type: "button",
+          className: `feed-action-btn${showComments ? ' active' : ''}`,
+          "aria-label": showComments ? 'Hide comments' : 'Show comments',
+          onClick: () => setShowComments(v => !v),
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(SvgIcon, {
+            name: "comment"
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+            children: commentCount
+          })]
+        })]
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
+        type: "button",
+        className: `feed-action-btn feed-save-btn${saved ? ' saved' : ''}`,
+        onClick: () => setSaved(!saved),
+        "aria-label": saved ? 'Unsave' : 'Save',
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(SvgIcon, {
+          name: "bookmark"
+        })
+      })]
+    }), showComments && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(CommentsSection, {
+      postId: post.id,
+      onCountChange: setCommentCount
+    })]
+  });
+};
+FeedCard.propTypes = {
+  post: prop_types__WEBPACK_IMPORTED_MODULE_2___default().shape({
+    id: prop_types__WEBPACK_IMPORTED_MODULE_2___default().oneOfType([(prop_types__WEBPACK_IMPORTED_MODULE_2___default().string), (prop_types__WEBPACK_IMPORTED_MODULE_2___default().number)]),
+    liked: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().bool),
+    likes: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().number),
+    saved: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().bool),
+    user: prop_types__WEBPACK_IMPORTED_MODULE_2___default().shape({
+      color: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string),
+      avatar: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string),
+      name: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string),
+      role: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string)
+    }),
+    timeAgo: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string),
+    title: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string),
+    text: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string),
+    tags: prop_types__WEBPACK_IMPORTED_MODULE_2___default().arrayOf((prop_types__WEBPACK_IMPORTED_MODULE_2___default().string)),
+    images: prop_types__WEBPACK_IMPORTED_MODULE_2___default().arrayOf((prop_types__WEBPACK_IMPORTED_MODULE_2___default().string)),
+    attachment: prop_types__WEBPACK_IMPORTED_MODULE_2___default().shape({
+      name: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string),
+      type: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string)
+    }),
+    comments: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().number)
+  }).isRequired
+};
+
+/* ── Helper: format timeAgo from ISO timestamp ─────────────────────────────── */
+function formatTimeAgo(isoString) {
+  if (!isoString) return 'Just now';
+  const diff = Math.floor((Date.now() - new Date(isoString).getTime()) / 1000);
+  if (diff < 60) return 'Just now';
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  return `${Math.floor(diff / 86400)}d ago`;
+}
+
+/* ── Helper: map Supabase row → FeedCard post shape ───────────────────────── */
+function mapRowToPost(row) {
+  return {
+    id: row.post_id,
+    user: {
+      name: row.user_name || 'Unknown',
+      role: row.user_role || 'Member',
+      avatar: row.user_name?.slice(0, 2).toUpperCase() || '?',
+      color: '#0073e6'
+    },
+    timeAgo: formatTimeAgo(row.created_at),
+    title: null,
+    text: row.post_description || '',
+    tags: row.tags ? row.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
+    images: (() => {
+      if (!row.media) return [];
+      try {
+        return JSON.parse(row.media);
+      } catch {
+        return [row.media];
+      }
+    })(),
+    attachment: null,
+    likes: 0,
+    comments: 0,
+    liked: false,
+    saved: false
+  };
+}
+
+/* ── Feed with Lazy Loading ────────────────────────────────────────────────── */
+const Feed = () => {
+  const [allPosts, setAllPosts] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
+  const [visiblePosts, setVisiblePosts] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
+  const [page, setPage] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(1);
+  const [initialLoading, setInitialLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(true);
+  const [loadingMore, setLoadingMore] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const [hasMore, setHasMore] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const [error, setError] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const sentinelRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
+  const ctx = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)({
+    all: [],
+    page: 1,
+    busy: false,
+    hasMore: false
+  });
+
+  /* ── CHANGED: fetch from Supabase instead of /mock.json ─────────────────── */
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    if (!window.SupabaseUtils) {
+      setError('Supabase not ready. Please try again.');
+      setInitialLoading(false);
+      return;
+    }
+    window.SupabaseUtils.client.from('posts').select('*').order('post_id', {
+      ascending: false
+    }).then(({
+      data,
+      error: dbError
+    }) => {
+      if (dbError) {
+        setError(dbError.message);
+        setInitialLoading(false);
+        return;
+      }
+      const mapped = (data || []).map(mapRowToPost);
+      const initial = mapped.slice(0, POSTS_PER_PAGE);
+      const more = mapped.length > POSTS_PER_PAGE;
+      ctx.current = {
+        all: mapped,
+        page: 1,
+        busy: false,
+        hasMore: more
+      };
+      setAllPosts(mapped);
+      setVisiblePosts(initial);
+      setHasMore(more);
+      setInitialLoading(false);
+    });
+  }, []);
+
+  /* ── CHANGED: new post saves to Supabase and prepends to feed ───────────── */
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    const handleNewPost = ({
+      detail
+    }) => {
+      const {
+        title = '',
+        text = '',
+        images = [],
+        attachments = [],
+        links = []
+      } = detail;
+      const mimeLabel = mime => mime === 'video/mp4' ? 'MP4 · video' : 'PDF · document';
+      let attachment = null;
+      if (attachments.length > 0) {
+        attachment = {
+          name: attachments[0].name,
+          type: mimeLabel(attachments[0].mimeType)
+        };
+      } else if (links.length > 0) {
+        attachment = {
+          name: links[0].replace(/^https?:\/\//, ''),
+          type: 'Google Drive · link'
+        };
+      }
+      const extractedTags = `${text} ${title}`.match(/#\w+/g) || [];
+      const newPost = {
+        id: Date.now(),
+        user: {
+          name: 'You',
+          role: 'Member',
+          avatar: 'U',
+          color: '#0073e6'
+        },
+        timeAgo: 'Just now',
+        title: title || null,
+        text,
+        tags: extractedTags,
+        images: images.map(img => img.url),
+        attachment,
+        likes: 0,
+        comments: 0,
+        liked: false,
+        saved: false
+      };
+
+      // Optimistically add to feed immediately
+      setAllPosts(prev => [newPost, ...prev]);
+      setVisiblePosts(prev => [newPost, ...prev]);
+
+      // Save to Supabase in the background
+      if (window.SupabaseUtils) {
+        window.SupabaseUtils.client.from('posts').insert({
+          user_name: 'You',
+          user_role: 'Member',
+          post_description: text,
+          tags: extractedTags.join(', '),
+          media: images.length > 0 ? JSON.stringify(images.map(img => img.url)) : null
+        }).then(({
+          error: dbError
+        }) => {
+          if (dbError) {
+            console.error('Failed to save post to Supabase:', dbError.message);
+          }
+        });
+      }
+    };
+    document.addEventListener('post-bar:submit', handleNewPost);
+    return () => document.removeEventListener('post-bar:submit', handleNewPost);
+  }, []);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    ctx.current = {
+      all: allPosts,
+      page,
+      busy: loadingMore,
+      hasMore
+    };
+  }, [allPosts, page, loadingMore, hasMore]);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    if (initialLoading) return undefined;
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return undefined;
+    const loadNext = () => {
+      const {
+        all,
+        page: pg,
+        busy,
+        hasMore: more
+      } = ctx.current;
+      if (busy || !more) return;
+      ctx.current = {
+        ...ctx.current,
+        busy: true
+      };
+      setLoadingMore(true);
+      setTimeout(() => {
+        const nextPage = pg + 1;
+        const nextVisible = all.slice(0, nextPage * POSTS_PER_PAGE);
+        const stillMore = nextVisible.length < all.length;
+        setVisiblePosts(nextVisible);
+        setPage(nextPage);
+        setHasMore(stillMore);
+        setLoadingMore(false);
+        ctx.current = {
+          all,
+          page: nextPage,
+          busy: false,
+          hasMore: stillMore
+        };
+      }, 700);
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) loadNext();
+    }, {
+      threshold: 0.1
+    });
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [initialLoading]);
+  if (initialLoading) return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+    className: "feed-status",
+    children: "Loading feed\u2026"
+  });
+  if (error) return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+    className: "feed-status feed-status-error",
+    children: error
+  });
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+    className: "feed",
+    children: [visiblePosts.map(post => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(FeedCard, {
+      post: post
+    }, post.id)), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+      ref: sentinelRef,
+      className: "feed-sentinel",
+      "aria-hidden": "true",
+      children: [loadingMore && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+        className: "feed-spinner"
+      }), !hasMore && !loadingMore && visiblePosts.length > 0 && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
+        className: "feed-end-message",
+        children: "You're all caught up!"
+      })]
+    })]
+  });
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Feed);
+
+/***/ }),
+
+/***/ "./react-app/app/feed/index.jsx":
+/*!**************************************!*\
+  !*** ./react-app/app/feed/index.jsx ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   decorateBlock: () => (/* binding */ decorateBlock),
+/* harmony export */   "default": () => (/* binding */ decorate)
+/* harmony export */ });
+/* harmony import */ var react_dom_client__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-dom/client */ "./node_modules/react-dom/client.js");
+/* harmony import */ var _styles_index_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./styles/index.css */ "./react-app/app/feed/styles/index.css");
+/* harmony import */ var _components_app_jsx__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/app.jsx */ "./react-app/app/feed/components/app.jsx");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
+
+
+
+async function decorateBlock(block) {
+  const root = (0,react_dom_client__WEBPACK_IMPORTED_MODULE_0__.createRoot)(block);
+  root.render(/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_components_app_jsx__WEBPACK_IMPORTED_MODULE_2__["default"], {}));
+}
+async function decorate(block) {
+  await decorateBlock(block);
+}
+
+/***/ }),
+
+/***/ "./react-app/app/feed/styles/index.css":
+/*!*********************************************!*\
+  !*** ./react-app/app/feed/styles/index.css ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ })
+
+/******/ });
+/************************************************************************/
+/******/ // The module cache
+/******/ var __webpack_module_cache__ = {};
+/******/ 
+/******/ // The require function
+/******/ function __webpack_require__(moduleId) {
+/******/ 	// Check if module is in cache
+/******/ 	var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 	if (cachedModule !== undefined) {
+/******/ 		return cachedModule.exports;
+/******/ 	}
+/******/ 	// Create a new module (and put it into the cache)
+/******/ 	var module = __webpack_module_cache__[moduleId] = {
+/******/ 		id: moduleId,
+/******/ 		loaded: false,
+/******/ 		exports: {}
+/******/ 	};
+/******/ 
+/******/ 	// Execute the module function
+/******/ 	__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 
+/******/ 	// Flag the module as loaded
+/******/ 	module.loaded = true;
+/******/ 
+/******/ 	// Return the exports of the module
+/******/ 	return module.exports;
+/******/ }
+/******/ 
+/******/ // expose the modules object (__webpack_modules__)
+/******/ __webpack_require__.m = __webpack_modules__;
+/******/ 
+/************************************************************************/
+/******/ /* webpack/runtime/chunk loaded */
+/******/ (() => {
+/******/ 	var deferred = [];
+/******/ 	__webpack_require__.O = (result, chunkIds, fn, priority) => {
+/******/ 		if(chunkIds) {
+/******/ 			priority = priority || 0;
+/******/ 			for(var i = deferred.length; i > 0 && deferred[i - 1][2] > priority; i--) deferred[i] = deferred[i - 1];
+/******/ 			deferred[i] = [chunkIds, fn, priority];
+/******/ 			return;
+/******/ 		}
+/******/ 		var notFulfilled = Infinity;
+/******/ 		for (var i = 0; i < deferred.length; i++) {
+/******/ 			var [chunkIds, fn, priority] = deferred[i];
+/******/ 			var fulfilled = true;
+/******/ 			for (var j = 0; j < chunkIds.length; j++) {
+/******/ 				if ((priority & 1 === 0 || notFulfilled >= priority) && Object.keys(__webpack_require__.O).every((key) => (__webpack_require__.O[key](chunkIds[j])))) {
+/******/ 					chunkIds.splice(j--, 1);
+/******/ 				} else {
+/******/ 					fulfilled = false;
+/******/ 					if(priority < notFulfilled) notFulfilled = priority;
+/******/ 				}
+/******/ 			}
+/******/ 			if(fulfilled) {
+/******/ 				deferred.splice(i--, 1)
+/******/ 				var r = fn();
+/******/ 				if (r !== undefined) result = r;
+/******/ 			}
+/******/ 		}
+/******/ 		return result;
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/compat get default export */
+/******/ (() => {
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = (module) => {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			() => (module['default']) :
+/******/ 			() => (module);
+/******/ 		__webpack_require__.d(getter, { a: getter });
+/******/ 		return getter;
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/define property getters */
+/******/ (() => {
+/******/ 	// define getter functions for harmony exports
+/******/ 	__webpack_require__.d = (exports, definition) => {
+/******/ 		for(var key in definition) {
+/******/ 			if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 				Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 			}
+/******/ 		}
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/getFullHash */
+/******/ (() => {
+/******/ 	__webpack_require__.h = () => ("3b3449187ae074f5523c")
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/hasOwnProperty shorthand */
+/******/ (() => {
+/******/ 	__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/make namespace object */
+/******/ (() => {
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = (exports) => {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/node module decorator */
+/******/ (() => {
+/******/ 	__webpack_require__.nmd = (module) => {
+/******/ 		module.paths = [];
+/******/ 		if (!module.children) module.children = [];
+/******/ 		return module;
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/jsonp chunk loading */
+/******/ (() => {
+/******/ 	// no baseURI
+/******/ 	
+/******/ 	// object to store loaded and loading chunks
+/******/ 	// undefined = chunk not loaded, null = chunk preloaded/prefetched
+/******/ 	// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
+/******/ 	var installedChunks = {
+/******/ 		"feed": 0
+/******/ 	};
+/******/ 	
+/******/ 	// no chunk on demand loading
+/******/ 	
+/******/ 	// no prefetching
+/******/ 	
+/******/ 	// no preloaded
+/******/ 	
+/******/ 	// no HMR
+/******/ 	
+/******/ 	// no HMR manifest
+/******/ 	
+/******/ 	__webpack_require__.O.j = (chunkId) => (installedChunks[chunkId] === 0);
+/******/ 	
+/******/ 	// install a JSONP callback for chunk loading
+/******/ 	var webpackJsonpCallback = (parentChunkLoadingFunction, data) => {
+/******/ 		var [chunkIds, moreModules, runtime] = data;
+/******/ 		// add "moreModules" to the modules object,
+/******/ 		// then flag all "chunkIds" as loaded and fire callback
+/******/ 		var moduleId, chunkId, i = 0;
+/******/ 		if(chunkIds.some((id) => (installedChunks[id] !== 0))) {
+/******/ 			for(moduleId in moreModules) {
+/******/ 				if(__webpack_require__.o(moreModules, moduleId)) {
+/******/ 					__webpack_require__.m[moduleId] = moreModules[moduleId];
+/******/ 				}
+/******/ 			}
+/******/ 			if(runtime) var result = runtime(__webpack_require__);
+/******/ 		}
+/******/ 		if(parentChunkLoadingFunction) parentChunkLoadingFunction(data);
+/******/ 		for(;i < chunkIds.length; i++) {
+/******/ 			chunkId = chunkIds[i];
+/******/ 			if(__webpack_require__.o(installedChunks, chunkId) && installedChunks[chunkId]) {
+/******/ 				installedChunks[chunkId][0]();
+/******/ 			}
+/******/ 			installedChunks[chunkId] = 0;
+/******/ 		}
+/******/ 		return __webpack_require__.O(result);
+/******/ 	}
+/******/ 	
+/******/ 	var chunkLoadingGlobal = self["webpackChunk_adobe_aem_boilerplate"] = self["webpackChunk_adobe_aem_boilerplate"] || [];
+/******/ 	chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
+/******/ 	chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
+/******/ })();
+/******/ 
+/************************************************************************/
+/******/ 
+/******/ // startup
+/******/ // Load entry module and return exports
+/******/ // This entry module depends on other loaded chunks and execution need to be delayed
+/******/ __webpack_require__.O(undefined, ["vendor"], () => (__webpack_require__("./node_modules/webpack-dev-server/client/index.js?protocol=ws%3A&hostname=localhost&port=4200&pathname=%2Fws&logging=info&overlay=true&reconnect=10&hot=false&live-reload=true")))
+/******/ var __webpack_exports__ = __webpack_require__.O(undefined, ["vendor"], () => (__webpack_require__("./react-app/app/feed/index.jsx")))
+/******/ __webpack_exports__ = __webpack_require__.O(__webpack_exports__);
+/******/ var __webpack_exports__decorateBlock = __webpack_exports__.decorateBlock;
+/******/ var __webpack_exports__default = __webpack_exports__["default"];
+/******/ export { __webpack_exports__decorateBlock as decorateBlock, __webpack_exports__default as default };
+/******/ 

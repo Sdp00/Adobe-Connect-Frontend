@@ -1,7 +1,11 @@
 import createModal from '../../helper/helper.js';
 
-export default async function decorate() {}
+const link = document.createElement('link');
+link.rel = 'stylesheet';
+link.href = '/blocks/admin/admin.css';
+document.head.appendChild(link);
 
+export default async function decorate() {}
 /* UPLOAD MEDIA TO SUPABASE */
 async function uploadMedia(file) {
   const client = window.SupabaseUtils.client;
