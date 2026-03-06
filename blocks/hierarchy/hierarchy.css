@@ -279,7 +279,7 @@
 
 /* ── Dark mode ── */
 html[data-theme="dark"] .org-page {
-  background: #111111;
+  background: #111;
 }
 
 html[data-theme="dark"] .org-header h1 {
