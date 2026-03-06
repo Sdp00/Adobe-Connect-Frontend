@@ -5,7 +5,11 @@
   font-family: "Adobe Clean", system-ui, sans-serif;
   background: #f8f8f8;
   min-height: 100vh;
+<<<<<<< HEAD
+   margin-left: 190px;
+=======
   margin-left: 190px;
+>>>>>>> develop
 }
 
 /* Header */
