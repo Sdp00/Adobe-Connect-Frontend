@@ -88,13 +88,13 @@ html {
 }
 
 /* SEARCH */
-
 .nav-center {
   display: flex;
   justify-content: center;
   min-width: 0;
 }
 
+/* Single unified .nav-search block — includes position: relative */
 .nav-search {
   display: flex;
   align-items: center;
@@ -227,6 +227,7 @@ html {
   z-index: 9000;
 }
 
+/* dark base BEFORE compound .profile.open .profile-menu */
 html[data-theme="dark"] .profile-menu {
   background: var(--spectrum-gray-50);
   color: var(--spectrum-text-primary);
@@ -287,6 +288,7 @@ html[data-theme="dark"] .profile-menu {
    AEM EDS STICKY FIX
    ============================================ */
 
+/* lower specificity first */
 header > div,
 header .header-wrapper,
 header .nav-wrapper,
@@ -300,6 +302,7 @@ header .header,
   position: static !important;
 }
 
+/* higher specificity after */
 main > .section.nav-container > .nav-wrapper {
   max-width: 100% !important;
   margin: 0 !important;
@@ -505,40 +508,12 @@ header {
   background: #be123c;
 }
 
-/* DARK MODE */
-html[data-theme="dark"] {
-  --spectrum-gray-50: #1e1e1e;
-  --spectrum-gray-75: #181818;
-  --spectrum-gray-100: #2a2a2a;
-  --spectrum-gray-200: #333;
-  --spectrum-gray-300: #3f3f3f;
-  --spectrum-gray-500: #b3b3b3;
-  --spectrum-gray-700: #e0e0e0;
-  --spectrum-gray-800: #fff;
-  --spectrum-text-primary: #fff;
-  --spectrum-text-secondary: #b3b3b3;
-  --spectrum-border-divider: #333;
-
-  background: #121212;
-  color: #fff;
-}
-
-html[data-theme="dark"] .nav-inner {
-  background: var(--spectrum-gray-50);
-  color: var(--spectrum-text-primary);
-}
-
-html[data-theme="dark"] .profile-modal {
-  background: var(--spectrum-gray-50);
-  color: var(--spectrum-text-primary);
-}
-
 /* Mobile search icon — hidden on desktop */
 .mobile-search-btn {
   display: none;
 }
 
-/* Mobile search bar */
+/* Single unified .mobile-search-bar block — includes position: relative */
 .mobile-search-bar {
   display: none;
   position: absolute;
@@ -575,10 +550,6 @@ html[data-theme="dark"] .profile-modal {
 
 .mobile-search-bar input::placeholder {
   color: var(--spectrum-text-secondary);
-}
-
-html[data-theme="dark"] .mobile-search-bar {
-  background: var(--spectrum-gray-50);
 }
 
 /* Logo link */
@@ -682,6 +653,38 @@ html[data-theme="dark"] .mobile-search-bar {
   text-align: center;
   font-size: 14px;
   color: var(--spectrum-text-secondary);
+}
+
+/* DARK MODE */
+html[data-theme="dark"] {
+  --spectrum-gray-50: #1e1e1e;
+  --spectrum-gray-75: #181818;
+  --spectrum-gray-100: #2a2a2a;
+  --spectrum-gray-200: #333;
+  --spectrum-gray-300: #3f3f3f;
+  --spectrum-gray-500: #b3b3b3;
+  --spectrum-gray-700: #e0e0e0;
+  --spectrum-gray-800: #fff;
+  --spectrum-text-primary: #fff;
+  --spectrum-text-secondary: #b3b3b3;
+  --spectrum-border-divider: #333;
+
+  background: #121212;
+  color: #fff;
+}
+
+html[data-theme="dark"] .nav-inner {
+  background: var(--spectrum-gray-50);
+  color: var(--spectrum-text-primary);
+}
+
+html[data-theme="dark"] .profile-modal {
+  background: var(--spectrum-gray-50);
+  color: var(--spectrum-text-primary);
+}
+
+html[data-theme="dark"] .mobile-search-bar {
+  background: var(--spectrum-gray-50);
 }
 
 html[data-theme="dark"] .search-dropdown {
