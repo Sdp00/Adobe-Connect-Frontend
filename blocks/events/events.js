@@ -1,2 +1,601 @@
-/* eslint-disable */
-var e,t={783:(e,t,n)=>{n.d(t,{f:()=>u,A:()=>m});var a=n(338),s=n(540),i=n(556),r=n.n(i),l=n(848);function c({events:e,onDateSelect:t}){const[n,a]=(0,s.useState)(new Date),i=(e=>{const t=e.getFullYear(),n=e.getMonth(),a=new Date(t,n,1),s=new Date(t,n+1,0).getDate(),i=a.getDay(),r=[];for(let e=0;e<i;e+=1)r.push(null);for(let e=1;e<=s;e+=1)r.push(e);return r})(n),r=n.toLocaleDateString("en-US",{month:"long"}),c=n.getFullYear();return(0,l.jsxs)("div",{className:"calendar-compact",children:[(0,l.jsxs)("div",{className:"calendar-header-compact",children:[(0,l.jsx)("button",{type:"button",onClick:()=>a(new Date(n.getFullYear(),n.getMonth()-1)),className:"calendar-nav-btn",children:"<"}),(0,l.jsx)("div",{className:"calendar-title-compact",children:(0,l.jsxs)("span",{className:"month-name",children:[r," ",c]})}),(0,l.jsx)("button",{type:"button",onClick:()=>a(new Date(n.getFullYear(),n.getMonth()+1)),className:"calendar-nav-btn",children:">"})]}),(0,l.jsxs)("div",{className:"calendar-grid-compact",children:[["S","M","T","W","T","F","S"].map((e,t)=>(0,l.jsx)("div",{className:"calendar-weekday-compact",children:e},`day-${t}`)),i.map((a,s)=>{const i=(t=>{if(!t)return null;const a=`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(t).padStart(2,"0")}`;return e.find(e=>e.date===a)})(a);return(0,l.jsx)("div",{className:`calendar-day-compact${a?"":" calendar-day--empty"}${i?" calendar-day--event":""}`,children:a&&(0,l.jsxs)("button",{type:"button",className:"calendar-day-btn-compact",onClick:()=>a&&t&&t(a),children:[(0,l.jsx)("span",{className:"calendar-day-number",children:a}),i&&(0,l.jsx)("span",{className:"calendar-event-name",children:i.title})]})},`date-${s}`)})]})]})}function d({event:e,onRSVP:t}){const[n,a]=(0,s.useState)(!1),[i,r]=(0,s.useState)(""),c="past"===e.status;return(0,l.jsxs)(l.Fragment,{children:[(0,l.jsxs)("div",{className:"event-card",children:[(0,l.jsx)("img",{src:e.Media||e.image||"https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800",alt:e.title,className:"event-card-img"}),(0,l.jsxs)("div",{className:"event-card-content",children:[(0,l.jsx)("h3",{className:"event-card-title",children:e.title}),(0,l.jsxs)("div",{className:"event-card-meta",children:[(0,l.jsx)("div",{className:"event-meta-item",children:(0,l.jsxs)("span",{children:[new Date(e.date).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})," ","• ",e.time]})}),(0,l.jsx)("div",{className:"event-meta-item",children:(0,l.jsx)("span",{children:e.location})})]}),!c&&!e.rsvp&&(0,l.jsxs)("div",{className:"event-card-actions",children:[(0,l.jsx)("button",{type:"button",className:"btn",onClick:()=>t(e.id,"accepted"),children:"Accept"}),(0,l.jsx)("button",{type:"button",className:"btn",onClick:()=>a(!0),children:"Decline"})]})]})]}),n&&!c&&(0,l.jsx)("div",{className:"decline-modal-overlay",onClick:()=>a(!1),children:(0,l.jsxs)("div",{className:"decline-modal",onClick:e=>e.stopPropagation(),children:[(0,l.jsx)("h3",{children:"Reason for Declining"}),(0,l.jsx)("textarea",{className:"decline-textarea",value:i,onChange:e=>r(e.target.value),rows:"4"}),(0,l.jsxs)("div",{className:"decline-modal-actions",children:[(0,l.jsx)("button",{type:"button",className:"btn",onClick:()=>a(!1),children:"Cancel"}),(0,l.jsx)("button",{type:"button",className:"btn",onClick:()=>{i.trim()&&(t(e.id,"declined",i),a(!1),r(""))},disabled:!i.trim(),children:"Submit"})]})]})})]})}function o(){const[e,t]=(0,s.useState)([]),[n,a]=(0,s.useState)(!0),[i,r]=(0,s.useState)(null),[o,u]=(0,s.useState)(null),m=new Date;m.setHours(0,0,0,0);const p=new Date(m);p.setDate(m.getDate()+30);const v=new Date(m);v.setDate(m.getDate()-30),(0,s.useEffect)(()=>{async function e(){a(!0);try{await new Promise((e,t)=>{if(window.SupabaseUtils)return void e();let n=0;const a=setInterval(()=>{n+=1,window.SupabaseUtils?(clearInterval(a),e()):n>=30&&(clearInterval(a),t(new Error("SupabaseUtils did not load in time")))},100)});const{data:e,error:n}=await window.SupabaseUtils.getRecords("events",{select:"id,title,date,time,location,Media",orderBy:"date",ascending:!0});if(n)throw n;const a=(e||[]).map(e=>({...e,image:e.Media||e.image}));t(a)}catch(e){console.error("Events fetch error:",e),r("Failed to fetch events")}finally{a(!1)}}return e(),window.addEventListener("events-updated",e),()=>window.removeEventListener("events-updated",e)},[]);const h=(e,n,a=null)=>{t(t=>t.map(t=>t.id===e?{...t,rsvp:n,declineReason:a}:t))},x=e.filter(e=>{const t=new Date(e.date);return t.setHours(0,0,0,0),t>=m&&t<=p}),g=e.filter(e=>{const t=new Date(e.date);return t.setHours(0,0,0,0),t>=v&&t<m}).map(e=>({...e,status:"past"}));return n?(0,l.jsx)("p",{style:{padding:"20px",marginLeft:"240px"},children:"Loading events…"}):i?(0,l.jsx)("p",{style:{padding:"20px",marginLeft:"240px",color:"red"},children:i}):(0,l.jsxs)("div",{className:"events-page",children:[(0,l.jsx)("div",{className:"events-header",children:(0,l.jsx)("h1",{children:"Events"})}),(0,l.jsx)("div",{className:"events-top-section",children:(0,l.jsx)(c,{events:e,selectedDate:o,onDateSelect:u})}),(0,l.jsxs)("section",{className:"events-section",children:[(0,l.jsx)("h2",{className:"section-title",children:"Upcoming Events (Next 30 Days)"}),(0,l.jsx)("div",{className:"events-grid",children:x.length>0?x.map(e=>(0,l.jsx)(d,{event:e,onRSVP:h},e.id)):(0,l.jsx)("p",{children:"No upcoming events in the next 30 days"})})]}),(0,l.jsxs)("section",{className:"events-section",children:[(0,l.jsx)("h2",{className:"section-title",children:"Past Events (Last 30 Days)"}),(0,l.jsx)("div",{className:"events-grid",children:g.length>0?g.map(e=>(0,l.jsx)(d,{event:e,onRSVP:h},e.id)):(0,l.jsx)("p",{children:"No past events in the last 30 days"})})]})]})}async function u(e){(0,a.H)(e).render((0,l.jsx)(o,{block:e}))}async function m(e){u(e)}c.propTypes={events:r().arrayOf(r().shape({id:r().oneOfType([r().string,r().number]).isRequired,title:r().string.isRequired,date:r().string.isRequired})).isRequired,onDateSelect:r().func},c.defaultProps={onDateSelect:null},d.propTypes={event:r().shape({id:r().oneOfType([r().string,r().number]).isRequired,title:r().string.isRequired,date:r().string.isRequired,time:r().string.isRequired,location:r().string.isRequired,Media:r().string,image:r().string,status:r().string,rsvp:r().string}).isRequired,onRSVP:r().func.isRequired}}},n={};function a(e){var s=n[e];if(void 0!==s)return s.exports;var i=n[e]={exports:{}};return t[e](i,i.exports,a),i.exports}a.m=t,e=[],a.O=(t,n,s,i)=>{if(!n){var r=1/0;for(o=0;o<e.length;o++){for(var[n,s,i]=e[o],l=!0,c=0;c<n.length;c++)(!1&i||r>=i)&&Object.keys(a.O).every(e=>a.O[e](n[c]))?n.splice(c--,1):(l=!1,i<r&&(r=i));if(l){e.splice(o--,1);var d=s();void 0!==d&&(t=d)}}return t}i=i||0;for(var o=e.length;o>0&&e[o-1][2]>i;o--)e[o]=e[o-1];e[o]=[n,s,i]},a.n=e=>{var t=e&&e.__esModule?()=>e.default:()=>e;return a.d(t,{a:t}),t},a.d=(e,t)=>{for(var n in t)a.o(t,n)&&!a.o(e,n)&&Object.defineProperty(e,n,{enumerable:!0,get:t[n]})},a.o=(e,t)=>Object.prototype.hasOwnProperty.call(e,t),(()=>{var e={events:0};a.O.j=t=>0===e[t];var t=(t,n)=>{var s,i,[r,l,c]=n,d=0;if(r.some(t=>0!==e[t])){for(s in l)a.o(l,s)&&(a.m[s]=l[s]);if(c)var o=c(a)}for(t&&t(n);d<r.length;d++)i=r[d],a.o(e,i)&&e[i]&&e[i][0](),e[i]=0;return a.O(o)},n=self.webpackChunk_adobe_aem_boilerplate=self.webpackChunk_adobe_aem_boilerplate||[];n.forEach(t.bind(null,0)),n.push=t.bind(null,n.push.bind(n))})();var s=a.O(void 0,["vendor"],()=>a(783)),i=(s=a.O(s)).f,r=s.A;export{i as decorateBlock,r as default};
+/******/ var __webpack_modules__ = ({
+
+/***/ "./react-app/app/events/components/events.jsx":
+/*!****************************************************!*\
+  !*** ./react-app/app/events/components/events.jsx ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ Events)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
+
+
+function waitForSupabase() {
+  return new Promise((resolve, reject) => {
+    if (window.SupabaseUtils) {
+      resolve();
+      return;
+    }
+    let attempts = 0;
+    const interval = setInterval(() => {
+      attempts += 1;
+      if (window.SupabaseUtils) {
+        clearInterval(interval);
+        resolve();
+      } else if (attempts >= 30) {
+        clearInterval(interval);
+        reject(new Error('SupabaseUtils did not load in time'));
+      }
+    }, 100);
+  });
+}
+
+// Compact Calendar Component with Event Names
+function Calendar({
+  events,
+  onDateSelect
+}) {
+  const [currentMonth, setCurrentMonth] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(new Date());
+  const getDaysInMonth = date => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
+    const days = [];
+    for (let i = 0; i < startingDayOfWeek; i += 1) {
+      days.push(null);
+    }
+    for (let i = 1; i <= daysInMonth; i += 1) {
+      days.push(i);
+    }
+    return days;
+  };
+  const getEventForDay = day => {
+    if (!day) return null;
+    const dateStr = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    return events.find(evt => evt.date === dateStr);
+  };
+  const days = getDaysInMonth(currentMonth);
+  const monthName = currentMonth.toLocaleDateString('en-US', {
+    month: 'long'
+  });
+  const year = currentMonth.getFullYear();
+  const prevMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
+  const nextMonth = () => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+    className: "calendar-compact",
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+      className: "calendar-header-compact",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
+        type: "button",
+        onClick: prevMonth,
+        className: "calendar-nav-btn",
+        children: "<"
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+        className: "calendar-title-compact",
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("span", {
+          className: "month-name",
+          children: [monthName, " ", year]
+        })
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
+        type: "button",
+        onClick: nextMonth,
+        className: "calendar-nav-btn",
+        children: ">"
+      })]
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+      className: "calendar-grid-compact",
+      children: [['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+        className: "calendar-weekday-compact",
+        children: day
+      }, `day-${idx}`)), days.map((day, idx) => {
+        const event = getEventForDay(day);
+        return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+          className: `calendar-day-compact${!day ? ' calendar-day--empty' : ''}${event ? ' calendar-day--event' : ''}`,
+          children: day && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("button", {
+            type: "button",
+            className: "calendar-day-btn-compact",
+            onClick: () => day && onDateSelect && onDateSelect(day),
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+              className: "calendar-day-number",
+              children: day
+            }), event && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+              className: "calendar-event-name",
+              children: event.title
+            })]
+          })
+        }, `date-${idx}`);
+      })]
+    })]
+  });
+}
+Calendar.propTypes = {
+  events: prop_types__WEBPACK_IMPORTED_MODULE_2___default().arrayOf(prop_types__WEBPACK_IMPORTED_MODULE_2___default().shape({
+    id: prop_types__WEBPACK_IMPORTED_MODULE_2___default().oneOfType([(prop_types__WEBPACK_IMPORTED_MODULE_2___default().string), (prop_types__WEBPACK_IMPORTED_MODULE_2___default().number)]).isRequired,
+    title: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string).isRequired,
+    date: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string).isRequired
+  })).isRequired,
+  onDateSelect: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().func)
+};
+Calendar.defaultProps = {
+  onDateSelect: null
+};
+
+// Event Card Component with Decline Modal
+function EventCard({
+  event,
+  onRSVP
+}) {
+  const [showDeclineModal, setShowDeclineModal] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const [declineReason, setDeclineReason] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('');
+  const handleDeclineSubmit = () => {
+    if (declineReason.trim()) {
+      onRSVP(event.id, 'declined', declineReason);
+      setShowDeclineModal(false);
+      setDeclineReason('');
+    }
+  };
+  const isPast = event.status === 'past';
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.Fragment, {
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+      className: "event-card",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("img", {
+        src: event.Media || event.image || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800',
+        alt: event.title,
+        className: "event-card-img"
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+        className: "event-card-content",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("h3", {
+          className: "event-card-title",
+          children: event.title
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+          className: "event-card-meta",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+            className: "event-meta-item",
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("span", {
+              children: [new Date(event.date).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+              }), ' ', "\u2022 ", event.time]
+            })
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+            className: "event-meta-item",
+            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+              children: event.location
+            })
+          })]
+        }), !isPast && !event.rsvp && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+          className: "event-card-actions",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
+            type: "button",
+            className: "btn",
+            onClick: () => onRSVP(event.id, 'accepted'),
+            children: "Accept"
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
+            type: "button",
+            className: "btn",
+            onClick: () => setShowDeclineModal(true),
+            children: "Decline"
+          })]
+        })]
+      })]
+    }), showDeclineModal && !isPast && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+      className: "decline-modal-overlay",
+      onClick: () => setShowDeclineModal(false),
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+        className: "decline-modal",
+        onClick: e => e.stopPropagation(),
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("h3", {
+          children: "Reason for Declining"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("textarea", {
+          className: "decline-textarea",
+          value: declineReason,
+          onChange: e => setDeclineReason(e.target.value),
+          rows: "4"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+          className: "decline-modal-actions",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
+            type: "button",
+            className: "btn",
+            onClick: () => setShowDeclineModal(false),
+            children: "Cancel"
+          }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
+            type: "button",
+            className: "btn",
+            onClick: handleDeclineSubmit,
+            disabled: !declineReason.trim(),
+            children: "Submit"
+          })]
+        })]
+      })
+    })]
+  });
+}
+EventCard.propTypes = {
+  event: prop_types__WEBPACK_IMPORTED_MODULE_2___default().shape({
+    id: prop_types__WEBPACK_IMPORTED_MODULE_2___default().oneOfType([(prop_types__WEBPACK_IMPORTED_MODULE_2___default().string), (prop_types__WEBPACK_IMPORTED_MODULE_2___default().number)]).isRequired,
+    title: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string).isRequired,
+    date: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string).isRequired,
+    time: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string).isRequired,
+    location: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string).isRequired,
+    Media: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string),
+    image: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string),
+    status: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string),
+    rsvp: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string)
+  }).isRequired,
+  onRSVP: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().func).isRequired
+};
+
+// Main Events Component
+function Events() {
+  const [events, setEvents] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
+  const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(true);
+  const [error, setError] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const [selectedDate, setSelectedDate] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+
+  // ✅ Dynamic real current date
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const thirtyDaysFromNow = new Date(today);
+  thirtyDaysFromNow.setDate(today.getDate() + 30);
+  const thirtyDaysAgo = new Date(today);
+  thirtyDaysAgo.setDate(today.getDate() - 30);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    async function fetchEvents() {
+      setLoading(true);
+      try {
+        await waitForSupabase();
+        const {
+          data,
+          error: fetchError
+        } = await window.SupabaseUtils.getRecords('events', {
+          select: 'id,title,date,time,location,Media',
+          orderBy: 'date',
+          ascending: true
+        });
+        if (fetchError) throw fetchError;
+
+        // Map Media to image for consistency
+        const eventsWithImages = (data || []).map(evt => ({
+          ...evt,
+          image: evt.Media || evt.image
+        }));
+        setEvents(eventsWithImages);
+      } catch (err) {
+        console.error('Events fetch error:', err);
+        setError('Failed to fetch events');
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchEvents();
+    window.addEventListener('events-updated', fetchEvents);
+    return () => window.removeEventListener('events-updated', fetchEvents);
+  }, []);
+  const handleRSVP = (eventId, response, reason = null) => {
+    setEvents(prevEvents => prevEvents.map(evt => evt.id === eventId ? {
+      ...evt,
+      rsvp: response,
+      declineReason: reason
+    } : evt));
+  };
+
+  // ✅ Upcoming Events (Next 30 Days)
+  const upcomingEvents = events.filter(evt => {
+    const eventDate = new Date(evt.date);
+    eventDate.setHours(0, 0, 0, 0);
+    return eventDate >= today && eventDate <= thirtyDaysFromNow;
+  });
+
+  // ✅ Past Events (Last 30 Days)
+  const pastEvents = events.filter(evt => {
+    const eventDate = new Date(evt.date);
+    eventDate.setHours(0, 0, 0, 0);
+    return eventDate >= thirtyDaysAgo && eventDate < today;
+  }).map(evt => ({
+    ...evt,
+    status: 'past'
+  }));
+  if (loading) return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
+    style: {
+      padding: '20px',
+      marginLeft: '240px'
+    },
+    children: "Loading events\u2026"
+  });
+  if (error) return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
+    style: {
+      padding: '20px',
+      marginLeft: '240px',
+      color: 'red'
+    },
+    children: error
+  });
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+    className: "events-page",
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+      className: "events-header",
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("h1", {
+        children: "Events"
+      })
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+      className: "events-top-section",
+      children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(Calendar, {
+        events: events,
+        selectedDate: selectedDate,
+        onDateSelect: setSelectedDate
+      })
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("section", {
+      className: "events-section",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("h2", {
+        className: "section-title",
+        children: "Upcoming Events (Next 30 Days)"
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+        className: "events-grid",
+        children: upcomingEvents.length > 0 ? upcomingEvents.map(evt => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(EventCard, {
+          event: evt,
+          onRSVP: handleRSVP
+        }, evt.id)) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
+          children: "No upcoming events in the next 30 days"
+        })
+      })]
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("section", {
+      className: "events-section",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("h2", {
+        className: "section-title",
+        children: "Past Events (Last 30 Days)"
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+        className: "events-grid",
+        children: pastEvents.length > 0 ? pastEvents.map(evt => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(EventCard, {
+          event: evt,
+          onRSVP: handleRSVP
+        }, evt.id)) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
+          children: "No past events in the last 30 days"
+        })
+      })]
+    })]
+  });
+}
+
+/***/ }),
+
+/***/ "./react-app/app/events/index.jsx":
+/*!****************************************!*\
+  !*** ./react-app/app/events/index.jsx ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   decorateBlock: () => (/* binding */ decorateBlock),
+/* harmony export */   "default": () => (/* binding */ decorate)
+/* harmony export */ });
+/* harmony import */ var react_dom_client__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-dom/client */ "./node_modules/react-dom/client.js");
+/* harmony import */ var _components_events_jsx__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/events.jsx */ "./react-app/app/events/components/events.jsx");
+/* harmony import */ var _styles_events_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./styles/events.css */ "./react-app/app/events/styles/events.css");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+// eslint-disable-next-line import/extensions
+
+// eslint-disable-next-line no-unused-vars
+
+
+
+async function decorateBlock(block) {
+  const root = (0,react_dom_client__WEBPACK_IMPORTED_MODULE_0__.createRoot)(block);
+  root.render(/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_components_events_jsx__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    block: block
+  }));
+}
+async function decorate(block) {
+  decorateBlock(block);
+}
+
+/***/ }),
+
+/***/ "./react-app/app/events/styles/events.css":
+/*!************************************************!*\
+  !*** ./react-app/app/events/styles/events.css ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ })
+
+/******/ });
+/************************************************************************/
+/******/ // The module cache
+/******/ var __webpack_module_cache__ = {};
+/******/ 
+/******/ // The require function
+/******/ function __webpack_require__(moduleId) {
+/******/ 	// Check if module is in cache
+/******/ 	var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 	if (cachedModule !== undefined) {
+/******/ 		return cachedModule.exports;
+/******/ 	}
+/******/ 	// Create a new module (and put it into the cache)
+/******/ 	var module = __webpack_module_cache__[moduleId] = {
+/******/ 		id: moduleId,
+/******/ 		loaded: false,
+/******/ 		exports: {}
+/******/ 	};
+/******/ 
+/******/ 	// Execute the module function
+/******/ 	__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 
+/******/ 	// Flag the module as loaded
+/******/ 	module.loaded = true;
+/******/ 
+/******/ 	// Return the exports of the module
+/******/ 	return module.exports;
+/******/ }
+/******/ 
+/******/ // expose the modules object (__webpack_modules__)
+/******/ __webpack_require__.m = __webpack_modules__;
+/******/ 
+/************************************************************************/
+/******/ /* webpack/runtime/chunk loaded */
+/******/ (() => {
+/******/ 	var deferred = [];
+/******/ 	__webpack_require__.O = (result, chunkIds, fn, priority) => {
+/******/ 		if(chunkIds) {
+/******/ 			priority = priority || 0;
+/******/ 			for(var i = deferred.length; i > 0 && deferred[i - 1][2] > priority; i--) deferred[i] = deferred[i - 1];
+/******/ 			deferred[i] = [chunkIds, fn, priority];
+/******/ 			return;
+/******/ 		}
+/******/ 		var notFulfilled = Infinity;
+/******/ 		for (var i = 0; i < deferred.length; i++) {
+/******/ 			var [chunkIds, fn, priority] = deferred[i];
+/******/ 			var fulfilled = true;
+/******/ 			for (var j = 0; j < chunkIds.length; j++) {
+/******/ 				if ((priority & 1 === 0 || notFulfilled >= priority) && Object.keys(__webpack_require__.O).every((key) => (__webpack_require__.O[key](chunkIds[j])))) {
+/******/ 					chunkIds.splice(j--, 1);
+/******/ 				} else {
+/******/ 					fulfilled = false;
+/******/ 					if(priority < notFulfilled) notFulfilled = priority;
+/******/ 				}
+/******/ 			}
+/******/ 			if(fulfilled) {
+/******/ 				deferred.splice(i--, 1)
+/******/ 				var r = fn();
+/******/ 				if (r !== undefined) result = r;
+/******/ 			}
+/******/ 		}
+/******/ 		return result;
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/compat get default export */
+/******/ (() => {
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = (module) => {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			() => (module['default']) :
+/******/ 			() => (module);
+/******/ 		__webpack_require__.d(getter, { a: getter });
+/******/ 		return getter;
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/define property getters */
+/******/ (() => {
+/******/ 	// define getter functions for harmony exports
+/******/ 	__webpack_require__.d = (exports, definition) => {
+/******/ 		for(var key in definition) {
+/******/ 			if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 				Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 			}
+/******/ 		}
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/getFullHash */
+/******/ (() => {
+/******/ 	__webpack_require__.h = () => ("098b72739e4b2a5b6794")
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/hasOwnProperty shorthand */
+/******/ (() => {
+/******/ 	__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/make namespace object */
+/******/ (() => {
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = (exports) => {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/node module decorator */
+/******/ (() => {
+/******/ 	__webpack_require__.nmd = (module) => {
+/******/ 		module.paths = [];
+/******/ 		if (!module.children) module.children = [];
+/******/ 		return module;
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/jsonp chunk loading */
+/******/ (() => {
+/******/ 	// no baseURI
+/******/ 	
+/******/ 	// object to store loaded and loading chunks
+/******/ 	// undefined = chunk not loaded, null = chunk preloaded/prefetched
+/******/ 	// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
+/******/ 	var installedChunks = {
+/******/ 		"events": 0
+/******/ 	};
+/******/ 	
+/******/ 	// no chunk on demand loading
+/******/ 	
+/******/ 	// no prefetching
+/******/ 	
+/******/ 	// no preloaded
+/******/ 	
+/******/ 	// no HMR
+/******/ 	
+/******/ 	// no HMR manifest
+/******/ 	
+/******/ 	__webpack_require__.O.j = (chunkId) => (installedChunks[chunkId] === 0);
+/******/ 	
+/******/ 	// install a JSONP callback for chunk loading
+/******/ 	var webpackJsonpCallback = (parentChunkLoadingFunction, data) => {
+/******/ 		var [chunkIds, moreModules, runtime] = data;
+/******/ 		// add "moreModules" to the modules object,
+/******/ 		// then flag all "chunkIds" as loaded and fire callback
+/******/ 		var moduleId, chunkId, i = 0;
+/******/ 		if(chunkIds.some((id) => (installedChunks[id] !== 0))) {
+/******/ 			for(moduleId in moreModules) {
+/******/ 				if(__webpack_require__.o(moreModules, moduleId)) {
+/******/ 					__webpack_require__.m[moduleId] = moreModules[moduleId];
+/******/ 				}
+/******/ 			}
+/******/ 			if(runtime) var result = runtime(__webpack_require__);
+/******/ 		}
+/******/ 		if(parentChunkLoadingFunction) parentChunkLoadingFunction(data);
+/******/ 		for(;i < chunkIds.length; i++) {
+/******/ 			chunkId = chunkIds[i];
+/******/ 			if(__webpack_require__.o(installedChunks, chunkId) && installedChunks[chunkId]) {
+/******/ 				installedChunks[chunkId][0]();
+/******/ 			}
+/******/ 			installedChunks[chunkId] = 0;
+/******/ 		}
+/******/ 		return __webpack_require__.O(result);
+/******/ 	}
+/******/ 	
+/******/ 	var chunkLoadingGlobal = self["webpackChunk_adobe_aem_boilerplate"] = self["webpackChunk_adobe_aem_boilerplate"] || [];
+/******/ 	chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
+/******/ 	chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
+/******/ })();
+/******/ 
+/************************************************************************/
+/******/ 
+/******/ // startup
+/******/ // Load entry module and return exports
+/******/ // This entry module depends on other loaded chunks and execution need to be delayed
+/******/ __webpack_require__.O(undefined, ["vendor"], () => (__webpack_require__("./node_modules/webpack-dev-server/client/index.js?protocol=ws%3A&hostname=localhost&port=4200&pathname=%2Fws&logging=info&overlay=true&reconnect=10&hot=false&live-reload=true")))
+/******/ var __webpack_exports__ = __webpack_require__.O(undefined, ["vendor"], () => (__webpack_require__("./react-app/app/events/index.jsx")))
+/******/ __webpack_exports__ = __webpack_require__.O(__webpack_exports__);
+/******/ var __webpack_exports__decorateBlock = __webpack_exports__.decorateBlock;
+/******/ var __webpack_exports__default = __webpack_exports__["default"];
+/******/ export { __webpack_exports__decorateBlock as decorateBlock, __webpack_exports__default as default };
+/******/ 
