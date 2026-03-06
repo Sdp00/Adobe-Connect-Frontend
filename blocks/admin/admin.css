@@ -19,7 +19,11 @@
   opacity: 1;
   pointer-events: all;
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 /* Modal dialog */
 .hc-modal-dialog {
   position: relative;
@@ -43,7 +47,11 @@
   transform: translateY(0) scale(1);
   opacity: 1;
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 /* Close button */
 .hc-modal-close-btn {
   position: absolute;
@@ -75,7 +83,11 @@
   stroke: #333;
   fill: none;
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 /* Modal body */
 .hc-modal-body {
   flex: 1 1 auto;
@@ -95,7 +107,11 @@
   background: #ccc;
   border-radius: 4px;
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 /* Modal footer */
 .hc-modal-footer {
   flex-shrink: 0;
@@ -108,7 +124,11 @@
   background: #fff;
   margin: 0;
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 /* Form */
 .create-event-form {
   display: flex;
@@ -133,7 +153,11 @@
   font-size: 13px;
   color: #666;
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 .create-event-form > select {
   display: block;
   width: 100%;
@@ -149,14 +173,22 @@
   outline: none;
   margin: 0;
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 .dynamic-fields {
   display: flex;
   flex-direction: column;
   gap: 14px;
   width: 100%;
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 /* Form field */
 .form-field {
   display: flex;
@@ -164,6 +196,7 @@
   gap: 6px;
   width: 100%;
   box-sizing: border-box;
+<<<<<<< HEAD
 }
  
 .form-field .label-text {
@@ -177,6 +210,21 @@
   flex-wrap: nowrap;
 }
  
+=======
+}
+
+.form-field .label-text {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a1a;
+  line-height: 1;
+  flex-wrap: nowrap;
+}
+
+>>>>>>> develop
 .form-field .req {
   color: #e60023;
   font-weight: 700;
@@ -184,7 +232,11 @@
   display: inline;
   line-height: 1;
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 .form-field input,
 .form-field select,
 .form-field textarea {
@@ -204,7 +256,11 @@
   min-width: 0;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 .form-field textarea {
   height: auto;
   min-height: 88px;
@@ -212,29 +268,49 @@
   resize: vertical;
   line-height: 1.5;
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 .form-field input[type="file"] {
   height: auto;
   padding: 8px 12px;
   cursor: pointer;
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 .form-field input[type="date"],
 .form-field input[type="time"] {
   color-scheme: light;
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 .form-field input::placeholder,
 .form-field textarea::placeholder {
   color: #999;
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 .form-field input:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   background: #f0f0f0;
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 .form-field input:focus,
 .form-field select:focus,
 .form-field textarea:focus {
@@ -242,7 +318,11 @@
   box-shadow: 0 0 0 2px rgb(225 29 72 / 15%);
   background: #fff;
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 .file-hint {
   font-size: 11px;
   font-weight: 400;
@@ -250,7 +330,11 @@
   margin-top: 2px;
   display: block;
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 .field-error {
   color: #e11d48;
   font-size: 11px;
@@ -258,7 +342,11 @@
   display: block;
   margin-top: 2px;
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 /* Form row */
 .form-row {
   display: grid;
@@ -266,7 +354,11 @@
   gap: 12px;
   width: 100%;
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 /* Modal actions */
 .modal-actions {
   display: flex;
@@ -277,7 +369,11 @@
   margin: 0;
   padding: 0;
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 .modal-actions .btn-secondary,
 .modal-actions .btn-primary {
   display: inline-flex;
@@ -296,6 +392,25 @@
   box-shadow: none;
   line-height: 1;
   transition: background 0.15s, opacity 0.15s;
+<<<<<<< HEAD
+=======
+}
+
+.modal-actions .btn-secondary {
+  background: #f0f0f0;
+  border: 1px solid #d0d0d0;
+  color: #1a1a1a;
+}
+
+.modal-actions .btn-secondary:hover {
+  background: #e0e0e0;
+}
+
+.modal-actions .btn-primary {
+  background: #e11d48;
+  border: none;
+  color: #fff;
+>>>>>>> develop
 }
  
 .modal-actions .btn-secondary {
@@ -322,20 +437,32 @@
   opacity: 0.6;
   cursor: not-allowed;
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 /* Toast */
 @keyframes toast-slide {
   from {
     opacity: 0;
     transform: translateY(-8px);
   }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 #global-toast-container {
   position: fixed;
   top: 20px;
@@ -346,34 +473,55 @@
   gap: 10px;
   pointer-events: none;
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 /* Mobile */
 @media (width <= 480px) {
   .hc-modal-overlay {
     align-items: flex-end;
     padding: 0;
   }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
   .hc-modal-dialog {
     max-width: 100%;
     max-height: 92dvh;
     border-radius: 14px 14px 0 0;
   }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
   .form-row {
     grid-template-columns: 1fr;
   }
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 /* Dark mode */
 html[data-theme="dark"] .hc-modal-overlay.is-open .hc-modal-dialog {
   background: #181818;
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 html[data-theme="dark"] .hc-modal-footer {
   background: #181818;
   border-top-color: #333;
 }
+<<<<<<< HEAD
  
 html[data-theme="dark"] .hc-modal-close-btn {
   background: #2a2a2a;
@@ -399,16 +547,51 @@ html[data-theme="dark"] .create-event-form > p {
   color: #b3b3b3;
 }
  
+=======
+
+html[data-theme="dark"] .hc-modal-close-btn {
+  background: #2a2a2a;
+}
+
+html[data-theme="dark"] .hc-modal-close-btn:hover {
+  background: #333;
+}
+
+html[data-theme="dark"] .hc-modal-close-btn svg {
+  stroke: #eee;
+}
+
+html[data-theme="dark"] .hc-modal-body::-webkit-scrollbar-thumb {
+  background: #555;
+}
+
+html[data-theme="dark"] .create-event-form h2 {
+  color: #fff;
+}
+
+html[data-theme="dark"] .create-event-form > p {
+  color: #b3b3b3;
+}
+
+>>>>>>> develop
 html[data-theme="dark"] .create-event-form > select {
   background: #242424;
   border-color: #3a3a3a;
   color: #fff;
 }
+<<<<<<< HEAD
  
 html[data-theme="dark"] .form-field .label-text {
   color: #e0e0e0;
 }
  
+=======
+
+html[data-theme="dark"] .form-field .label-text {
+  color: #e0e0e0;
+}
+
+>>>>>>> develop
 html[data-theme="dark"] .form-field input,
 html[data-theme="dark"] .form-field select,
 html[data-theme="dark"] .form-field textarea {
@@ -416,17 +599,29 @@ html[data-theme="dark"] .form-field textarea {
   border-color: #3a3a3a;
   color: #fff;
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 html[data-theme="dark"] .form-field input[type="date"],
 html[data-theme="dark"] .form-field input[type="time"] {
   color-scheme: dark;
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 html[data-theme="dark"] .form-field input::placeholder,
 html[data-theme="dark"] .form-field textarea::placeholder {
   color: #666;
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 html[data-theme="dark"] .form-field input:focus,
 html[data-theme="dark"] .form-field select:focus,
 html[data-theme="dark"] .form-field textarea:focus {
@@ -434,6 +629,7 @@ html[data-theme="dark"] .form-field textarea:focus {
   box-shadow: 0 0 0 2px rgb(225 29 72 / 25%);
   background: #2c2c2c;
 }
+<<<<<<< HEAD
  
 html[data-theme="dark"] .form-field input:disabled {
   background: #1a1a1a;
@@ -443,11 +639,23 @@ html[data-theme="dark"] .file-hint {
   color: #999;
 }
  
+=======
+
+html[data-theme="dark"] .form-field input:disabled {
+  background: #1a1a1a;
+}
+
+html[data-theme="dark"] .file-hint {
+  color: #999;
+}
+
+>>>>>>> develop
 html[data-theme="dark"] .modal-actions .btn-secondary {
   background: #242424;
   border-color: #3a3a3a;
   color: #fff;
 }
+<<<<<<< HEAD
  
 html[data-theme="dark"] .modal-actions .btn-secondary:hover {
   background: #2e2e2e;
@@ -457,6 +665,17 @@ html[data-theme="dark"] .modal-actions .btn-primary {
   background: #e11d48;
 }
  
+=======
+
+html[data-theme="dark"] .modal-actions .btn-secondary:hover {
+  background: #2e2e2e;
+}
+
+html[data-theme="dark"] .modal-actions .btn-primary {
+  background: #e11d48;
+}
+
+>>>>>>> develop
 html[data-theme="dark"] .modal-actions .btn-primary:hover {
   background: #be123c;
 }

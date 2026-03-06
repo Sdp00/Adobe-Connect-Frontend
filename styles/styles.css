@@ -10,7 +10,11 @@
  * governing permissions and limitations under the License.
  */
 @import url('buttons.css');
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 :root {
   /* Adobe Spectrum Tokens */
  
@@ -208,7 +212,11 @@ body.appear {
 header {
   height: var(--nav-height);
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 /* Desktop layout: offset main from fixed sidebar (left) and upcoming events (right) */
 @media (width > 1024px) {
   main {
@@ -216,14 +224,22 @@ header {
     margin-right: 320px; /* .upcoming-events-wrapper width */
   }
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 @media (width <= 1024px) {
   main {
     margin-left: 0;
     margin-right: 0;
   }
 }
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> develop
 header .header,
 footer .footer {
   visibility: hidden;
@@ -522,5 +538,9 @@ main .section.highlight {
     transform: translateY(0);
     opacity:   1;
   }
+<<<<<<< HEAD
 }
  
+=======
+}
+>>>>>>> develop
