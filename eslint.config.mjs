@@ -4,7 +4,6 @@ import tseslint from "typescript-eslint";
 import pluginImport from "eslint-plugin-import";
 import pluginReact from "eslint-plugin-react";
 import { builtinRules } from "eslint/use-at-your-own-risk";
-
 const tsFiles = ["**/*.{ts,tsx,mts,cts}"];
 const tsConfigs = tseslint.configs.recommended.map((config) => ({
   ...config,
@@ -16,7 +15,6 @@ const jsRecommendedRules = Object.fromEntries(
     supportedRules.has(ruleName),
   ),
 );
-
 export default [
   {
     ignores: [
