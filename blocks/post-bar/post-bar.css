@@ -6,24 +6,23 @@
   margin-top: 0;
   padding-bottom: 10px;
   padding-top: 10px;
-  position: -webkit-sticky;
-  position: sticky;
+  position: sticky !important;
   top: var(--nav-height, 64px);
-  z-index: 200;
+  z-index: 99;
 }
 
-/* ── Block – transparent outer wrapper (mirrors .feed.block) ─────────────── */
+/* ── Block – transparent outer wrapper ──────────────────────────────────── */
 .post-bar.block {
   margin: 0;
   padding: 0;
 }
 
-/* ── Inner centering container (mirrors React-rendered .feed div) ────────── */
+/* ── Inner centering container — matches .feed max-width ─────────────────── */
 .post-bar-inner {
   box-sizing: border-box;
   margin: 0 auto;
-  max-width: 640px;
-  padding: 10px;
+  max-width: 680px;
+  padding: 10px 16px;
 }
 
 /* ── Visual card row ─────────────────────────────────────────────────────── */
@@ -35,11 +34,9 @@
   box-shadow: var(--post-bar-shadow, 0 2px 8px rgb(0 0 0 / 8%));
   display: flex;
   gap: 12px;
+  margin-left: 0;
   padding: 12px 16px;
-
-  /* ✅ stretch slightly to right */
-  width: calc(100% + 16px);
-  margin-left: -50px;
+  width: 100%;
 }
 
 /* ── Avatar ──────────────────────────────────────────────────────────────── */
@@ -574,7 +571,7 @@
 /* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (width <= 900px) {
   .post-bar-inner {
-    padding: 0 8px;
+    padding: 6px 12px;
   }
 
   .post-bar-row {
@@ -594,6 +591,31 @@
 
   .post-bar-btn span {
     display: none;
+  }
+}
+
+@media (width <= 480px) {
+  .post-bar-inner {
+    padding: 4px 8px;
+  }
+
+  .post-bar-row {
+    gap: 6px;
+    padding: 8px 10px;
+  }
+
+  .post-bar-avatar {
+    height: 32px;
+    width: 32px;
+  }
+
+  .post-bar-input-trigger {
+    font-size: 0.875rem;
+    padding: 8px 12px;
+  }
+
+  .post-bar-btn {
+    padding: 8px 10px;
   }
 }
 

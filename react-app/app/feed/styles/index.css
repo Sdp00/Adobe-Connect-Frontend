@@ -20,14 +20,14 @@
  
 /* ── Feed Container ──────────────────────────────────────────────────────── */
 .feed {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  max-width: 680px;
   margin: 0 auto;
+  max-width: 680px;
   padding: 16px;
-  box-sizing: border-box;
-  transform: translateX(-20px);
+  width: 100%;
 }
  
 /* ── Post Card ───────────────────────────────────────────────────────────── */
@@ -428,17 +428,61 @@
 }
  
 /* ── Responsive ──────────────────────────────────────────────────────────── */
-@media (width <= 630px) {
+@media (width <= 900px) {
   .feed {
-    padding: 12px 8px;
-    gap: 12px;
+    padding: 12px 12px;
+  }
+}
+
+@media (width <= 600px) {
+  .feed {
+    padding: 10px 8px;
+    gap: 10px;
   }
 
   .feed-card {
-    padding: 16px;
     border-radius: 10px;
+    padding: 14px;
   }
 
+  .feed-card-name {
+    font-size: 0.875rem;
+  }
+
+  .feed-card-text {
+    font-size: 0.875rem;
+  }
+
+  .feed-action-btn {
+    font-size: 0.8125rem;
+    padding: 5px 8px;
+  }
+}
+
+@media (width <= 400px) {
+  .feed {
+    padding: 8px 6px;
+    gap: 8px;
+  }
+
+  .feed-card {
+    padding: 12px;
+  }
+
+  .feed-card-avatar {
+    height: 36px;
+    width: 36px;
+  }
+
+  .feed-action-btn {
+    gap: 3px;
+    padding: 5px 6px;
+  }
+
+  .feed-action-btn svg {
+    height: 16px;
+    width: 16px;
+  }
 }
 
 /* ── Active comment button ───────────────────────────────────────────────── */
