@@ -1,2 +1,420 @@
-/* eslint-disable */
-var e,t={474:(e,t,s)=>{s.d(t,{f:()=>c,A:()=>p});var r=s(338),n=s(540),i=s(556),a=s.n(i),l=s(848);function d({newsletter:e}){return(0,l.jsxs)("div",{className:"newsletter-card",children:[(0,l.jsx)("img",{src:e.image,alt:e.title,className:"newsletter-img"}),(0,l.jsxs)("div",{className:"newsletter-content",children:[(0,l.jsx)("h3",{className:"newsletter-title",children:e.title}),(0,l.jsx)("p",{className:"newsletter-desc",children:e.description}),(0,l.jsx)("div",{className:"newsletter-badge",children:e.badge}),(0,l.jsx)("div",{className:"newsletter-actions",children:(0,l.jsxs)("a",{href:e.url,className:"btn",children:[(0,l.jsxs)("svg",{width:"18",height:"18",viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:"2",children:[(0,l.jsx)("path",{d:"M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"}),(0,l.jsx)("circle",{cx:"12",cy:"12",r:"3"})]}),"Read"]})})]})]})}function o(){const[e,t]=(0,n.useState)([]),[s,r]=(0,n.useState)(!0),[i,a]=(0,n.useState)(null);return(0,n.useEffect)(()=>{async function e(){r(!0);try{await new Promise((e,t)=>{if(window.SupabaseUtils)return void e();let s=0;const r=setInterval(()=>{s+=1,window.SupabaseUtils?(clearInterval(r),e()):s>=30&&(clearInterval(r),t(new Error("SupabaseUtils did not load in time")))},100)});const{data:e,error:s}=await window.SupabaseUtils.getRecords("newsletters",{select:"id,title,description,date,badge,image,url",orderBy:"id",ascending:!0});if(s)throw s;t(e||[])}catch(e){console.error("Newsletter fetch error:",e),a("Failed to fetch newsletters")}finally{r(!1)}}return e(),window.addEventListener("newsletters-updated",e),()=>window.removeEventListener("newsletters-updated",e)},[]),s?(0,l.jsx)("p",{style:{padding:"20px",marginLeft:"240px"},children:"Loading newsletters…"}):i?(0,l.jsx)("p",{style:{padding:"20px",marginLeft:"240px",color:"red"},children:i}):e&&0!==e.length?(0,l.jsxs)("div",{className:"newsletters-page",children:[(0,l.jsxs)("div",{className:"newsletters-header",children:[(0,l.jsxs)("svg",{width:"32",height:"32",viewBox:"0 0 24 24",fill:"none",stroke:"#eb5146",strokeWidth:"2",children:[(0,l.jsx)("path",{d:"M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"}),(0,l.jsx)("polyline",{points:"14 2 14 8 20 8"}),(0,l.jsx)("line",{x1:"16",y1:"13",x2:"8",y2:"13"}),(0,l.jsx)("line",{x1:"16",y1:"17",x2:"8",y2:"17"})]}),(0,l.jsxs)("div",{children:[(0,l.jsx)("h1",{children:"Newsletters"}),(0,l.jsx)("p",{className:"newsletters-subtitle",children:"Adobe Monthly Newsletters - Stay informed about company updates"})]})]}),(0,l.jsx)("div",{className:"newsletters-grid",children:e.map(e=>(0,l.jsx)(d,{newsletter:e},e.id))})]}):(0,l.jsx)("p",{style:{padding:"20px",marginLeft:"240px"},children:"No newsletters found"})}async function c(e){(0,r.H)(e).render((0,l.jsx)(o,{}))}async function p(e){c(e)}d.propTypes={newsletter:a().shape({id:a().oneOfType([a().string,a().number]).isRequired,title:a().string.isRequired,description:a().string.isRequired,badge:a().string.isRequired,image:a().string.isRequired,url:a().string.isRequired}).isRequired}}},s={};function r(e){var n=s[e];if(void 0!==n)return n.exports;var i=s[e]={exports:{}};return t[e](i,i.exports,r),i.exports}r.m=t,e=[],r.O=(t,s,n,i)=>{if(!s){var a=1/0;for(c=0;c<e.length;c++){for(var[s,n,i]=e[c],l=!0,d=0;d<s.length;d++)(!1&i||a>=i)&&Object.keys(r.O).every(e=>r.O[e](s[d]))?s.splice(d--,1):(l=!1,i<a&&(a=i));if(l){e.splice(c--,1);var o=n();void 0!==o&&(t=o)}}return t}i=i||0;for(var c=e.length;c>0&&e[c-1][2]>i;c--)e[c]=e[c-1];e[c]=[s,n,i]},r.n=e=>{var t=e&&e.__esModule?()=>e.default:()=>e;return r.d(t,{a:t}),t},r.d=(e,t)=>{for(var s in t)r.o(t,s)&&!r.o(e,s)&&Object.defineProperty(e,s,{enumerable:!0,get:t[s]})},r.o=(e,t)=>Object.prototype.hasOwnProperty.call(e,t),(()=>{var e={newsletters:0};r.O.j=t=>0===e[t];var t=(t,s)=>{var n,i,[a,l,d]=s,o=0;if(a.some(t=>0!==e[t])){for(n in l)r.o(l,n)&&(r.m[n]=l[n]);if(d)var c=d(r)}for(t&&t(s);o<a.length;o++)i=a[o],r.o(e,i)&&e[i]&&e[i][0](),e[i]=0;return r.O(c)},s=self.webpackChunk_adobe_aem_boilerplate=self.webpackChunk_adobe_aem_boilerplate||[];s.forEach(t.bind(null,0)),s.push=t.bind(null,s.push.bind(s))})();var n=r.O(void 0,["vendor"],()=>r(474)),i=(n=r.O(n)).f,a=n.A;export{i as decorateBlock,a as default};
+/******/ var __webpack_modules__ = ({
+
+/***/ "./react-app/app/newsletters/components/newsletters.jsx":
+/*!**************************************************************!*\
+  !*** ./react-app/app/newsletters/components/newsletters.jsx ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ Newsletters)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
+
+
+function waitForSupabase() {
+  return new Promise((resolve, reject) => {
+    if (window.SupabaseUtils) {
+      resolve();
+      return;
+    }
+    let attempts = 0;
+    const interval = setInterval(() => {
+      attempts += 1;
+      if (window.SupabaseUtils) {
+        clearInterval(interval);
+        resolve();
+      } else if (attempts >= 30) {
+        clearInterval(interval);
+        reject(new Error('SupabaseUtils did not load in time'));
+      }
+    }, 100);
+  });
+}
+function NewsletterCard({
+  newsletter
+}) {
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+    className: "newsletter-card",
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("img", {
+      src: newsletter.image,
+      alt: newsletter.title,
+      className: "newsletter-img"
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+      className: "newsletter-content",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("h3", {
+        className: "newsletter-title",
+        children: newsletter.title
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
+        className: "newsletter-desc",
+        children: newsletter.description
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+        className: "newsletter-badge",
+        children: newsletter.badge
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+        className: "newsletter-actions",
+        children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("a", {
+          href: newsletter.url,
+          className: "btn",
+          children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("svg", {
+            width: "18",
+            height: "18",
+            viewBox: "0 0 24 24",
+            fill: "none",
+            stroke: "currentColor",
+            strokeWidth: "2",
+            children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("path", {
+              d: "M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"
+            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("circle", {
+              cx: "12",
+              cy: "12",
+              r: "3"
+            })]
+          }), "Read"]
+        })
+      })]
+    })]
+  });
+}
+NewsletterCard.propTypes = {
+  newsletter: prop_types__WEBPACK_IMPORTED_MODULE_2___default().shape({
+    id: prop_types__WEBPACK_IMPORTED_MODULE_2___default().oneOfType([(prop_types__WEBPACK_IMPORTED_MODULE_2___default().string), (prop_types__WEBPACK_IMPORTED_MODULE_2___default().number)]).isRequired,
+    title: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string).isRequired,
+    description: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string).isRequired,
+    badge: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string).isRequired,
+    image: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string).isRequired,
+    url: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string).isRequired
+  }).isRequired
+};
+function Newsletters() {
+  const [newsletters, setNewsletters] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
+  const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(true);
+  const [error, setError] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    async function fetchNewsletters() {
+      setLoading(true);
+      try {
+        await waitForSupabase();
+        const {
+          data,
+          error: fetchError
+        } = await window.SupabaseUtils.getRecords('newsletters', {
+          select: 'id,title,description,date,badge,image,url',
+          orderBy: 'id',
+          ascending: true
+        });
+        if (fetchError) throw fetchError;
+        setNewsletters(data || []);
+      } catch (err) {
+        console.error('Newsletter fetch error:', err);
+        setError('Failed to fetch newsletters');
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchNewsletters();
+    window.addEventListener('newsletters-updated', fetchNewsletters);
+    return () => window.removeEventListener('newsletters-updated', fetchNewsletters);
+  }, []);
+  if (loading) return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
+    style: {
+      padding: '20px',
+      marginLeft: '240px'
+    },
+    children: "Loading newsletters\u2026"
+  });
+  if (error) return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
+    style: {
+      padding: '20px',
+      marginLeft: '240px',
+      color: 'red'
+    },
+    children: error
+  });
+  if (!newsletters || newsletters.length === 0) {
+    return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
+      style: {
+        padding: '20px',
+        marginLeft: '240px'
+      },
+      children: "No newsletters found"
+    });
+  }
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+    className: "newsletters-page",
+    children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+      className: "newsletters-header",
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("svg", {
+        width: "32",
+        height: "32",
+        viewBox: "0 0 24 24",
+        fill: "none",
+        stroke: "#eb5146",
+        strokeWidth: "2",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("path", {
+          d: "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("polyline", {
+          points: "14 2 14 8 20 8"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("line", {
+          x1: "16",
+          y1: "13",
+          x2: "8",
+          y2: "13"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("line", {
+          x1: "16",
+          y1: "17",
+          x2: "8",
+          y2: "17"
+        })]
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("h1", {
+          children: "Newsletters"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
+          className: "newsletters-subtitle",
+          children: "Adobe Monthly Newsletters - Stay informed about company updates"
+        })]
+      })]
+    }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+      className: "newsletters-grid",
+      children: newsletters.map(newsletter => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(NewsletterCard, {
+        newsletter: newsletter
+      }, newsletter.id))
+    })]
+  });
+}
+
+/***/ }),
+
+/***/ "./react-app/app/newsletters/index.jsx":
+/*!*********************************************!*\
+  !*** ./react-app/app/newsletters/index.jsx ***!
+  \*********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   decorateBlock: () => (/* binding */ decorateBlock),
+/* harmony export */   "default": () => (/* binding */ decorate)
+/* harmony export */ });
+/* harmony import */ var react_dom_client__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-dom/client */ "./node_modules/react-dom/client.js");
+/* harmony import */ var _components_newsletters_jsx__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/newsletters.jsx */ "./react-app/app/newsletters/components/newsletters.jsx");
+/* harmony import */ var _styles_newsletters_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./styles/newsletters.css */ "./react-app/app/newsletters/styles/newsletters.css");
+/* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+// eslint-disable-next-line import/extensions
+
+// eslint-disable-next-line no-unused-vars
+
+
+
+async function decorateBlock(block) {
+  const root = (0,react_dom_client__WEBPACK_IMPORTED_MODULE_0__.createRoot)(block);
+  root.render(/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_components_newsletters_jsx__WEBPACK_IMPORTED_MODULE_1__["default"], {}));
+}
+async function decorate(block) {
+  decorateBlock(block);
+}
+
+/***/ }),
+
+/***/ "./react-app/app/newsletters/styles/newsletters.css":
+/*!**********************************************************!*\
+  !*** ./react-app/app/newsletters/styles/newsletters.css ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ })
+
+/******/ });
+/************************************************************************/
+/******/ // The module cache
+/******/ var __webpack_module_cache__ = {};
+/******/ 
+/******/ // The require function
+/******/ function __webpack_require__(moduleId) {
+/******/ 	// Check if module is in cache
+/******/ 	var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 	if (cachedModule !== undefined) {
+/******/ 		return cachedModule.exports;
+/******/ 	}
+/******/ 	// Create a new module (and put it into the cache)
+/******/ 	var module = __webpack_module_cache__[moduleId] = {
+/******/ 		id: moduleId,
+/******/ 		loaded: false,
+/******/ 		exports: {}
+/******/ 	};
+/******/ 
+/******/ 	// Execute the module function
+/******/ 	__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 
+/******/ 	// Flag the module as loaded
+/******/ 	module.loaded = true;
+/******/ 
+/******/ 	// Return the exports of the module
+/******/ 	return module.exports;
+/******/ }
+/******/ 
+/******/ // expose the modules object (__webpack_modules__)
+/******/ __webpack_require__.m = __webpack_modules__;
+/******/ 
+/************************************************************************/
+/******/ /* webpack/runtime/chunk loaded */
+/******/ (() => {
+/******/ 	var deferred = [];
+/******/ 	__webpack_require__.O = (result, chunkIds, fn, priority) => {
+/******/ 		if(chunkIds) {
+/******/ 			priority = priority || 0;
+/******/ 			for(var i = deferred.length; i > 0 && deferred[i - 1][2] > priority; i--) deferred[i] = deferred[i - 1];
+/******/ 			deferred[i] = [chunkIds, fn, priority];
+/******/ 			return;
+/******/ 		}
+/******/ 		var notFulfilled = Infinity;
+/******/ 		for (var i = 0; i < deferred.length; i++) {
+/******/ 			var [chunkIds, fn, priority] = deferred[i];
+/******/ 			var fulfilled = true;
+/******/ 			for (var j = 0; j < chunkIds.length; j++) {
+/******/ 				if ((priority & 1 === 0 || notFulfilled >= priority) && Object.keys(__webpack_require__.O).every((key) => (__webpack_require__.O[key](chunkIds[j])))) {
+/******/ 					chunkIds.splice(j--, 1);
+/******/ 				} else {
+/******/ 					fulfilled = false;
+/******/ 					if(priority < notFulfilled) notFulfilled = priority;
+/******/ 				}
+/******/ 			}
+/******/ 			if(fulfilled) {
+/******/ 				deferred.splice(i--, 1)
+/******/ 				var r = fn();
+/******/ 				if (r !== undefined) result = r;
+/******/ 			}
+/******/ 		}
+/******/ 		return result;
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/compat get default export */
+/******/ (() => {
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = (module) => {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			() => (module['default']) :
+/******/ 			() => (module);
+/******/ 		__webpack_require__.d(getter, { a: getter });
+/******/ 		return getter;
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/define property getters */
+/******/ (() => {
+/******/ 	// define getter functions for harmony exports
+/******/ 	__webpack_require__.d = (exports, definition) => {
+/******/ 		for(var key in definition) {
+/******/ 			if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 				Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 			}
+/******/ 		}
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/getFullHash */
+/******/ (() => {
+/******/ 	__webpack_require__.h = () => ("098b72739e4b2a5b6794")
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/hasOwnProperty shorthand */
+/******/ (() => {
+/******/ 	__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/make namespace object */
+/******/ (() => {
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = (exports) => {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/node module decorator */
+/******/ (() => {
+/******/ 	__webpack_require__.nmd = (module) => {
+/******/ 		module.paths = [];
+/******/ 		if (!module.children) module.children = [];
+/******/ 		return module;
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/jsonp chunk loading */
+/******/ (() => {
+/******/ 	// no baseURI
+/******/ 	
+/******/ 	// object to store loaded and loading chunks
+/******/ 	// undefined = chunk not loaded, null = chunk preloaded/prefetched
+/******/ 	// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
+/******/ 	var installedChunks = {
+/******/ 		"newsletters": 0
+/******/ 	};
+/******/ 	
+/******/ 	// no chunk on demand loading
+/******/ 	
+/******/ 	// no prefetching
+/******/ 	
+/******/ 	// no preloaded
+/******/ 	
+/******/ 	// no HMR
+/******/ 	
+/******/ 	// no HMR manifest
+/******/ 	
+/******/ 	__webpack_require__.O.j = (chunkId) => (installedChunks[chunkId] === 0);
+/******/ 	
+/******/ 	// install a JSONP callback for chunk loading
+/******/ 	var webpackJsonpCallback = (parentChunkLoadingFunction, data) => {
+/******/ 		var [chunkIds, moreModules, runtime] = data;
+/******/ 		// add "moreModules" to the modules object,
+/******/ 		// then flag all "chunkIds" as loaded and fire callback
+/******/ 		var moduleId, chunkId, i = 0;
+/******/ 		if(chunkIds.some((id) => (installedChunks[id] !== 0))) {
+/******/ 			for(moduleId in moreModules) {
+/******/ 				if(__webpack_require__.o(moreModules, moduleId)) {
+/******/ 					__webpack_require__.m[moduleId] = moreModules[moduleId];
+/******/ 				}
+/******/ 			}
+/******/ 			if(runtime) var result = runtime(__webpack_require__);
+/******/ 		}
+/******/ 		if(parentChunkLoadingFunction) parentChunkLoadingFunction(data);
+/******/ 		for(;i < chunkIds.length; i++) {
+/******/ 			chunkId = chunkIds[i];
+/******/ 			if(__webpack_require__.o(installedChunks, chunkId) && installedChunks[chunkId]) {
+/******/ 				installedChunks[chunkId][0]();
+/******/ 			}
+/******/ 			installedChunks[chunkId] = 0;
+/******/ 		}
+/******/ 		return __webpack_require__.O(result);
+/******/ 	}
+/******/ 	
+/******/ 	var chunkLoadingGlobal = self["webpackChunk_adobe_aem_boilerplate"] = self["webpackChunk_adobe_aem_boilerplate"] || [];
+/******/ 	chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
+/******/ 	chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
+/******/ })();
+/******/ 
+/************************************************************************/
+/******/ 
+/******/ // startup
+/******/ // Load entry module and return exports
+/******/ // This entry module depends on other loaded chunks and execution need to be delayed
+/******/ __webpack_require__.O(undefined, ["vendor"], () => (__webpack_require__("./node_modules/webpack-dev-server/client/index.js?protocol=ws%3A&hostname=localhost&port=4200&pathname=%2Fws&logging=info&overlay=true&reconnect=10&hot=false&live-reload=true")))
+/******/ var __webpack_exports__ = __webpack_require__.O(undefined, ["vendor"], () => (__webpack_require__("./react-app/app/newsletters/index.jsx")))
+/******/ __webpack_exports__ = __webpack_require__.O(__webpack_exports__);
+/******/ var __webpack_exports__decorateBlock = __webpack_exports__.decorateBlock;
+/******/ var __webpack_exports__default = __webpack_exports__["default"];
+/******/ export { __webpack_exports__decorateBlock as decorateBlock, __webpack_exports__default as default };
+/******/ 

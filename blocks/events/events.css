@@ -1,6 +1,6 @@
-/*!**********************************************************************************************!*\
-  !*** css ./node_modules/css-loader/dist/cjs.js!./react-app/app/training/styles/training.css ***!
-  \**********************************************************************************************/
+/*!******************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./react-app/app/events/styles/events.css ***!
+  \******************************************************************************************/
 /* Reset */
 * {
   margin: 0;
@@ -8,8 +8,8 @@
   box-sizing: border-box;
 }
 
-/* Training Page - Fixed for sidebar */
-.training-page {
+/* Events Page - Fixed for sidebar */
+.events-page {
   max-width: 1200px;
   margin: 0 auto;
   padding: 24px 32px;
@@ -17,20 +17,20 @@
   transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.training-header {
+.events-header {
   display: flex;
   align-items: center;
   gap: 16px;
   margin-bottom: 20px;
 }
 
-.training-header h1 {
+.events-header h1 {
   font-size: 32px;
   font-weight: 700;
   color: #111827;
 }
 
-.training-top-section {
+.events-top-section {
   display: flex;
   flex-direction: column;
   gap: 32px;
@@ -153,7 +153,7 @@
   color: #fff;
 }
 
-.training-section {
+.events-section {
   margin-bottom: 56px;
 }
 
@@ -164,20 +164,20 @@
   margin-bottom: 24px;
 }
 
-.no-trainings-message {
+.no-events-message {
   font-size: 16px;
   color: #6b7280;
   text-align: center;
   padding: 40px 20px;
 }
 
-.training-grid {
+.events-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
   gap: 24px;
 }
 
-.training-card {
+.event-card {
   background: white;
   border-radius: 16px;
   overflow: hidden;
@@ -185,36 +185,36 @@
   transition: all 0.2s;
 }
 
-.training-card:hover {
+.event-card:hover {
   box-shadow: 0 4px 12px rgb(0 0 0 / 8%);
   transform: translateY(-2px);
 }
 
-.training-card-img {
+.event-card-img {
   width: 100%;
   height: 200px;
   object-fit: cover;
 }
 
-.training-card-content {
+.event-card-content {
   padding: 24px;
 }
 
-.training-card-title {
+.event-card-title {
   font-size: 20px;
   font-weight: 700;
   color: #111827;
   margin: 0 0 16px;
 }
 
-.training-card-meta {
+.event-card-meta {
   display: flex;
   flex-direction: column;
   gap: 12px;
   margin-bottom: 20px;
 }
 
-.training-meta-item {
+.event-meta-item {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -222,19 +222,19 @@
   color: #6b7280;
 }
 
-.training-meta-item svg {
+.event-meta-item svg {
   flex-shrink: 0;
 }
 
-.training-meta-item--overdue {
+.event-meta-item--overdue {
   color: #dc2626;
 }
 
-.training-meta-item--pending {
+.event-meta-item--pending {
   color: #6b7280;
 }
 
-.training-card-actions {
+.event-card-actions {
   display: flex;
   gap: 12px;
 }
@@ -314,7 +314,7 @@
 }
 
 @media (width <= 1024px) {
-  .training-page {
+  .events-page {
     margin-left: 0;
     padding: 24px 16px;
   }
@@ -331,7 +331,7 @@
     font-size: 9px;
   }
 
-  .training-grid {
+  .events-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -344,19 +344,19 @@
 }
 
 /* DARK MODE */
-html[data-theme="dark"] .training-page {
+html[data-theme="dark"] .events-page {
   background: #181818;
 }
 
-html[data-theme="dark"] .training-header h1,
+html[data-theme="dark"] .events-header h1,
 html[data-theme="dark"] .section-title,
-html[data-theme="dark"] .training-card-title,
+html[data-theme="dark"] .event-card-title,
 html[data-theme="dark"] .month-name {
   color: #fff;
 }
 
 html[data-theme="dark"] .calendar-compact,
-html[data-theme="dark"] .training-card,
+html[data-theme="dark"] .event-card,
 html[data-theme="dark"] .decline-modal {
   background: #1e1e1e;
   border-color: #333;
@@ -377,8 +377,8 @@ html[data-theme="dark"] .calendar-day-btn-compact {
   color: #fff;
 }
 
-html[data-theme="dark"] .training-meta-item,
-html[data-theme="dark"] .no-trainings-message {
+html[data-theme="dark"] .event-meta-item,
+html[data-theme="dark"] .no-events-message {
   color: #b3b3b3;
 }
 

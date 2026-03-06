@@ -6,6 +6,7 @@ link.href = '/blocks/admin/admin.css';
 document.head.appendChild(link);
 
 export default async function decorate() {}
+
 /* UPLOAD MEDIA TO SUPABASE */
 async function uploadMedia(file) {
   const client = window.SupabaseUtils.client;
@@ -23,13 +24,11 @@ async function uploadMedia(file) {
 
 /* TOAST */
 function showToast(message, type = 'success') {
-
   let container = document.getElementById('global-toast-container');
 
   if (!container) {
     container = document.createElement('div');
     container.id = 'global-toast-container';
-
     container.style.position = 'fixed';
     container.style.top = '20px';
     container.style.right = '20px';
@@ -37,13 +36,11 @@ function showToast(message, type = 'success') {
     container.style.display = 'flex';
     container.style.flexDirection = 'column';
     container.style.gap = '10px';
-
     document.body.appendChild(container);
   }
 
   const toast = document.createElement('div');
   toast.textContent = message;
-
   toast.style.background = type === 'error' ? '#e11d48' : '#16a34a';
   toast.style.color = '#fff';
   toast.style.padding = '12px 18px';
@@ -51,8 +48,7 @@ function showToast(message, type = 'success') {
   toast.style.fontSize = '14px';
   toast.style.fontWeight = '500';
   toast.style.boxShadow = '0 6px 18px rgba(0,0,0,0.15)';
-  toast.style.animation = 'toastSlide 0.3s ease';
-
+  toast.style.animation = 'toast-slide 0.3s ease';
   container.appendChild(toast);
 
   setTimeout(() => {

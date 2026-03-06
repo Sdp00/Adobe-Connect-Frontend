@@ -1,14 +1,14 @@
 /******/ var __webpack_modules__ = ({
 
-/***/ "./react-app/app/training/components/training.jsx":
-/*!********************************************************!*\
-  !*** ./react-app/app/training/components/training.jsx ***!
-  \********************************************************/
+/***/ "./react-app/app/events/components/events.jsx":
+/*!****************************************************!*\
+  !*** ./react-app/app/events/components/events.jsx ***!
+  \****************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ Training)
+/* harmony export */   "default": () => (/* binding */ Events)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
@@ -38,9 +38,9 @@ function waitForSupabase() {
   });
 }
 
-// Compact Calendar Component with Training Names
+// Compact Calendar Component with Event Names
 function Calendar({
-  trainings,
+  events,
   onDateSelect
 }) {
   const [currentMonth, setCurrentMonth] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(new Date());
@@ -60,10 +60,10 @@ function Calendar({
     }
     return days;
   };
-  const getTrainingForDay = day => {
+  const getEventForDay = day => {
     if (!day) return null;
     const dateStr = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    return trainings.find(training => training.date === dateStr);
+    return events.find(evt => evt.date === dateStr);
   };
   const days = getDaysInMonth(currentMonth);
   const monthName = currentMonth.toLocaleDateString('en-US', {
@@ -99,9 +99,9 @@ function Calendar({
         className: "calendar-weekday-compact",
         children: day
       }, `day-${idx}`)), days.map((day, idx) => {
-        const training = getTrainingForDay(day);
+        const event = getEventForDay(day);
         return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
-          className: `calendar-day-compact${!day ? ' calendar-day--empty' : ''}${training ? ' calendar-day--event' : ''}`,
+          className: `calendar-day-compact${!day ? ' calendar-day--empty' : ''}${event ? ' calendar-day--event' : ''}`,
           children: day && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("button", {
             type: "button",
             className: "calendar-day-btn-compact",
@@ -109,9 +109,9 @@ function Calendar({
             children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
               className: "calendar-day-number",
               children: day
-            }), training && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
+            }), event && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
               className: "calendar-event-name",
-              children: training.title
+              children: event.title
             })]
           })
         }, `date-${idx}`);
@@ -120,7 +120,7 @@ function Calendar({
   });
 }
 Calendar.propTypes = {
-  trainings: prop_types__WEBPACK_IMPORTED_MODULE_2___default().arrayOf(prop_types__WEBPACK_IMPORTED_MODULE_2___default().shape({
+  events: prop_types__WEBPACK_IMPORTED_MODULE_2___default().arrayOf(prop_types__WEBPACK_IMPORTED_MODULE_2___default().shape({
     id: prop_types__WEBPACK_IMPORTED_MODULE_2___default().oneOfType([(prop_types__WEBPACK_IMPORTED_MODULE_2___default().string), (prop_types__WEBPACK_IMPORTED_MODULE_2___default().number)]).isRequired,
     title: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string).isRequired,
     date: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string).isRequired
@@ -131,66 +131,56 @@ Calendar.defaultProps = {
   onDateSelect: null
 };
 
-// Training Card Component with Decline Modal
-function TrainingCard({
-  training,
+// Event Card Component with Decline Modal
+function EventCard({
+  event,
   onRSVP
 }) {
   const [showDeclineModal, setShowDeclineModal] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
   const [declineReason, setDeclineReason] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('');
-  const getStatusText = () => {
-    if (training.status === 'overdue') return 'Response overdue';
-    if (training.daysToRespond) return `Respond within ${training.daysToRespond} days`;
-    return '';
-  };
   const handleDeclineSubmit = () => {
     if (declineReason.trim()) {
-      onRSVP(training.id, 'declined', declineReason);
+      onRSVP(event.id, 'declined', declineReason);
       setShowDeclineModal(false);
       setDeclineReason('');
     }
   };
-  const isPast = training.status === 'past';
+  const isPast = event.status === 'past';
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.Fragment, {
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
-      className: "training-card",
+      className: "event-card",
       children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("img", {
-        src: training.image,
-        alt: training.title,
-        className: "training-card-img"
+        src: event.Media || event.image || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800',
+        alt: event.title,
+        className: "event-card-img"
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
-        className: "training-card-content",
+        className: "event-card-content",
         children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("h3", {
-          className: "training-card-title",
-          children: training.title
+          className: "event-card-title",
+          children: event.title
         }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
-          className: "training-card-meta",
+          className: "event-card-meta",
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
-            className: "training-meta-item",
+            className: "event-meta-item",
             children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("span", {
-              children: [new Date(training.date).toLocaleDateString('en-US', {
+              children: [new Date(event.date).toLocaleDateString('en-US', {
                 month: 'short',
                 day: 'numeric',
                 year: 'numeric'
-              }), ' ', "\u2022 ", training.time]
+              }), ' ', "\u2022 ", event.time]
             })
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
-            className: "training-meta-item",
+            className: "event-meta-item",
             children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
-              children: training.location
-            })
-          }), !isPast && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
-            className: `training-meta-item training-meta-item--${training.status}`,
-            children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", {
-              children: getStatusText()
+              children: event.location
             })
           })]
-        }), !isPast && !training.rsvp && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
-          className: "training-card-actions",
+        }), !isPast && !event.rsvp && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+          className: "event-card-actions",
           children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
             type: "button",
             className: "btn",
-            onClick: () => onRSVP(training.id, 'accepted'),
+            onClick: () => onRSVP(event.id, 'accepted'),
             children: "Accept"
           }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
             type: "button",
@@ -232,24 +222,24 @@ function TrainingCard({
     })]
   });
 }
-TrainingCard.propTypes = {
-  training: prop_types__WEBPACK_IMPORTED_MODULE_2___default().shape({
+EventCard.propTypes = {
+  event: prop_types__WEBPACK_IMPORTED_MODULE_2___default().shape({
     id: prop_types__WEBPACK_IMPORTED_MODULE_2___default().oneOfType([(prop_types__WEBPACK_IMPORTED_MODULE_2___default().string), (prop_types__WEBPACK_IMPORTED_MODULE_2___default().number)]).isRequired,
     title: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string).isRequired,
     date: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string).isRequired,
     time: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string).isRequired,
     location: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string).isRequired,
-    image: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string).isRequired,
+    Media: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string),
+    image: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string),
     status: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string),
-    daysToRespond: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().number),
     rsvp: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().string)
   }).isRequired,
   onRSVP: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().func).isRequired
 };
 
-// Main Training Component with Supabase
-function Training() {
-  const [trainings, setTrainings] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
+// Main Events Component
+function Events() {
+  const [events, setEvents] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
   const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(true);
   const [error, setError] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
   const [selectedDate, setSelectedDate] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
@@ -262,64 +252,59 @@ function Training() {
   const thirtyDaysAgo = new Date(today);
   thirtyDaysAgo.setDate(today.getDate() - 30);
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    async function fetchTrainings() {
+    async function fetchEvents() {
       setLoading(true);
       try {
         await waitForSupabase();
         const {
           data,
           error: fetchError
-        } = await window.SupabaseUtils.getRecords('trainings', {
-          select: 'id,title,date,time,location,image,status,daysToRespond,rsvp',
+        } = await window.SupabaseUtils.getRecords('events', {
+          select: 'id,title,date,time,location,Media',
           orderBy: 'date',
           ascending: true
         });
         if (fetchError) throw fetchError;
-        setTrainings(data || []);
+
+        // Map Media to image for consistency
+        const eventsWithImages = (data || []).map(evt => ({
+          ...evt,
+          image: evt.Media || evt.image
+        }));
+        setEvents(eventsWithImages);
       } catch (err) {
-        console.error('Training fetch error:', err);
-        setError('Failed to fetch trainings');
+        console.error('Events fetch error:', err);
+        setError('Failed to fetch events');
       } finally {
         setLoading(false);
       }
     }
-    fetchTrainings();
-    window.addEventListener('trainings-updated', fetchTrainings);
-    return () => window.removeEventListener('trainings-updated', fetchTrainings);
+    fetchEvents();
+    window.addEventListener('events-updated', fetchEvents);
+    return () => window.removeEventListener('events-updated', fetchEvents);
   }, []);
-  const handleRSVP = async (trainingId, response, reason = null) => {
-    try {
-      await waitForSupabase();
-      const updateData = {
-        rsvp: response
-      };
-      if (reason) {
-        updateData.declineReason = reason;
-      }
-      await window.SupabaseUtils.updateRecord('trainings', trainingId, updateData);
-      setTrainings(prevTrainings => prevTrainings.map(training => training.id === trainingId ? {
-        ...training,
-        ...updateData
-      } : training));
-    } catch (err) {
-      console.error('Failed to update RSVP:', err);
-    }
+  const handleRSVP = (eventId, response, reason = null) => {
+    setEvents(prevEvents => prevEvents.map(evt => evt.id === eventId ? {
+      ...evt,
+      rsvp: response,
+      declineReason: reason
+    } : evt));
   };
 
-  // ✅ Upcoming Trainings (Next 30 Days)
-  const upcomingTrainings = trainings.filter(training => {
-    const trainingDate = new Date(training.date);
-    trainingDate.setHours(0, 0, 0, 0);
-    return trainingDate >= today && trainingDate <= thirtyDaysFromNow;
+  // ✅ Upcoming Events (Next 30 Days)
+  const upcomingEvents = events.filter(evt => {
+    const eventDate = new Date(evt.date);
+    eventDate.setHours(0, 0, 0, 0);
+    return eventDate >= today && eventDate <= thirtyDaysFromNow;
   });
 
-  // ✅ Past Trainings (Last 30 Days)
-  const pastTrainings = trainings.filter(training => {
-    const trainingDate = new Date(training.date);
-    trainingDate.setHours(0, 0, 0, 0);
-    return trainingDate >= thirtyDaysAgo && trainingDate < today;
-  }).map(training => ({
-    ...training,
+  // ✅ Past Events (Last 30 Days)
+  const pastEvents = events.filter(evt => {
+    const eventDate = new Date(evt.date);
+    eventDate.setHours(0, 0, 0, 0);
+    return eventDate >= thirtyDaysAgo && eventDate < today;
+  }).map(evt => ({
+    ...evt,
     status: 'past'
   }));
   if (loading) return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
@@ -327,7 +312,7 @@ function Training() {
       padding: '20px',
       marginLeft: '240px'
     },
-    children: "Loading trainings\u2026"
+    children: "Loading events\u2026"
   });
   if (error) return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
     style: {
@@ -338,47 +323,45 @@ function Training() {
     children: error
   });
   return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
-    className: "training-page",
+    className: "events-page",
     children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
-      className: "training-header",
+      className: "events-header",
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("h1", {
-        children: "Training"
+        children: "Events"
       })
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
-      className: "training-top-section",
+      className: "events-top-section",
       children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(Calendar, {
-        trainings: trainings,
+        events: events,
         selectedDate: selectedDate,
         onDateSelect: setSelectedDate
       })
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("section", {
-      className: "training-section",
+      className: "events-section",
       children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("h2", {
         className: "section-title",
-        children: "Upcoming Training (Next 30 Days)"
+        children: "Upcoming Events (Next 30 Days)"
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
-        className: "training-grid",
-        children: upcomingTrainings.length > 0 ? upcomingTrainings.map(training => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(TrainingCard, {
-          training: training,
+        className: "events-grid",
+        children: upcomingEvents.length > 0 ? upcomingEvents.map(evt => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(EventCard, {
+          event: evt,
           onRSVP: handleRSVP
-        }, training.id)) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
-          className: "no-trainings-message",
-          children: "No upcoming trainings in the next 30 days"
+        }, evt.id)) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
+          children: "No upcoming events in the next 30 days"
         })
       })]
     }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("section", {
-      className: "training-section",
+      className: "events-section",
       children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("h2", {
         className: "section-title",
-        children: "Past Training (Last 30 Days)"
+        children: "Past Events (Last 30 Days)"
       }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
-        className: "training-grid",
-        children: pastTrainings.length > 0 ? pastTrainings.map(training => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(TrainingCard, {
-          training: training,
+        className: "events-grid",
+        children: pastEvents.length > 0 ? pastEvents.map(evt => /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(EventCard, {
+          event: evt,
           onRSVP: handleRSVP
-        }, training.id)) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
-          className: "no-trainings-message",
-          children: "No past trainings in the last 30 days"
+        }, evt.id)) : /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
+          children: "No past events in the last 30 days"
         })
       })]
     })]
@@ -387,10 +370,10 @@ function Training() {
 
 /***/ }),
 
-/***/ "./react-app/app/training/index.jsx":
-/*!******************************************!*\
-  !*** ./react-app/app/training/index.jsx ***!
-  \******************************************/
+/***/ "./react-app/app/events/index.jsx":
+/*!****************************************!*\
+  !*** ./react-app/app/events/index.jsx ***!
+  \****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -399,8 +382,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* binding */ decorate)
 /* harmony export */ });
 /* harmony import */ var react_dom_client__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react-dom/client */ "./node_modules/react-dom/client.js");
-/* harmony import */ var _components_training_jsx__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/training.jsx */ "./react-app/app/training/components/training.jsx");
-/* harmony import */ var _styles_training_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./styles/training.css */ "./react-app/app/training/styles/training.css");
+/* harmony import */ var _components_events_jsx__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/events.jsx */ "./react-app/app/events/components/events.jsx");
+/* harmony import */ var _styles_events_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./styles/events.css */ "./react-app/app/events/styles/events.css");
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
 // eslint-disable-next-line import/extensions
 
@@ -410,7 +393,9 @@ __webpack_require__.r(__webpack_exports__);
 
 async function decorateBlock(block) {
   const root = (0,react_dom_client__WEBPACK_IMPORTED_MODULE_0__.createRoot)(block);
-  root.render(/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_components_training_jsx__WEBPACK_IMPORTED_MODULE_1__["default"], {}));
+  root.render(/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_3__.jsx)(_components_events_jsx__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    block: block
+  }));
 }
 async function decorate(block) {
   decorateBlock(block);
@@ -418,10 +403,10 @@ async function decorate(block) {
 
 /***/ }),
 
-/***/ "./react-app/app/training/styles/training.css":
-/*!****************************************************!*\
-  !*** ./react-app/app/training/styles/training.css ***!
-  \****************************************************/
+/***/ "./react-app/app/events/styles/events.css":
+/*!************************************************!*\
+  !*** ./react-app/app/events/styles/events.css ***!
+  \************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -557,7 +542,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	// undefined = chunk not loaded, null = chunk preloaded/prefetched
 /******/ 	// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
 /******/ 	var installedChunks = {
-/******/ 		"training": 0
+/******/ 		"events": 0
 /******/ 	};
 /******/ 	
 /******/ 	// no chunk on demand loading
@@ -608,7 +593,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ // Load entry module and return exports
 /******/ // This entry module depends on other loaded chunks and execution need to be delayed
 /******/ __webpack_require__.O(undefined, ["vendor"], () => (__webpack_require__("./node_modules/webpack-dev-server/client/index.js?protocol=ws%3A&hostname=localhost&port=4200&pathname=%2Fws&logging=info&overlay=true&reconnect=10&hot=false&live-reload=true")))
-/******/ var __webpack_exports__ = __webpack_require__.O(undefined, ["vendor"], () => (__webpack_require__("./react-app/app/training/index.jsx")))
+/******/ var __webpack_exports__ = __webpack_require__.O(undefined, ["vendor"], () => (__webpack_require__("./react-app/app/events/index.jsx")))
 /******/ __webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ var __webpack_exports__decorateBlock = __webpack_exports__.decorateBlock;
 /******/ var __webpack_exports__default = __webpack_exports__["default"];
