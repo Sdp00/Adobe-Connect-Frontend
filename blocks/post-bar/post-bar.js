@@ -30,8 +30,12 @@ async function uploadFile(file) {
 }
 
 export default function decorate(block) {
-  const { pathname } = window.location;
-  const isHomePage = pathname === '/' || pathname === '/index' || pathname === '/index.html';
+  const pathname = window.location.pathname;
+const isHomePage = pathname === '/'
+  || pathname === '/index'
+  || pathname === '/index.html'
+  || pathname === '/admin';
+  
   if (!isHomePage) {
     const wrapperSection = block.closest('.section');
     if (wrapperSection) wrapperSection.style.display = 'none';
