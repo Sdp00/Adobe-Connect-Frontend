@@ -428,6 +428,24 @@
 }
  
 /* ── Responsive ──────────────────────────────────────────────────────────── */
+
+/* ── Desktop / Large Screens ───────────────────────────────────────────── */
+.feed {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Large Desktop */
+@media (min-width: 1200px) {
+  .feed {
+    max-width: 720px;
+  }
+}
+
 @media (width <= 900px) {
   .feed {
     padding: 12px 12px;

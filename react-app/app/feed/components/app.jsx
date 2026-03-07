@@ -2,29 +2,20 @@ import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 const POSTS_PER_PAGE = 2;
+const COMMENTS_PER_PAGE = 2;
 
-/* ── SVG Icon — fetches from /icons/{name}.svg and renders inline ──────────── */
+/* ── SVG Icon ──────────────────────────────────────────────────────────────── */
 const SvgIcon = ({ name }) => {
   const [svgContent, setSvgContent] = useState('');
-
   useEffect(() => {
     fetch(`/icons/${name}.svg`)
       .then((res) => res.text())
       .then((text) => setSvgContent(text))
       .catch(() => setSvgContent(''));
   }, [name]);
-
-  return (
-    <span
-      aria-hidden="true"
-      dangerouslySetInnerHTML={{ __html: svgContent }}
-    />
-  );
+  return <span aria-hidden="true" dangerouslySetInnerHTML={{ __html: svgContent }} />;
 };
-
-SvgIcon.propTypes = {
-  name: PropTypes.string.isRequired,
-};
+SvgIcon.propTypes = { name: PropTypes.string.isRequired };
 
 /* ── Image Carousel ────────────────────────────────────────────────────────── */
 const ImageCarousel = ({ images, userName }) => {
@@ -32,12 +23,7 @@ const ImageCarousel = ({ images, userName }) => {
   if (!images || images.length === 0) return null;
   if (images.length === 1) {
     return (
-      <img
-        className="feed-card-image"
-        src={images[0]}
-        alt={`Post by ${userName}`}
-        loading="lazy"
-      />
+      <img className="feed-card-image" src={images[0]} alt={`Post by ${userName}`} loading="lazy" />
     );
   }
   return (
@@ -75,51 +61,99 @@ const ImageCarousel = ({ images, userName }) => {
     </div>
   );
 };
-
 ImageCarousel.propTypes = {
   images: PropTypes.arrayOf(PropTypes.string).isRequired,
   userName: PropTypes.string.isRequired,
 };
 
-/* ── Comments Section ───────────────────────────────────────────────────────── */
+/* ── Helper: format timeAgo ────────────────────────────────────────────────── */
+function formatTimeAgo(isoString) {
+  if (!isoString) return 'Just now';
+  const diff = Math.floor((Date.now() - new Date(isoString).getTime()) / 1000);
+  if (diff < 60) return 'Just now';
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  return `${Math.floor(diff / 86400)}d ago`;
+}
+
+/* ── Comments Section ──────────────────────────────────────────────────────── */
 const CommentsSection = ({ postId, onCountChange }) => {
-  const [comments, setComments] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [text, setText] = useState('');
-  const [submitting, setSubmitting] = useState(false);
+  const [comments, setComments]       = useState([]);
+  const [totalCount, setTotalCount]   = useState(0);
+  const [loading, setLoading]         = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [text, setText]               = useState('');
+  const [submitting, setSubmitting]   = useState(false);
+  const [fetchError, setFetchError]   = useState(null);
+  const fetchedCountRef               = useRef(0);
+  const allCommentsRef                = useRef([]);
 
   useEffect(() => {
-    if (!window.SupabaseUtils) { setLoading(false); return; }
-    window.SupabaseUtils.client
-      .from('comments')
-      .select('*')
-      .eq('post_id', postId)
-      .order('created_at', { ascending: true })
-      .then(({ data, error: dbError }) => {
-        if (!dbError) {
-          setComments(data || []);
-          onCountChange((data || []).length);
-        }
-        setLoading(false);
-      });
+    let cancelled = false;
+
+    const tryFetch = () => {
+      if (!window.SupabaseUtils?.client) {
+        setTimeout(() => { if (!cancelled) tryFetch(); }, 200);
+        return;
+      }
+      window.SupabaseUtils.client
+        .from('comments')
+        .select('comment_id, post_id, e_id, comment_text, created_at')
+        .eq('post_id', postId)
+        .order('created_at', { ascending: true })
+        .then(({ data, error: dbError }) => {
+          if (cancelled) return;
+          if (dbError) {
+            console.error('Comments fetch error:', dbError.message);
+            setFetchError(dbError.message);
+            setLoading(false);
+            return;
+          }
+          const all = data || [];
+          allCommentsRef.current = all;
+          fetchedCountRef.current = Math.min(COMMENTS_PER_PAGE, all.length);
+          setComments(all.slice(0, COMMENTS_PER_PAGE));
+          setTotalCount(all.length);
+          onCountChange(all.length);
+          setLoading(false);
+        });
+    };
+
+    tryFetch();
+    return () => { cancelled = true; };
   }, [postId, onCountChange]);
+
+  const handleLoadMore = () => {
+    if (loadingMore) return;
+    setLoadingMore(true);
+    const from = fetchedCountRef.current;
+    const nextSlice = allCommentsRef.current.slice(from, from + COMMENTS_PER_PAGE);
+    setComments((prev) => [...prev, ...nextSlice]);
+    fetchedCountRef.current = from + nextSlice.length;
+    setLoadingMore(false);
+  };
 
   const handleSubmit = async () => {
     const trimmed = text.trim();
-    if (!trimmed || submitting || !window.SupabaseUtils) return;
+    if (!trimmed || submitting || !window.SupabaseUtils?.client) return;
     setSubmitting(true);
+
     const { data, error: dbError } = await window.SupabaseUtils.client
       .from('comments')
-      .insert({ post_id: postId, user_name: 'You', comment_text: trimmed })
-      .select()
+      .insert({ post_id: postId, comment_text: trimmed })
+      .select('comment_id, post_id, e_id, comment_text, created_at')
       .single();
+
     if (!dbError && data) {
-      setComments((prev) => {
-        const updated = [...prev, data];
-        onCountChange(updated.length);
-        return updated;
-      });
+      allCommentsRef.current = [...allCommentsRef.current, data];
+      fetchedCountRef.current += 1;
+      setComments((prev) => [...prev, data]);
+      const newTotal = totalCount + 1;
+      setTotalCount(newTotal);
+      onCountChange(newTotal);
       setText('');
+    } else if (dbError) {
+      console.error('Comment insert error:', dbError.message);
     }
     setSubmitting(false);
   };
@@ -131,24 +165,43 @@ const CommentsSection = ({ postId, onCountChange }) => {
     }
   };
 
+  const hasMore = fetchedCountRef.current < totalCount;
+
   return (
     <div className="feed-comments">
       {loading && <p className="feed-comments-status">Loading comments…</p>}
-      {!loading && comments.length === 0 && (
+      {fetchError && <p className="feed-comments-status" style={{ color: 'red' }}>{fetchError}</p>}
+
+      {!loading && !fetchError && comments.length === 0 && (
         <p className="feed-comments-status">No comments yet. Be the first!</p>
       )}
+
       {comments.map((c) => (
         <div key={c.comment_id} className="feed-comment-item">
           <div className="feed-comment-avatar" aria-hidden="true">
-            {(c.user_name || 'U').slice(0, 1).toUpperCase()}
+            {c.e_id ? String(c.e_id).slice(0, 1) : 'U'}
           </div>
           <div className="feed-comment-body">
-            <span className="feed-comment-name">{c.user_name || 'Unknown'}</span>
+            <span className="feed-comment-name">
+              {c.e_id ? `Employee #${c.e_id}` : 'You'}
+            </span>
             <p className="feed-comment-text">{c.comment_text}</p>
             <span className="feed-comment-meta">{formatTimeAgo(c.created_at)}</span>
           </div>
         </div>
       ))}
+
+      {!loading && hasMore && (
+        <button
+          type="button"
+          className="feed-comments-load-more"
+          onClick={handleLoadMore}
+          disabled={loadingMore}
+        >
+          {loadingMore ? 'Loading…' : `Load more (${totalCount - fetchedCountRef.current} remaining)`}
+        </button>
+      )}
+
       <div className="feed-comment-input-row">
         <div className="feed-comment-avatar" aria-hidden="true">U</div>
         <textarea
@@ -180,9 +233,9 @@ CommentsSection.propTypes = {
 
 /* ── Single Post Card ──────────────────────────────────────────────────────── */
 const FeedCard = ({ post }) => {
-  const [liked, setLiked] = useState(post.liked);
-  const [likeCount, setLikeCount] = useState(post.likes);
-  const [saved, setSaved] = useState(post.saved);
+  const [liked, setLiked]               = useState(post.liked);
+  const [likeCount, setLikeCount]       = useState(post.likes);
+  const [saved, setSaved]               = useState(post.saved);
   const [showComments, setShowComments] = useState(false);
   const [commentCount, setCommentCount] = useState(post.comments);
 
@@ -295,16 +348,6 @@ FeedCard.propTypes = {
   }).isRequired,
 };
 
-/* ── Helper: format timeAgo from ISO timestamp ─────────────────────────────── */
-function formatTimeAgo(isoString) {
-  if (!isoString) return 'Just now';
-  const diff = Math.floor((Date.now() - new Date(isoString).getTime()) / 1000);
-  if (diff < 60) return 'Just now';
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  return `${Math.floor(diff / 86400)}d ago`;
-}
-
 /* ── Helper: map Supabase row → FeedCard post shape ───────────────────────── */
 function mapRowToPost(row) {
   return {
@@ -333,93 +376,68 @@ function mapRowToPost(row) {
 
 /* ── Feed with Lazy Loading ────────────────────────────────────────────────── */
 const Feed = () => {
-  const [allPosts, setAllPosts] = useState([]);
-  const [visiblePosts, setVisiblePosts] = useState([]);
-  const [page, setPage] = useState(1);
+  const [allPosts, setAllPosts]             = useState([]);
+  const [visiblePosts, setVisiblePosts]     = useState([]);
+  const [page, setPage]                     = useState(1);
   const [initialLoading, setInitialLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [hasMore, setHasMore] = useState(false);
-  const [error, setError] = useState(null);
+  const [loadingMore, setLoadingMore]       = useState(false);
+  const [hasMore, setHasMore]               = useState(false);
+  const [error, setError]                   = useState(null);
   const sentinelRef = useRef(null);
-  const ctx = useRef({
-    all: [],
-    page: 1,
-    busy: false,
-    hasMore: false,
-  });
+  const ctx = useRef({ all: [], page: 1, busy: false, hasMore: false });
 
-  /* ── CHANGED: fetch from Supabase instead of /mock.json ─────────────────── */
+  /* ── Fetch posts from Supabase (with retry) ──────────────────────────────── */
   useEffect(() => {
-    if (!window.SupabaseUtils) {
-      setError('Supabase not ready. Please try again.');
-      setInitialLoading(false);
-      return;
-    }
+    let cancelled = false;
 
-    window.SupabaseUtils.client
-      .from('posts')
-      .select('*')
-      .order('post_id', { ascending: false })
-      .then(({ data, error: dbError }) => {
-        if (dbError) {
-          setError(dbError.message);
+    const tryFetch = () => {
+      if (!window.SupabaseUtils?.client) {
+        setTimeout(() => { if (!cancelled) tryFetch(); }, 200);
+        return;
+      }
+      window.SupabaseUtils.client
+        .from('posts')
+        .select('*')
+        .order('post_id', { ascending: false })
+        .then(({ data, error: dbError }) => {
+          if (cancelled) return;
+          if (dbError) {
+            setError(dbError.message);
+            setInitialLoading(false);
+            return;
+          }
+          const mapped  = (data || []).map(mapRowToPost);
+          const initial = mapped.slice(0, POSTS_PER_PAGE);
+          const more    = mapped.length > POSTS_PER_PAGE;
+          ctx.current   = { all: mapped, page: 1, busy: false, hasMore: more };
+          setAllPosts(mapped);
+          setVisiblePosts(initial);
+          setHasMore(more);
           setInitialLoading(false);
-          return;
-        }
+        });
+    };
 
-        const mapped = (data || []).map(mapRowToPost);
-        const initial = mapped.slice(0, POSTS_PER_PAGE);
-        const more = mapped.length > POSTS_PER_PAGE;
-
-        ctx.current = {
-          all: mapped,
-          page: 1,
-          busy: false,
-          hasMore: more,
-        };
-        setAllPosts(mapped);
-        setVisiblePosts(initial);
-        setHasMore(more);
-        setInitialLoading(false);
-      });
+    tryFetch();
+    return () => { cancelled = true; };
   }, []);
 
-  /* ── CHANGED: new post saves to Supabase and prepends to feed ───────────── */
+  /* ── Listen for new post events ─────────────────────────────────────────── */
   useEffect(() => {
     const handleNewPost = ({ detail }) => {
-      const {
-        title = '',
-        text = '',
-        images = [],
-        attachments = [],
-        links = [],
-      } = detail;
+      const { title = '', text = '', images = [], attachments = [], links = [] } = detail;
 
       const mimeLabel = (mime) => (mime === 'video/mp4' ? 'MP4 · video' : 'PDF · document');
-
       let attachment = null;
       if (attachments.length > 0) {
-        attachment = {
-          name: attachments[0].name,
-          type: mimeLabel(attachments[0].mimeType),
-        };
+        attachment = { name: attachments[0].name, type: mimeLabel(attachments[0].mimeType) };
       } else if (links.length > 0) {
-        attachment = {
-          name: links[0].replace(/^https?:\/\//, ''),
-          type: 'Google Drive · link',
-        };
+        attachment = { name: links[0].replace(/^https?:\/\//, ''), type: 'Google Drive · link' };
       }
 
       const extractedTags = `${text} ${title}`.match(/#\w+/g) || [];
-
       const newPost = {
         id: Date.now(),
-        user: {
-          name: 'You',
-          role: 'Member',
-          avatar: 'U',
-          color: '#0073e6',
-        },
+        user: { name: 'You', role: 'Member', avatar: 'U', color: '#0073e6' },
         timeAgo: 'Just now',
         title: title || null,
         text,
@@ -432,12 +450,10 @@ const Feed = () => {
         saved: false,
       };
 
-      // Optimistically add to feed immediately
       setAllPosts((prev) => [newPost, ...prev]);
       setVisiblePosts((prev) => [newPost, ...prev]);
 
-      // Save to Supabase in the background
-      if (window.SupabaseUtils) {
+      if (window.SupabaseUtils?.client) {
         window.SupabaseUtils.client
           .from('posts')
           .insert({
@@ -448,9 +464,7 @@ const Feed = () => {
             media: images.length > 0 ? JSON.stringify(images.map((img) => img.url)) : null,
           })
           .then(({ error: dbError }) => {
-            if (dbError) {
-              console.error('Failed to save post to Supabase:', dbError.message);
-            }
+            if (dbError) console.error('Failed to save post:', dbError.message);
           });
       }
     };
@@ -460,57 +474,37 @@ const Feed = () => {
   }, []);
 
   useEffect(() => {
-    ctx.current = {
-      all: allPosts,
-      page,
-      busy: loadingMore,
-      hasMore,
-    };
+    ctx.current = { all: allPosts, page, busy: loadingMore, hasMore };
   }, [allPosts, page, loadingMore, hasMore]);
 
+  /* ── Intersection observer for infinite scroll ───────────────────────────── */
   useEffect(() => {
     if (initialLoading) return undefined;
-
     const sentinel = sentinelRef.current;
     if (!sentinel) return undefined;
 
     const loadNext = () => {
-      const {
-        all,
-        page: pg,
-        busy,
-        hasMore: more,
-      } = ctx.current;
+      const { all, page: pg, busy, hasMore: more } = ctx.current;
       if (busy || !more) return;
-
       ctx.current = { ...ctx.current, busy: true };
       setLoadingMore(true);
 
       setTimeout(() => {
-        const nextPage = pg + 1;
+        const nextPage    = pg + 1;
         const nextVisible = all.slice(0, nextPage * POSTS_PER_PAGE);
-        const stillMore = nextVisible.length < all.length;
-
+        const stillMore   = nextVisible.length < all.length;
         setVisiblePosts(nextVisible);
         setPage(nextPage);
         setHasMore(stillMore);
         setLoadingMore(false);
-        ctx.current = {
-          all,
-          page: nextPage,
-          busy: false,
-          hasMore: stillMore,
-        };
+        ctx.current = { all, page: nextPage, busy: false, hasMore: stillMore };
       }, 700);
     };
 
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) loadNext();
-      },
+      ([entry]) => { if (entry.isIntersecting) loadNext(); },
       { threshold: 0.1 },
     );
-
     observer.observe(sentinel);
     return () => observer.disconnect();
   }, [initialLoading]);
@@ -523,7 +517,6 @@ const Feed = () => {
       {visiblePosts.map((post) => (
         <FeedCard key={post.id} post={post} />
       ))}
-
       <div ref={sentinelRef} className="feed-sentinel" aria-hidden="true">
         {loadingMore && <span className="feed-spinner" />}
         {!hasMore && !loadingMore && visiblePosts.length > 0 && (

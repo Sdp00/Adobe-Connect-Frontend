@@ -1,5 +1,7 @@
 /* ── Sticky section ──────────────────────────────────────────────────────── */
+
 /* .section.post-bar-section has specificity (0,2,0) which beats            */
+
 /* main > .section (0,1,1) so margin: 0 properly overrides the global rule  */
 .section.post-bar-section {
   background: var(--background-color);
@@ -292,13 +294,27 @@
 }
 
 @keyframes carousel-in-from-right {
-  from { opacity: 0; transform: translateX(28px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(28px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes carousel-in-from-left {
-  from { opacity: 0; transform: translateX(-28px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(-28px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .post-bar-carousel-slide img {
