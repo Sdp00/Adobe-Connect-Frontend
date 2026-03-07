@@ -12,7 +12,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
+/* harmony import */ var prop_types__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(prop_types__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react/jsx-runtime */ "./node_modules/react/jsx-runtime.js");
+
 
 
 const calendarIcon = '/icons/calendar.svg';
@@ -37,11 +40,54 @@ function waitForSupabase() {
     }, 100);
   });
 }
+function DeclineModal({
+  onClose,
+  onSubmit
+}) {
+  const [reason, setReason] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('');
+  return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", {
+    className: "decline-modal-overlay",
+    onClick: onClose,
+    children: /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+      className: "decline-modal",
+      onClick: e => e.stopPropagation(),
+      children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("h3", {
+        children: "Reason for Declining"
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("textarea", {
+        className: "decline-textarea",
+        value: reason,
+        onChange: e => setReason(e.target.value),
+        placeholder: "Enter your reason...",
+        rows: "4"
+      }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+        className: "decline-modal-actions",
+        children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
+          type: "button",
+          className: "btn",
+          onClick: onClose,
+          children: "Cancel"
+        }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
+          type: "button",
+          className: "btn",
+          onClick: () => onSubmit(reason),
+          disabled: !reason.trim(),
+          children: "Submit"
+        })]
+      })]
+    })
+  });
+}
+DeclineModal.propTypes = {
+  onClose: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().func).isRequired,
+  onSubmit: (prop_types__WEBPACK_IMPORTED_MODULE_2___default().func).isRequired
+};
 function App() {
   const [events, setEvents] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);
   const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(true);
   const [error, setError] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
   const [responses, setResponses] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({});
+  const [declineTarget, setDeclineTarget] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  const isAdmin = window.location.pathname === '/admin';
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     async function fetchEvents() {
       setLoading(true);
@@ -77,10 +123,15 @@ function App() {
     ...prev,
     [id]: 'accepted'
   }));
-  const handleDecline = id => setResponses(prev => ({
-    ...prev,
-    [id]: 'declined'
-  }));
+  const handleDeclineSubmit = () => {
+    if (declineTarget) {
+      setResponses(prev => ({
+        ...prev,
+        [declineTarget]: 'declined'
+      }));
+      setDeclineTarget(null);
+    }
+  };
   if (loading) return /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", {
     style: {
       padding: 20
@@ -138,7 +189,7 @@ function App() {
                 className: "event-icon",
                 alt: ""
               }), daysRemaining > 0 ? `Respond within ${daysRemaining} day${daysRemaining !== 1 ? 's' : ''}` : 'Response overdue']
-            }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+            }), !isAdmin && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
               className: "event-card-actions",
               children: [!response && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)(react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.Fragment, {
                 children: [/*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
@@ -147,7 +198,7 @@ function App() {
                   children: "Accept"
                 }), /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
                   className: "event-card-button decline",
-                  onClick: () => handleDecline(event.id),
+                  onClick: () => setDeclineTarget(event.id),
                   children: "Decline"
                 })]
               }), response === 'accepted' && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("button", {
@@ -171,6 +222,9 @@ function App() {
           })]
         }, event.id);
       })
+    }), declineTarget && /*#__PURE__*/(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)(DeclineModal, {
+      onClose: () => setDeclineTarget(null),
+      onSubmit: handleDeclineSubmit
     })]
   });
 }
@@ -311,7 +365,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 
 /******/ /* webpack/runtime/getFullHash */
 /******/ (() => {
-/******/ 	__webpack_require__.h = () => ("3b3449187ae074f5523c")
+/******/ 	__webpack_require__.h = () => ("098b72739e4b2a5b6794")
 /******/ })();
 /******/ 
 /******/ /* webpack/runtime/hasOwnProperty shorthand */
