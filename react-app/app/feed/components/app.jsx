@@ -77,7 +77,7 @@ function formatTimeAgo(isoString) {
 }
 
 /* ── Comments Section ──────────────────────────────────────────────────────── */
-const CommentsSection = ({ postId, onCountChange }) => {
+const CommentsSection = ({ postId, onCountChange, onClose }) => {
   const [comments, setComments]       = useState([]);
   const [totalCount, setTotalCount]   = useState(0);
   const [loading, setLoading]         = useState(true);
@@ -152,6 +152,7 @@ const CommentsSection = ({ postId, onCountChange }) => {
       setTotalCount(newTotal);
       onCountChange(newTotal);
       setText('');
+      onClose();
     } else if (dbError) {
       console.error('Comment insert error:', dbError.message);
     }
@@ -229,15 +230,16 @@ const CommentsSection = ({ postId, onCountChange }) => {
 CommentsSection.propTypes = {
   postId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   onCountChange: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
 };
 
 /* ── Single Post Card ──────────────────────────────────────────────────────── */
-const FeedCard = ({ post }) => {
-  const [liked, setLiked]               = useState(post.liked);
-  const [likeCount, setLikeCount]       = useState(post.likes);
-  const [saved, setSaved]               = useState(post.saved);
-  const [showComments, setShowComments] = useState(false);
-  const [commentCount, setCommentCount] = useState(post.comments);
+const FeedCard = ({
+  post, commentCount, isOpen, onToggle, onClose, onCommentCountChange,
+}) => {
+  const [liked, setLiked]         = useState(post.liked);
+  const [likeCount, setLikeCount] = useState(post.likes);
+  const [saved, setSaved]         = useState(post.saved);
 
   const handleLike = () => {
     setLikeCount(liked ? likeCount - 1 : likeCount + 1);
@@ -298,9 +300,9 @@ const FeedCard = ({ post }) => {
           </button>
           <button
             type="button"
-            className={`feed-action-btn${showComments ? ' active' : ''}`}
-            aria-label={showComments ? 'Hide comments' : 'Show comments'}
-            onClick={() => setShowComments((v) => !v)}
+            className={`feed-action-btn${isOpen ? ' active' : ''}`}
+            aria-label={isOpen ? 'Hide comments' : 'Show comments'}
+            onClick={onToggle}
           >
             <SvgIcon name="comment" />
             <span>{commentCount}</span>
@@ -316,8 +318,12 @@ const FeedCard = ({ post }) => {
         </button>
       </div>
 
-      {showComments && (
-        <CommentsSection postId={post.id} onCountChange={setCommentCount} />
+      {isOpen && (
+        <CommentsSection
+          postId={post.id}
+          onCountChange={onCommentCountChange}
+          onClose={onClose}
+        />
       )}
     </article>
   );
@@ -346,6 +352,11 @@ FeedCard.propTypes = {
     }),
     comments: PropTypes.number,
   }).isRequired,
+  commentCount: PropTypes.number.isRequired,
+  isOpen: PropTypes.bool.isRequired,
+  onToggle: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
+  onCommentCountChange: PropTypes.func.isRequired,
 };
 
 /* ── Helper: map Supabase row → FeedCard post shape ───────────────────────── */
@@ -376,17 +387,19 @@ function mapRowToPost(row) {
 
 /* ── Feed with Lazy Loading ────────────────────────────────────────────────── */
 const Feed = () => {
-  const [allPosts, setAllPosts]             = useState([]);
-  const [visiblePosts, setVisiblePosts]     = useState([]);
-  const [page, setPage]                     = useState(1);
+  const [allPosts, setAllPosts]           = useState([]);
+  const [visiblePosts, setVisiblePosts]   = useState([]);
+  const [page, setPage]                   = useState(1);
   const [initialLoading, setInitialLoading] = useState(true);
-  const [loadingMore, setLoadingMore]       = useState(false);
-  const [hasMore, setHasMore]               = useState(false);
-  const [error, setError]                   = useState(null);
+  const [loadingMore, setLoadingMore]     = useState(false);
+  const [hasMore, setHasMore]             = useState(false);
+  const [error, setError]                 = useState(null);
+  const [openPostId, setOpenPostId]       = useState(null);
+  const [commentCounts, setCommentCounts] = useState({});
   const sentinelRef = useRef(null);
   const ctx = useRef({ all: [], page: 1, busy: false, hasMore: false });
 
-  /* ── Fetch posts from Supabase (with retry) ──────────────────────────────── */
+  /* ── Fetch posts + comment counts from Supabase ──────────────────────────── */
   useEffect(() => {
     let cancelled = false;
 
@@ -414,6 +427,23 @@ const Feed = () => {
           setVisiblePosts(initial);
           setHasMore(more);
           setInitialLoading(false);
+
+          /* fetch comment counts for all loaded posts */
+          const postIds = mapped.map((p) => p.id);
+          if (postIds.length > 0) {
+            window.SupabaseUtils.client
+              .from('comments')
+              .select('post_id')
+              .in('post_id', postIds)
+              .then(({ data: cData }) => {
+                if (cancelled) return;
+                const counts = {};
+                (cData || []).forEach((r) => {
+                  counts[r.post_id] = (counts[r.post_id] || 0) + 1;
+                });
+                setCommentCounts(counts);
+              });
+          }
         });
     };
 
@@ -509,13 +539,29 @@ const Feed = () => {
     return () => observer.disconnect();
   }, [initialLoading]);
 
+  const handleCommentCountChange = (postId, count) => {
+    setCommentCounts((prev) => ({ ...prev, [postId]: count }));
+  };
+
+  const handleToggle = (postId) => {
+    setOpenPostId((prev) => (prev === postId ? null : postId));
+  };
+
   if (initialLoading) return <div className="feed-status">Loading feed…</div>;
   if (error) return <div className="feed-status feed-status-error">{error}</div>;
 
   return (
     <div className="feed">
       {visiblePosts.map((post) => (
-        <FeedCard key={post.id} post={post} />
+        <FeedCard
+          key={post.id}
+          post={post}
+          commentCount={commentCounts[post.id] ?? post.comments}
+          isOpen={openPostId === post.id}
+          onToggle={() => handleToggle(post.id)}
+          onClose={() => setOpenPostId(null)}
+          onCommentCountChange={(count) => handleCommentCountChange(post.id, count)}
+        />
       ))}
       <div ref={sentinelRef} className="feed-sentinel" aria-hidden="true">
         {loadingMore && <span className="feed-spinner" />}

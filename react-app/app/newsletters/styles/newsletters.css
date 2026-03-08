@@ -1,10 +1,7 @@
 .newsletters-page {
-  max-width: 1400px;
-  margin: 0 auto;
+  width: 100%;
   padding: 40px 32px;
   padding-top: 40px;
-  margin-left: 240px;
-  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .newsletters-header {
@@ -18,7 +15,7 @@
   font-size: 32px;
   font-weight: 700;
   color: #111827;
-  margin: 0 0 4px ;
+  margin: 0 0 4px;
 }
 
 .newsletters-subtitle {
@@ -29,7 +26,7 @@
 
 .newsletters-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 24px;
 }
 
@@ -71,14 +68,14 @@
   font-size: 20px;
   font-weight: 700;
   color: #111827;
-  margin: 0 0 12px ;
+  margin: 0 0 12px;
 }
 
 .newsletter-desc {
   font-size: 15px;
   color: #6b7280;
   line-height: 1.6;
-  margin: 0 0 12px ;
+  margin: 0 0 12px;
 }
 
 .newsletter-actions {
@@ -86,7 +83,6 @@
   gap: 12px;
 }
 
-/* ✅ FIX: Make button/link text white */
 .newsletter-actions a {
   color: #fff;
   text-decoration: none;
@@ -102,7 +98,6 @@
 
 @media (width <= 1024px) {
   .newsletters-page {
-    margin-left: 0;
     padding: 24px 16px;
     padding-top: 24px;
   }

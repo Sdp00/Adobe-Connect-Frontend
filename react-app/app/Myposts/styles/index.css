@@ -5,7 +5,6 @@
   font-family: "Adobe Clean", system-ui, sans-serif;
   background: #f8f8f8;
   min-height: 100vh;
-  margin-left: 190px;
 }
 
 /* Header */
@@ -88,6 +87,27 @@
   font-size: 14px;
   color: #8e8e8e;
   padding: 40px;
+}
+
+/* Responsive */
+@media (width <= 1024px) {
+  .myposts-page {
+    padding: 24px 16px;
+  }
+
+  .myposts-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+@media (width <= 600px) {
+  .myposts-page {
+    padding: 16px 12px;
+  }
+
+  .myposts-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Dark Mode */
