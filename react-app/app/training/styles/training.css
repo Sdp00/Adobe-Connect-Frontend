@@ -5,13 +5,10 @@
   box-sizing: border-box;
 }
 
-/* Training Page - Fixed for sidebar */
+/* Training Page */
 .training-page {
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
   padding: 24px 32px;
-  margin-left: 240px;
-  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .training-header {
@@ -29,8 +26,7 @@
 
 .training-top-section {
   display: flex;
-  flex-direction: column;
-  gap: 32px;
+  justify-content: center;
   margin-bottom: 48px;
 }
 
@@ -39,7 +35,8 @@
   border-radius: 16px;
   padding: 24px;
   border: 1px solid #f3f4f6;
-  width: 100%;
+  width: 90%;
+  max-width: 900px;
 }
 
 .calendar-header-compact {
@@ -170,7 +167,7 @@
 
 .training-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 24px;
 }
 
@@ -310,14 +307,18 @@
   gap: 12px;
 }
 
+/* Tablet */
 @media (width <= 1024px) {
   .training-page {
-    margin-left: 0;
     padding: 24px 16px;
   }
 
   .calendar-grid-compact {
     gap: 4px;
+  }
+
+  .calendar-day-compact {
+    min-height: 60px;
   }
 
   .calendar-day-btn-compact {
@@ -333,7 +334,35 @@
   }
 }
 
-@media (width <= 767px) {
+/* Mobile */
+@media (width <= 600px) {
+  .training-page {
+    padding: 16px 12px;
+  }
+
+  .calendar-compact {
+    width: 100%;
+    padding: 16px 12px;
+  }
+
+  .calendar-grid-compact {
+    gap: 2px;
+  }
+
+  .calendar-day-compact {
+    min-height: 44px;
+  }
+
+  .calendar-day-btn-compact {
+    min-height: 44px;
+    font-size: 12px;
+    padding: 4px 2px;
+  }
+
+  .calendar-event-name {
+    display: none;
+  }
+
   .decline-modal {
     width: 95%;
     padding: 20px;

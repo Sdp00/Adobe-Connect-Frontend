@@ -359,8 +359,8 @@ export default function Training() {
       status: 'past',
     }));
 
-  if (loading) return <p style={{ padding: '20px', marginLeft: '240px' }}>Loading trainings…</p>;
-  if (error) return <p style={{ padding: '20px', marginLeft: '240px', color: 'red' }}>{error}</p>;
+  if (loading) return <p style={{ padding: '20px' }}>Loading trainings…</p>;
+  if (error) return <p style={{ padding: '20px', color: 'red' }}>{error}</p>;
 
   return (
     <div className="training-page">
