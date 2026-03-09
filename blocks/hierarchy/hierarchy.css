@@ -140,7 +140,9 @@
 }
 
 /* ── Card top ── */
+
 /* ── 1. Base Element Styles ── */
+
 .card-top {
   padding: 16px;
   display: flex;
@@ -175,9 +177,10 @@
 }
 
 /* dark .avatar BEFORE compound .card-top.red .avatar */
-html[data-theme="dark"] .avatar {
+
+/* html[data-theme="dark"] .avatar {
   box-shadow: 0 2px 6px rgb(0 0 0 / 30%);
-}
+} */
 
 .card-top.red .avatar {
   background: rgb(255 255 255 / 20%);
@@ -191,12 +194,14 @@ html[data-theme="dark"] .avatar {
 }
 
 /* ── Card text ── */
+
 .card-info {
   flex: 1;
   min-width: 0;
 }
 
 /* base .name BEFORE compound red override */
+
 .name {
   font-size: 14px;
   font-weight: 700;
@@ -208,6 +213,7 @@ html[data-theme="dark"] .avatar {
 }
 
 /* dark .name BEFORE compound .card-top.red .name */
+
 html[data-theme="dark"] .name {
   color: #f3f4f6;
 }
@@ -225,6 +231,7 @@ html[data-theme="dark"] .card.selected .card-top.light .name {
 }
 
 /* ── Role — base BEFORE compound red override ── */
+
 .role {
   font-size: 12px;
   color: #6b7280;
@@ -236,15 +243,17 @@ html[data-theme="dark"] .card.selected .card-top.light .name {
 }
 
 /* dark .role BEFORE compound .card-top.red .role */
+
 html[data-theme="dark"] .role {
   color: #9ca3af;
 }
 
-.card-top.red .role {
+/* .card-top.red .role {
   color: rgb(255 255 255 / 75%);
-}
+} */
 
 /* ── Chevron — base BEFORE compound hover override ── */
+
 .card-chevron {
   font-size: 22px;
   color: #dc2626;
@@ -256,6 +265,7 @@ html[data-theme="dark"] .role {
 }
 
 /* dark .card-chevron BEFORE compound .card.clickable:hover .card-chevron */
+
 html[data-theme="dark"] .card-chevron {
   color: #fca5a5;
 }
@@ -266,11 +276,13 @@ html[data-theme="dark"] .card-chevron {
 }
 
 /* ── card-top.light — base BEFORE compound selected override ── */
-.card-top.light {
+
+/* .card-top.light {
   background: #fef2f2;
-}
+} */
 
 /* dark .card-top.light BEFORE compound .card.selected .card-top.light */
+
 html[data-theme="dark"] .card-top.light {
   background: #262626;
 }
@@ -284,15 +296,19 @@ html[data-theme="dark"] .card.selected .card-top.light {
 }
 
 /* ── "You" badge ── */
-.card-you {
+
+/* .card-you {
   font-size: 10px;
   font-weight: 800;
   background: #2563eb;
   color: #fff;
   padding: 3px 8px;
   border-radius: 999px;
+} */
+
 /* ── 2. Card Container Styles (Base) ── */
-.card {
+
+/* .card {
   width: 230px;
   background: #fff;
   border-radius: 16px;
@@ -302,13 +318,14 @@ html[data-theme="dark"] .card.selected .card-top.light {
   transition: transform 0.18s ease, box-shadow 0.18s ease;
   flex-shrink: 0;
   position: relative;
-}
+} */
 
-.card.clickable {
+/* .card.clickable {
   cursor: pointer;
-}
+} */
 
 /* ── 3. Theme Overrides (Dark Mode Base) ── */
+
 html[data-theme="dark"] .org-page {
   background: #111;
 }
@@ -348,95 +365,100 @@ html[data-theme="dark"] .card.clickable:hover {
   box-shadow: 0 10px 28px rgb(0 0 0 / 40%), 0 0 0 1px rgb(220 38 38 / 30%);
 }
 
-html[data-theme="dark"] .name {
+/* html[data-theme="dark"] .name {
   color: #f3f4f6;
-}
+} */
 
-html[data-theme="dark"] .role {
+/* html[data-theme="dark"] .role {
   color: #9ca3af;
-}
+} */
 
-html[data-theme="dark"] .avatar {
+/* html[data-theme="dark"] .avatar {
   box-shadow: 0 2px 6px rgb(0 0 0 / 30%);
-}
+} */
 
-html[data-theme="dark"] .card-chevron {
+/* html[data-theme="dark"] .card-chevron {
   color: #fca5a5;
-}
+} */
 
-html[data-theme="dark"] .card-top.light {
+/* html[data-theme="dark"] .card-top.light {
   background: #262626;
-}
+} */
 
 /* ── 4. Specific Component Behaviors (Hovers/Active) ── */
 
 /* Moved here to ensure they come AFTER dark mode base elements */
-.card.clickable:hover {
+
+/* .card.clickable:hover {
   transform: translateY(-3px);
   box-shadow: 0 10px 28px rgb(0 0 0 / 12%), 0 0 0 1px rgb(220 38 38 / 20%);
-}
+} */
 
-.card.clickable:hover .card-chevron {
+/* .card.clickable:hover .card-chevron {
   opacity: 1;
   transform: translateX(2px);
-}
+} */
 
 /* ── 5. High-Specificity State Overrides ── */
 
 /* Red Cards (CEO) */
-.card-top.red {
+
+/* .card-top.red {
   background: linear-gradient(135deg, #f87171, #dc2626);
   color: #fff;
-}
+} */
 
-.card-top.red .name {
+/* .card-top.red .name {
   color: #fff;
-}
+} */
 
-.card-top.red .role {
+/* .card-top.red .role {
   color: rgb(255 255 255 / 75%);
-}
+} */
 
-.card-top.red .avatar {
+/* .card-top.red .avatar {
   background: rgb(255 255 255 / 20%);
   color: #fff;
   box-shadow: none;
-}
+} */
 
-.card.ceo {
+/* .card.ceo {
   border: 2px solid #ef4444;
   box-shadow: 0 4px 16px rgb(239 68 68 / 15%);
-}
+} */
 
 /* Selected State */
-.card.selected {
+
+/* .card.selected {
   border: 2px solid #2563eb;
   box-shadow: 0 0 0 4px rgb(37 99 235 / 10%), 0 4px 16px rgb(37 99 235 / 15%);
-}
+} */
 
-.card.selected .card-top.light {
+/* .card.selected .card-top.light {
   background: linear-gradient(135deg, #eff6ff, #dbeafe);
-}
+} */
 
-.card.selected .card-top.light .name {
+/* .card.selected .card-top.light .name {
   color: #1d4ed8;
-}
+} */
 
-.card.selected .card-top.light .avatar {
+/* .card.selected .card-top.light .avatar {
   background: #2563eb;
   color: #fff;
-}
+} */
 
 /* Dark Mode + Selected Overrides */
-html[data-theme="dark"] .card.selected .card-top.light {
-  background: #1a2540;
-}
 
-html[data-theme="dark"] .card.selected .card-top.light .name {
+/* html[data-theme="dark"] .card.selected .card-top.light {
+  background: #1a2540;
+} */
+
+/* html[data-theme="dark"] .card.selected .card-top.light .name {
   color: #93c5fd;
-}
+} */
 
 /* ── 6. Miscellaneous ── */
+
 .card-you {
   font-size: 10px;
   font-weight: 800;
