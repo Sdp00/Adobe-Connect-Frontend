@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 const POSTS_PER_PAGE = 2;
-const COMMENTS_PER_PAGE = 2;
 
 /* ── SVG Icon ──────────────────────────────────────────────────────────────── */
 const SvgIcon = ({ name }) => {
@@ -66,6 +65,12 @@ ImageCarousel.propTypes = {
   userName: PropTypes.string.isRequired,
 };
 
+/* ── Helper: strip hashtags from display text ──────────────────────────────── */
+function stripHashtags(text) {
+  if (!text) return '';
+  return text.replace(/#\w+/g, '').replace(/\s+/g, ' ').trim();
+}
+
 /* ── Helper: format timeAgo ────────────────────────────────────────────────── */
 function formatTimeAgo(isoString) {
   if (!isoString) return 'Just now';
@@ -77,16 +82,12 @@ function formatTimeAgo(isoString) {
 }
 
 /* ── Comments Section ──────────────────────────────────────────────────────── */
-const CommentsSection = ({ postId, onCountChange, onClose }) => {
-  const [comments, setComments]       = useState([]);
-  const [totalCount, setTotalCount]   = useState(0);
-  const [loading, setLoading]         = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [text, setText]               = useState('');
-  const [submitting, setSubmitting]   = useState(false);
-  const [fetchError, setFetchError]   = useState(null);
-  const fetchedCountRef               = useRef(0);
-  const allCommentsRef                = useRef([]);
+const CommentsSection = ({ postId, onCountChange }) => {
+  const [comments, setComments] = useState([]);
+  const [loading, setLoading]   = useState(true);
+  const [text, setText]         = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [fetchError, setFetchError] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -98,7 +99,7 @@ const CommentsSection = ({ postId, onCountChange, onClose }) => {
       }
       window.SupabaseUtils.client
         .from('comments')
-        .select('comment_id, post_id, e_id, comment_text, created_at')
+        .select('comment_id, post_id, e_id, comment_text, created_at, employees(name)')
         .eq('post_id', postId)
         .order('created_at', { ascending: true })
         .then(({ data, error: dbError }) => {
@@ -110,10 +111,7 @@ const CommentsSection = ({ postId, onCountChange, onClose }) => {
             return;
           }
           const all = data || [];
-          allCommentsRef.current = all;
-          fetchedCountRef.current = Math.min(COMMENTS_PER_PAGE, all.length);
-          setComments(all.slice(0, COMMENTS_PER_PAGE));
-          setTotalCount(all.length);
+          setComments(all);
           onCountChange(all.length);
           setLoading(false);
         });
@@ -123,16 +121,6 @@ const CommentsSection = ({ postId, onCountChange, onClose }) => {
     return () => { cancelled = true; };
   }, [postId, onCountChange]);
 
-  const handleLoadMore = () => {
-    if (loadingMore) return;
-    setLoadingMore(true);
-    const from = fetchedCountRef.current;
-    const nextSlice = allCommentsRef.current.slice(from, from + COMMENTS_PER_PAGE);
-    setComments((prev) => [...prev, ...nextSlice]);
-    fetchedCountRef.current = from + nextSlice.length;
-    setLoadingMore(false);
-  };
-
   const handleSubmit = async () => {
     const trimmed = text.trim();
     if (!trimmed || submitting || !window.SupabaseUtils?.client) return;
@@ -141,18 +129,13 @@ const CommentsSection = ({ postId, onCountChange, onClose }) => {
     const { data, error: dbError } = await window.SupabaseUtils.client
       .from('comments')
       .insert({ post_id: postId, comment_text: trimmed })
-      .select('comment_id, post_id, e_id, comment_text, created_at')
+      .select('comment_id, post_id, e_id, comment_text, created_at, employees(name)')
       .single();
 
     if (!dbError && data) {
-      allCommentsRef.current = [...allCommentsRef.current, data];
-      fetchedCountRef.current += 1;
       setComments((prev) => [...prev, data]);
-      const newTotal = totalCount + 1;
-      setTotalCount(newTotal);
-      onCountChange(newTotal);
+      onCountChange(comments.length + 1);
       setText('');
-      onClose();
     } else if (dbError) {
       console.error('Comment insert error:', dbError.message);
     }
@@ -166,8 +149,6 @@ const CommentsSection = ({ postId, onCountChange, onClose }) => {
     }
   };
 
-  const hasMore = fetchedCountRef.current < totalCount;
-
   return (
     <div className="feed-comments">
       {loading && <p className="feed-comments-status">Loading comments…</p>}
@@ -180,28 +161,17 @@ const CommentsSection = ({ postId, onCountChange, onClose }) => {
       {comments.map((c) => (
         <div key={c.comment_id} className="feed-comment-item">
           <div className="feed-comment-avatar" aria-hidden="true">
-            {c.e_id ? String(c.e_id).slice(0, 1) : 'U'}
+            {c.employees?.name ? c.employees.name.slice(0, 2).toUpperCase() : 'U'}
           </div>
           <div className="feed-comment-body">
             <span className="feed-comment-name">
-              {c.e_id ? `Employee #${c.e_id}` : 'You'}
+              {c.employees?.name || 'You'}
             </span>
             <p className="feed-comment-text">{c.comment_text}</p>
             <span className="feed-comment-meta">{formatTimeAgo(c.created_at)}</span>
           </div>
         </div>
       ))}
-
-      {!loading && hasMore && (
-        <button
-          type="button"
-          className="feed-comments-load-more"
-          onClick={handleLoadMore}
-          disabled={loadingMore}
-        >
-          {loadingMore ? 'Loading…' : `Load more (${totalCount - fetchedCountRef.current} remaining)`}
-        </button>
-      )}
 
       <div className="feed-comment-input-row">
         <div className="feed-comment-avatar" aria-hidden="true">U</div>
@@ -230,12 +200,11 @@ const CommentsSection = ({ postId, onCountChange, onClose }) => {
 CommentsSection.propTypes = {
   postId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   onCountChange: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
 };
 
 /* ── Single Post Card ──────────────────────────────────────────────────────── */
 const FeedCard = ({
-  post, commentCount, isOpen, onToggle, onClose, onCommentCountChange,
+  post, commentCount, isOpen, onToggle, onCommentCountChange,
 }) => {
   const [liked, setLiked]         = useState(post.liked);
   const [likeCount, setLikeCount] = useState(post.likes);
@@ -246,8 +215,15 @@ const FeedCard = ({
     setLiked(!liked);
   };
 
+  const handleCardClick = (e) => {
+    if (!isOpen) return;
+    if (e.target.closest('.feed-comments')) return;
+    if (e.target.closest('.feed-action-btn')) return;
+    onToggle();
+  };
+
   return (
-    <article className="feed-card">
+    <article className="feed-card" onClick={handleCardClick}>
       <div className="feed-card-header">
         <div className="feed-card-user">
           <div className="feed-card-avatar" style={{ background: post.user.color }} aria-hidden="true">
@@ -265,7 +241,7 @@ const FeedCard = ({
       </div>
 
       {post.title && <p className="feed-card-title">{post.title}</p>}
-      <p className="feed-card-text">{post.text}</p>
+      <p className="feed-card-text">{stripHashtags(post.text)}</p>
 
       {post.tags && post.tags.length > 0 && (
         <div className="feed-card-tags">
@@ -322,7 +298,6 @@ const FeedCard = ({
         <CommentsSection
           postId={post.id}
           onCountChange={onCommentCountChange}
-          onClose={onClose}
         />
       )}
     </article>
@@ -355,7 +330,6 @@ FeedCard.propTypes = {
   commentCount: PropTypes.number.isRequired,
   isOpen: PropTypes.bool.isRequired,
   onToggle: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
   onCommentCountChange: PropTypes.func.isRequired,
 };
 
@@ -367,11 +341,11 @@ function mapRowToPost(row) {
       name: row.user_name || 'Unknown',
       role: row.user_role || 'Member',
       avatar: row.user_name?.slice(0, 2).toUpperCase() || '?',
-      color: '#0073e6',
+      color: '#e11d48',
     },
     timeAgo: formatTimeAgo(row.created_at),
     title: null,
-    text: row.post_description || '',
+    text: stripHashtags(row.post_description || ''),
     tags: row.tags ? row.tags.split(',').map((t) => t.trim()).filter(Boolean) : [],
     images: (() => {
       if (!row.media) return [];
@@ -465,12 +439,13 @@ const Feed = () => {
       }
 
       const extractedTags = `${text} ${title}`.match(/#\w+/g) || [];
+      const cleanText = stripHashtags(text);
       const newPost = {
         id: Date.now(),
-        user: { name: 'You', role: 'Member', avatar: 'U', color: '#0073e6' },
+        user: { name: 'You', role: 'Member', avatar: 'U', color: '#e11d48' },
         timeAgo: 'Just now',
         title: title || null,
-        text,
+        text: cleanText,
         tags: extractedTags,
         images: images.map((img) => img.url),
         attachment,
@@ -482,21 +457,6 @@ const Feed = () => {
 
       setAllPosts((prev) => [newPost, ...prev]);
       setVisiblePosts((prev) => [newPost, ...prev]);
-
-      if (window.SupabaseUtils?.client) {
-        window.SupabaseUtils.client
-          .from('posts')
-          .insert({
-            user_name: 'You',
-            user_role: 'Member',
-            post_description: text,
-            tags: extractedTags.join(', '),
-            media: images.length > 0 ? JSON.stringify(images.map((img) => img.url)) : null,
-          })
-          .then(({ error: dbError }) => {
-            if (dbError) console.error('Failed to save post:', dbError.message);
-          });
-      }
     };
 
     document.addEventListener('post-bar:submit', handleNewPost);
@@ -559,7 +519,6 @@ const Feed = () => {
           commentCount={commentCounts[post.id] ?? post.comments}
           isOpen={openPostId === post.id}
           onToggle={() => handleToggle(post.id)}
-          onClose={() => setOpenPostId(null)}
           onCommentCountChange={(count) => handleCommentCountChange(post.id, count)}
         />
       ))}

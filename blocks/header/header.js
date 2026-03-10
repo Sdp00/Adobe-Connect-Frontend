@@ -27,6 +27,11 @@ export default async function decorate(block) {
  
   nav.innerHTML = `
     <div class="nav-left">
+      <button class="sb-hamburger" aria-label="Toggle menu">
+        <span class="sb-hamburger-line"></span>
+        <span class="sb-hamburger-line"></span>
+        <span class="sb-hamburger-line"></span>
+      </button>
       <a href="/"><img class="nav-logo-img" src="/blocks/header/Adobe-logo.jpeg" alt="Adobe" /></a>
       <span class="nav-title">${title}</span>
     </div>

@@ -679,8 +679,61 @@ html[data-theme="dark"] .nav-inner {
 }
 
 html[data-theme="dark"] .profile-modal {
-  background: var(--spectrum-gray-50);
-  color: var(--spectrum-text-primary);
+  background: #1e1e1e;
+  color: #fff;
+}
+
+html[data-theme="dark"] .profile-modal-header h3 {
+  color: #fff;
+}
+
+html[data-theme="dark"] .profile-modal-body label {
+  color: #e5e7eb;
+}
+
+html[data-theme="dark"] .modal-close {
+  color: #b3b3b3;
+}
+
+html[data-theme="dark"] .modal-close:hover {
+  color: #fff;
+}
+
+html[data-theme="dark"] .date-field input {
+  background: #2a2a2a;
+  border-color: #444;
+  color: #fff;
+  color-scheme: dark;
+}
+
+html[data-theme="dark"] .interests-header {
+  color: #e5e7eb;
+}
+
+html[data-theme="dark"] .profile-modal .interest-chip {
+  background: #2a2a2a;
+  border-color: #444;
+  color: #e5e7eb !important;
+}
+
+html[data-theme="dark"] .profile-modal .interest-chip.selected {
+  background: #f3f4f6;
+  color: #111827 !important;
+  border-color: #f3f4f6;
+}
+
+html[data-theme="dark"] .profile-modal .update-btn {
+  background: #333;
+  color: #6b7280;
+}
+
+html[data-theme="dark"] .profile-modal .update-btn:not(:disabled) {
+  background: #e11d48;
+  color: #fff;
+}
+
+html[data-theme="dark"] .profile-modal .update-btn:not(:disabled):hover {
+  background: #be123c;
 }
 
 html[data-theme="dark"] .mobile-search-bar {
@@ -735,14 +788,6 @@ html[data-theme="dark"] .search-result-badge.person {
   /* Hide desktop search */
   .nav-center {
     display: none;
-  }
-
-  .nav-left::before {
-    content: '';
-    display: block;
-    width: 32px;
-    height: 32px;
-    flex-shrink: 0;
   }
 
   .nav-left {

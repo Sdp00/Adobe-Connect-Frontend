@@ -389,12 +389,14 @@ const isHomePage = pathname === '/'
 
       // Save to Supabase posts table
       submitBtn.textContent = 'Saving...';
+      const cleanBody = body.replace(/#\w+/g, '').replace(/\s+/g, ' ').trim();
       const { error: dbError } = await window.SupabaseUtils.client
         .from('posts')
         .insert({
           user_name: 'You',
           user_role: 'Member',
-          post_description: body,
+          title: title || null,
+          post_description: cleanBody,
           tags: tags.join(', '),
           media: mediaUrls.length > 0 ? JSON.stringify(mediaUrls) : null,
         });

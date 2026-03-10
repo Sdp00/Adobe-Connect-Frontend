@@ -58,13 +58,6 @@ export default async function decorate(block) {
     await Promise.all(allIconIds.map(async (id) => [id, await loadIcon(id)])),
   );
 
-  // Hamburger button (mobile/tablet only)
-  const hamburger = createElement('button', 'sb-hamburger', { 'aria-label': 'Toggle menu' });
-  hamburger.innerHTML = `
-    <span class="sb-hamburger-line"></span>
-    <span class="sb-hamburger-line"></span>
-    <span class="sb-hamburger-line"></span>
-  `;
 
   const sidebar = createElement('aside', 'sb-sidebar', { 'aria-label': 'Main navigation' });
   const nav = createElement('nav');
@@ -112,24 +105,22 @@ export default async function decorate(block) {
 
   sidebar.appendChild(socialList);
 
-  // Hamburger toggle for mobile/tablet
-  hamburger.addEventListener('click', () => {
-    sidebar.classList.toggle('sb-sidebar-open');
-    hamburger.classList.toggle('sb-hamburger-open');
-    document.body.classList.toggle('sb-menu-open');
-  });
-
-  // Close sidebar when clicking outside (mobile/tablet)
+  // Single delegated listener: handles hamburger toggle AND outside-click close.
+  // Queries .sb-hamburger lazily so header timing doesn't matter.
   document.addEventListener('click', (e) => {
-    if (window.innerWidth <= 1024) {
-      if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
-        sidebar.classList.remove('sb-sidebar-open');
-        hamburger.classList.remove('sb-hamburger-open');
-        document.body.classList.remove('sb-menu-open');
-      }
+    const hamburger = document.querySelector('.sb-hamburger');
+    if (hamburger && hamburger.contains(e.target)) {
+      sidebar.classList.toggle('sb-sidebar-open');
+      hamburger.classList.toggle('sb-hamburger-open');
+      document.body.classList.toggle('sb-menu-open');
+      return;
+    }
+    if (window.innerWidth <= 1024 && !sidebar.contains(e.target)) {
+      sidebar.classList.remove('sb-sidebar-open');
+      if (hamburger) hamburger.classList.remove('sb-hamburger-open');
+      document.body.classList.remove('sb-menu-open');
     }
   });
 
-  block.appendChild(hamburger);
   block.appendChild(sidebar);
 }
