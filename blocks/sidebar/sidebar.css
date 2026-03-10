@@ -15,9 +15,6 @@
 
 .sb-hamburger {
   display: none;
-  position: fixed;
-  top: 14px;
-  left: 24px;
   width: 36px;
   height: 36px;
   background: transparent;
@@ -28,8 +25,8 @@
   justify-content: center;
   gap: 5px;
   cursor: pointer;
-  z-index: 102;
-  transition: all 0.3s ease;
+  flex-shrink: 0;
+  transition: background 0.3s ease;
 }
 
 .sb-hamburger:hover {
